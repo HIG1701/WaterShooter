@@ -1,18 +1,28 @@
 using UnityEngine;
 
-//一応残しますが、使わないかも
-
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] GameObject player;                     //playerのゲームオブジェクトを入れる変数を設定
+    [SerializeField] GameObject player;
+
+
     private void Update()
     {
-        float my = Input.GetAxis("Mouse Y");                //マウスの縦方向の移動量を取得
+        MoveCamera();                       //カメラ
+    }
+    private void MoveCamera()
+    {
+        float mx = Input.GetAxis("Mouse X");                            //カーソルの横の移動量を取得
+        float my = Input.GetAxis("Mouse Y");                            //カーソルの縦の移動量を取得
 
-        if (Mathf.Abs(my) > 0.001f)                         //Y方向に一定量移動していれば縦回転
+        if (Mathf.Abs(mx) > 0.001f)                                     //X方向に一定量移動していれば横回転
         {
-            //transform.RotateAround(player.transform.position, transform.right, -my);
-            transform.RotateAround(player.transform.position, Vector3.right, -my);
+            //transform.RotateAround(回転の中心, 回転の軸（Vector3.upは(0,1,0)のことなのでｙ軸を軸としている）, 変化量); 
+            transform.RotateAround(transform.position, Vector3.up, mx); //回転軸はplayerオブジェクトのワールド座標Y軸
+        }
+
+        if (Mathf.Abs(my) > 0.001f)                                     //Y方向に一定量移動していれば縦回転
+        {
+            transform.RotateAround(transform.position, Vector3.right, -my);
         }
     }
 }
