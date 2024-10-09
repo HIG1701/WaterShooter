@@ -1,28 +1,44 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] GameObject player;
+    [SerializeField] GameObject Player;
+    private Vector3 CurrentPos;             //現在のカメラ位置
+    private Vector3 PastPos;                //過去のカメラ位置
+    private Vector3 Distance;                   //移動距離
 
-
+    private void Start()
+    {
+        //最初のプレイヤーの位置の取得
+        PastPos = Player.transform.position;
+    }
     private void Update()
     {
-        MoveCamera();                       //カメラ
+        MoveCamera();
+        RotateCamera();
     }
+
     private void MoveCamera()
     {
-        float mx = Input.GetAxis("Mouse X");                            //カーソルの横の移動量を取得
-        float my = Input.GetAxis("Mouse Y");                            //カーソルの縦の移動量を取得
+        //プレイヤーの現在地の取得
+        CurrentPos = Player.transform.position;
+        Distance = CurrentPos - PastPos;
+        transform.position = Vector3.Lerp(transform.position, transform.position + Distance, 1.0f);
+        PastPos = CurrentPos;
+    }
 
-        if (Mathf.Abs(mx) > 0.001f)                                     //X方向に一定量移動していれば横回転
-        {
-            //transform.RotateAround(回転の中心, 回転の軸（Vector3.upは(0,1,0)のことなのでｙ軸を軸としている）, 変化量); 
-            transform.RotateAround(transform.position, Vector3.up, mx); //回転軸はplayerオブジェクトのワールド座標Y軸
-        }
+    private void RotateCamera()
+    {
+        //マウス移動
+        float mx = Input.GetAxis("Mouse X");
+        float my = Input.GetAxis("Mouse Y");
 
-        if (Mathf.Abs(my) > 0.001f)                                     //Y方向に一定量移動していれば縦回転
-        {
-            transform.RotateAround(transform.position, Vector3.right, -my);
-        }
+        if (Mathf.Abs(mx) > 0.01f)
+            //Y座標
+            transform.RotateAround(Player.transform.position, Vector3.up, mx);
+        if (Mathf.Abs(my) > 0.01f)
+            //X座標
+            transform.RotateAround(Player.transform.position, transform.right, -my);
     }
 }

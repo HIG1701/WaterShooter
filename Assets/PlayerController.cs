@@ -1,52 +1,87 @@
-using UnityEngine;
-
-//���N���X�ɂ��܂��i�b��j
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private float speed = 30.0f;            //�ړ����x
-    private float jumpForce = 20f;          //�W�����v
-    private Rigidbody rb;
-    private bool isGrounded;                //�ݒu����
+    [SerializeField] private float MoveSpeedIn = 30.0f;                             //プレイヤー移動速度（入力）
+    [SerializeField] private float jumpForce = 20f;                                 //プレイヤージャンプ力（入力）
+    private Rigidbody PlayerRb;                                                     //プレイヤーRigidbody
+    private Vector3 MoveSpeed;                                                      //プレイヤー移動速度
+    private Vector3 CurrentPos;                                                     //プレイヤー現在位置
+    private Vector3 PastPos;                                                        //プレイヤー過去位置
+    private Vector3 Delta;                                                          //プレイヤー移動量
+    private Quaternion PlayerRot;                                                   //プレイヤー進行方向
+    private float CurrentAngularVel;                                                //現在回転角速度
+    [SerializeField] private float MaxAngularVel = Mathf.Infinity;                  //最大回転角速度[deg/s]
+    [SerializeField] private float SmoothTime = 0.1f;                               //進行にかかる時間[s]
+    private float DistanceAngle;                                                    //現在の向きと進行方向角度
+    private float RotAngle;                                                         //現在の回転角度
+    private Quaternion NextRot;                                                     //どの程度回転するか
+    private bool isGrounded;                                                        //地面との設置判定
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        PlayerRb = GetComponent<Rigidbody>();
+        PastPos = transform.position;
     }
+
     private void Update()
     {
-        PlayerMove();                       //�ړ�
-        PlayerJump();                       //�W�����v
-        PlayerDash();                       //�_�b�V��
+        Dash();
+        Jump();
+        MovePlayer();
+        RotatePlayer();
     }
 
-    private void PlayerMove()
+    private void MovePlayer()
     {
-        // Player�̑O�㍶�E�̈ړ�
-        float xMovement = Input.GetAxis("Horizontal") * speed * Time.deltaTime;             //���E�̈ړ�
-        float zMovement = Input.GetAxis("Vertical") * speed * Time.deltaTime;               //�O��̈ړ�
-        transform.Translate(xMovement, 0, zMovement);                                       //�I�u�W�F�N�g�̈ʒu���X�V
+        //前方取得
+        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+        //右方取得
+        Vector3 cameraRight = Vector3.Scale(Camera.main.transform.right, new Vector3(1, 0, 1)).normalized;
+
+        //初期化
+        MoveSpeed = Vector3.zero;
+
+        //移動入力
+        if (Input.GetKey(KeyCode.W)) MoveSpeed = MoveSpeedIn * cameraForward;
+        if (Input.GetKey(KeyCode.A)) MoveSpeed = -MoveSpeedIn * cameraRight;
+        if (Input.GetKey(KeyCode.S)) MoveSpeed = -MoveSpeedIn * cameraForward;
+        if (Input.GetKey(KeyCode.D)) MoveSpeed = MoveSpeedIn * cameraRight;
+        PlayerRb.velocity = MoveSpeed;
     }
 
-
-    private void PlayerJump()
+    private void RotatePlayer()
     {
-        //�n�ʂƐG��Ă���
+        //現在の位置
+        CurrentPos = transform.position;
+        //移動量計算
+        Delta = CurrentPos - PastPos;
+        Delta.y = 0;
+        //過去の位置の更新
+        PastPos = CurrentPos;
+
+        if (Delta == Vector3.zero) return;
+        PlayerRot = Quaternion.LookRotation(Delta, Vector3.up);
+        DistanceAngle = Vector3.Angle(transform.forward, Delta);
+
+        //Vector3.SmoothDamp (現在地, 目的地, ref 現在の速度, 遷移時間, 最高速度);
+        RotAngle = Mathf.SmoothDampAngle(0, DistanceAngle, ref CurrentAngularVel, SmoothTime, MaxAngularVel);
+        NextRot = Quaternion.RotateTowards(transform.rotation, PlayerRot, RotAngle);
+        transform.rotation = NextRot;
+    }
+
+    private void Dash()
+    {
+        if (Input.GetKey(KeyCode.LeftShift)) MoveSpeedIn = 60.0f;
+        else MoveSpeedIn = 30.0f;
+    }
+
+    private void Jump()
+    {
+        //�n�ʂƐG��Ă���
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
-    }
-
-    private void PlayerDash()
-    {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            speed = 50.0f;
-        }
-        else
-        {
-            speed = 50.0f;
+            PlayerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
