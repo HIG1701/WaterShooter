@@ -2,35 +2,41 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player; // プレイヤーのTransform
-    public Vector3 offset; // カメラのオフセット
-    public float sensitivity = 5f; // マウス感度
-    public float distance = 5f; // プレイヤーからの距離
+    [SerializeField] Transform Player;                              //プレイヤーのTransform
+    [SerializeField] Vector3 Offset;                                //カメラのオフセット
+    [SerializeField] float Sensitivity = 5f;                        //マウス感度
+    [SerializeField] float Distance = 5f;                           //プレイヤーからの距離
 
-    private float currentX = 0f;
-    private float currentY = 0f;
-    private const float Y_ANGLE_MIN = -20f;
-    private const float Y_ANGLE_MAX = 80f;
+    private float CurrentX = 0f;
+    private float CurrentY = 0f;
 
-    void Start()
+    //垂直方向の回転角度の制限
+    private const float AngleMIN = -20f;
+    private const float AngleMAX = 80f;
+
+    private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked; // カーソルをロック
-        Cursor.visible = false; // カーソルを非表示
+        Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
+        Cursor.visible = false;                                     //カーソル非表示
     }
 
-    void Update()
+    private void Update()
     {
-        currentX += Input.GetAxis("Mouse X") * sensitivity;
-        currentY -= Input.GetAxis("Mouse Y") * sensitivity;
+        CurrentX += Input.GetAxis("Mouse X") * Sensitivity;
+        CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;
 
-        currentY = Mathf.Clamp(currentY, Y_ANGLE_MIN, Y_ANGLE_MAX);
+        //CurrentYの値をAngleMINとAngleMAXの間に制限する
+        CurrentY = Mathf.Clamp(CurrentY, AngleMIN, AngleMAX);
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        Vector3 direction = new Vector3(0, 0, -distance);
-        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-        transform.position = player.position + rotation * direction + offset;
-        transform.LookAt(player.position + offset);
+        Vector3 direction = new Vector3(0, 0, -Distance);
+        //CurrentYとCurrentXを使って回転を計算
+        Quaternion rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
+        //カメラ位置をプレイヤー位置と回転、オフセットを基に設定
+        transform.position = Player.position + rotation * direction + Offset;
+        //カメラがプレイヤーの位置を向くよう設定
+        transform.LookAt(Player.position + Offset);
     }
 }

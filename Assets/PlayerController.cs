@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float SprintSpeed = 100f;                  //加速
     [SerializeField] float JumpForce = 50f;                     //ジャンプ力
     [SerializeField] Transform CameraTransform;                 //カメラのTransform
+
     private float CurrentSpeed;
     private bool IsGrounded;                                    //地面と触れているか
     private Rigidbody rb;
