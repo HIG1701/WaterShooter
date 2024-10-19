@@ -409,7 +409,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &190833595
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1308,6 +1308,7 @@ GameObject:
   - component: {fileID: 705859382}
   - component: {fileID: 705859381}
   - component: {fileID: 705859380}
+  - component: {fileID: 705859383}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Wall
@@ -1401,6 +1402,33 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705859378}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &705859383
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705859378}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &840949962
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,10 +1935,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb6f2f00941078469cbb663466fcd50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 190833598}
-  offset: {x: 0, y: 0, z: 0}
-  sensitivity: 5
-  distance: 30
+  Player: {fileID: 190833598}
+  Offset: {x: 0, y: 0, z: 0}
+  Sensitivity: 5
+  Distance: 30
 --- !u!1 &967232848
 GameObject:
   m_ObjectHideFlags: 0
