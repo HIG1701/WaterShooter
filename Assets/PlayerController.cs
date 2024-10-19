@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float PlayerSpeed = 50f;                   //通常速度
     [SerializeField] float SprintSpeed = 100f;                  //加速
     [SerializeField] float JumpForce = 50f;                     //ジャンプ力
+    [SerializeField] Transform CameraTransform;                 //カメラのTransform
     private float CurrentSpeed;
     private bool IsGrounded;                                    //地面と触れているか
     private Rigidbody rb;
@@ -20,10 +21,6 @@ public class PlayerController : MonoBehaviour
         //PlayerJump();
         PlayerDash();
         PlayerMove();
-    }
-
-    private void Update()
-    {
         PlayerShift();
         Playerfire();
         //リロードRキー
@@ -37,15 +34,23 @@ public class PlayerController : MonoBehaviour
         float MoveHorizontal = Input.GetAxis("Horizontal");
         float MoveVertical = Input.GetAxis("Vertical");
 
-        Vector3 Movement = new Vector3(MoveHorizontal, 0.0f, MoveVertical);
+        //カメラの前方向と右方向を基準に移動方向を計算
+        Vector3 forward = CameraTransform.forward;
+        Vector3 right = CameraTransform.right;
+        forward.y = 0f;
+        right.y = 0f;
+        forward.Normalize();
+        right.Normalize();
 
-        if (Movement != Vector3.zero)
+        Vector3 desiredMoveDirection = forward * MoveVertical + right * MoveHorizontal;
+
+        if (desiredMoveDirection != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(Movement);
+            Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection);
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 10f));
         }
 
-        rb.MovePosition(transform.position + Movement * CurrentSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(transform.position + desiredMoveDirection * CurrentSpeed * Time.fixedDeltaTime);
     }
 
     private void PlayerDash()
