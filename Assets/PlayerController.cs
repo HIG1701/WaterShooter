@@ -1,11 +1,13 @@
 using UnityEngine;
 
+//このスクリプトでは、プレイヤーの動き全般を実装する
+//今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float PlayerSpeed = 50f;                   //通常速度
     [SerializeField] float SprintSpeed = 100f;                  //加速
     [SerializeField] float DownSpeed = 10f;                     //壁に当たっている時
-    [SerializeField] float JumpForce = 50f;                     //ジャンプ力
     [SerializeField] float jumpVelocity = 10f;                  //ジャンプ速度
     [SerializeField] Transform CameraTransform;                 //カメラのTransform
 
@@ -25,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
-        //Physics.gravity デフォルト：(0, -9.81, 0)
+        //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
         Physics.gravity *= GravityMultiplier;                   //重力を強める
     }
@@ -83,6 +85,17 @@ public class PlayerController : MonoBehaviour
         {
             //ダッシュ中にすり抜ける問題を解決できていない
             CurrentSpeed = DownSpeed;
+
+            //Rayが壁にヒットしていれば、壁を上る
+            if (Hit.collider.CompareTag("Wall"))
+            {
+                float ClimbSpeed = 5f;
+                // 上下移動の処理
+                if (MoveVertical > 0)
+                {
+                    DesiredMoveDirection = Vector3.up * ClimbSpeed;
+                }
+            }
         }
 
         Rb.MovePosition(transform.position + DesiredMoveDirection * CurrentSpeed * Time.fixedDeltaTime);

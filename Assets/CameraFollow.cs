@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//このスクリプトでは、マウスがプレイヤーを中心に追従するような処理を実装する
+//参考リンク：https://chamucode.com/unity-camera-follow/
+
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] Transform Player;                              //プレイヤーのTransform
@@ -11,7 +14,7 @@ public class CameraFollow : MonoBehaviour
     private float CurrentY = 0f;
 
     //垂直方向の回転角度の制限
-    private const float AngleMIN = -20f;
+    private const float AngleMIN = -5f;
     private const float AngleMAX = 80f;
 
     private void Start()
@@ -22,20 +25,26 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        CurrentX += Input.GetAxis("Mouse X") * Sensitivity;
-        CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;
+        CurrentX += Input.GetAxis("Mouse X") * Sensitivity;         //マウスX軸取得
+        CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;         //マウスY軸取得
 
         //CurrentYの値をAngleMINとAngleMAXの間に制限する
+        //Mathf.Clamp：値を指定された範囲の中にとどめる
+        //すなわち、Y軸を極端な角度に回転させることを防ぐ
         CurrentY = Mathf.Clamp(CurrentY, AngleMIN, AngleMAX);
     }
 
     private void LateUpdate()
     {
-        Vector3 direction = new Vector3(0, 0, -Distance);
+        Vector3 Direction = new Vector3(0, 0, -Distance);
+
         //CurrentYとCurrentXを使って回転を計算
-        Quaternion rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
+        Quaternion Rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
+
         //カメラ位置をプレイヤー位置と回転、オフセットを基に設定
-        transform.position = Player.position + rotation * direction + Offset;
+        transform.position = Player.position + Rotation * Direction + Offset;
+
+        //transform.LookAt：カメラに特定の位置を向かせ続ける
         //カメラがプレイヤーの位置を向くよう設定
         transform.LookAt(Player.position + Offset);
     }
