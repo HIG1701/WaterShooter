@@ -513,8 +513,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerSpeed: 30
   SprintSpeed: 60
+  DownSpeed: 10
   JumpForce: 10
+  jumpVelocity: 40
   CameraTransform: {fileID: 963194228}
+  CurrentSpeed: 0
 --- !u!1 &312859416
 GameObject:
   m_ObjectHideFlags: 0
