@@ -77,8 +77,8 @@ public class PlayerController : MonoBehaviour
                 Rb.MoveRotation(Quaternion.Slerp(transform.rotation, TargetRotation, Time.fixedDeltaTime * 10f));
 
                 //ƒƒ‚
-                //Quaternion.LookRotation(DesiredMoveDirection):DesiredMoveDirection‚Ì•ûŒü‚ğŒü‚­‰ñ“]‚ğŒvZ
-                //Quaternion.Slerp(a,b,c):a‚©‚çb‚Ö‚Ì‰ñ“]‚ğ•âŠ®
+                //Quaternion.LookRotation(DesiredMoveDirection)FDesiredMoveDirection‚Ì•ûŒü‚ğŒü‚­‰ñ“]‚ğŒvZ
+                //Quaternion.Slerp(a,b,c)Fa‚©‚çb‚Ö‚Ì‰ñ“]‚ğ•âŠ®
             }
         }
         else
