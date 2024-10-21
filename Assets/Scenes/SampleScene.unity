@@ -511,10 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1018306d6f80b49bcd4c70d0a82113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerSpeed: 30
-  SprintSpeed: 60
-  DownSpeed: 10
-  jumpVelocity: 40
+  parameter: {fileID: 11400000, guid: de694b03a0ed85c4a97c774623a84a31, type: 2}
   CameraTransform: {fileID: 963194228}
   CurrentSpeed: 0
 --- !u!1 &312859416

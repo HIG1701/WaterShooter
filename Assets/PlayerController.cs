@@ -5,16 +5,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float PlayerSpeed = 50f;                   //通常速度
-    [SerializeField] float SprintSpeed = 100f;                  //加速
-    [SerializeField] float DownSpeed = 10f;                     //壁に当たっている時
-    [SerializeField] float jumpVelocity = 10f;                  //ジャンプ速度
+    [SerializeField] PlayerParameter parameter;                 //プレイヤーパラメータ
     [SerializeField] Transform CameraTransform;                 //カメラのTransform
-
-    private float GravityMultiplier = 2f;                       //このオブジェクトのみ、重力の影響を強める
-    [SerializeField] private float CurrentSpeed;
-    private bool IsGrounded;                                    //地面と触れているか
+    [SerializeField] private float CurrentSpeed;                //現在Speed
     private Rigidbody Rb;
+    private bool IsGrounded;                                    //地面と触れているか
 
     private void Awake()
     {
@@ -23,13 +18,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        CurrentSpeed = PlayerSpeed;
+        CurrentSpeed = parameter.PlayerSpeed;
 
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
-        Physics.gravity *= GravityMultiplier;                   //重力を強める
+        Physics.gravity *= parameter.GravityMultiplier;                   //重力を強める
     }
 
     private void FixedUpdate()
@@ -84,7 +79,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             //ダッシュ中にすり抜ける問題を解決できていない
-            CurrentSpeed = DownSpeed;
+            CurrentSpeed = parameter.DownSpeed;
 
             //Rayが壁にヒットしていれば、壁を上る
             if (Hit.collider.CompareTag("Wall"))
@@ -104,14 +99,14 @@ public class PlayerController : MonoBehaviour
     private void PlayerSpeedControl()
     {
         //コントロールキーが押されていたら速度アップ
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) CurrentSpeed = SprintSpeed;
-        else CurrentSpeed = PlayerSpeed;
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) CurrentSpeed = parameter.SprintSpeed;
+        else CurrentSpeed = parameter.PlayerSpeed;
     }
 
     private void PlayerJump()
     {
         //AddForceだと何故かうまくいかなかったので、ベロシティでやってます
-        if (IsGrounded && Input.GetKeyDown(KeyCode.Space)) Rb.velocity = new Vector3(Rb.velocity.x, jumpVelocity, Rb.velocity.z);
+        if (IsGrounded && Input.GetKeyDown(KeyCode.Space)) Rb.velocity = new Vector3(Rb.velocity.x, parameter.JumpVelocity, Rb.velocity.z);
     }
     private void PlayerShift()
     {
