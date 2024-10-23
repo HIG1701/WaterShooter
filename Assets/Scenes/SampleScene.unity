@@ -1417,7 +1417,7 @@ GameObject:
   - component: {fileID: 705859381}
   - component: {fileID: 705859380}
   - component: {fileID: 705859383}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2047,6 +2047,10 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   Sensitivity: 5
   Distance: 40
+  SphereCastRadius: 0.5
+  CollisionLayers:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &967232848
 GameObject:
   m_ObjectHideFlags: 0
@@ -3858,7 +3862,7 @@ GameObject:
   - component: {fileID: 2108437919}
   - component: {fileID: 2108437918}
   - component: {fileID: 2108437917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
