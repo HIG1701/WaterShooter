@@ -10,10 +10,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float CurrentSpeed;                //現在Speed
     private Rigidbody Rb;
     private bool IsGrounded;                                    //地面と触れているか
+    private CoinManager coinManager;                            //コインマネージャー本体
+    private int Coin;                                           //コイン量
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
+        coinManager = FindObjectOfType<CoinManager>();
     }
 
     private void Start()
@@ -25,6 +28,7 @@ public class PlayerController : MonoBehaviour
         //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
         Physics.gravity *= parameter.GravityMultiplier;                   //重力を強める
+        Coin = parameter.Coin;                                            //Parameterコインを代入
     }
 
     private void FixedUpdate()
@@ -118,6 +122,18 @@ public class PlayerController : MonoBehaviour
         //左マウスで発射
         //右マウスでエイム
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        ////プレイヤーコイン量追加
+        //if (collision.gameObject.CompareTag("Coin"))
+        //{
+        //    collision.gameObject.GetComponents<CoinManager>();
+        //    Coin += coinManager.Coin;
+        //}
+        //Debug.Log(Coin);
+    }
+
     private void OnCollisionStay(Collision collision)
     {
         //地面に接触しているかどうかをチェック
