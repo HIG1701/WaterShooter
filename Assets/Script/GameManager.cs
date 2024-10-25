@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //ゲームシステム全体について記載する
 /*
@@ -19,6 +20,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SpawnPlayers();
+    }
+
+    private void Update()
+    {
+        //スポーン地点が動くか確認するためのロードシーン
+        if (Input.GetKey(KeyCode.P))
+        {
+            SceneManager.LoadScene("SampleScene");
+        }
     }
 
     //リストの内容をシャッフルする
