@@ -11,10 +11,12 @@ public class PlayerController : MonoBehaviour
     private Rigidbody Rb;
     private bool IsGrounded;                                    //地面と触れているか
     private int Coin;                                           //コイン量
+    private GameManager gameManager;                            //ゲームマネージャー
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
@@ -117,6 +119,12 @@ public class PlayerController : MonoBehaviour
         //左マウスで発射
         //右マウスでエイム
     }
+    private void Die()
+    {
+        gameObject.SetActive(false);
+        //リスポーンタイマーを開始させる
+        gameManager.StartRespawnTimer(gameObject);
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -131,6 +139,8 @@ public class PlayerController : MonoBehaviour
             }
         }
         Debug.Log(Coin);
+
+        if (collision.gameObject.CompareTag("DamageArea")) Die();
     }
 
     private void OnCollisionStay(Collision collision)

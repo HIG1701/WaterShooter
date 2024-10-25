@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -70,5 +71,22 @@ public class GameManager : MonoBehaviour
             //spawnPoints[spawnIndex].rotation：対応するスポーンの向き
             Instantiate(Players[i], SpawnPoints[SpawnIndex].position, SpawnPoints[SpawnIndex].rotation);
         }
+    }
+
+    //死亡後のリスポーンタイマーを開始するメソッド
+    public void StartRespawnTimer(GameObject player)
+    {
+        //5秒後にリスポーン
+        StartCoroutine(RespawnPlayer(player, 5f));
+    }
+
+    //プレイヤーをリスポーンさせるコルーチン
+    private IEnumerator RespawnPlayer(GameObject player, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        int randomIndex = Random.Range(0, SpawnPoints.Count);                   //ランダムなスポーン地点を選択
+        Transform respawnPoint = SpawnPoints[randomIndex];
+        player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
+        player.SetActive(true);                                                 //プレイヤーをアクティブにする
     }
 }
