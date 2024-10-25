@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class CoinManager : MonoBehaviour
 {
-    [HideInInspector] public int Coin;                  //コインの種類を入力：5 or 20 or 100......
+    [HideInInspector] public int Coin;
+
     private void Start()
     {
-        // コインの種類に応じて値を設定
+        //コインの種類に応じて値を設定
         switch (gameObject.name)
         {
             case "5Coin":
