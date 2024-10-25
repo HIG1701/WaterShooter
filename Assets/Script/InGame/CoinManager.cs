@@ -4,13 +4,24 @@ using UnityEngine;
 
 public class CoinManager : MonoBehaviour
 {
-    [SerializeField] public int Coin;                          //コインの種類を入力：5 or 20 or 100......
-
-    private void OnCollisionEnter(Collision collision)
+    [HideInInspector] public int Coin;                  //コインの種類を入力：5 or 20 or 100......
+    private void Start()
     {
-        if (collision.gameObject.CompareTag("Player"))
+        // コインの種類に応じて値を設定
+        switch (gameObject.name)
         {
-            Destroy(gameObject);                        //プレイヤーと接触すると消す
+            case "5Coin":
+                Coin = 5;
+                break;
+            case "20Coin":
+                Coin = 20;
+                break;
+            case "100Coin":
+                Coin = 100;
+                break;
+            default:
+                Coin = 0;
+                break;
         }
     }
 }

@@ -10,13 +10,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float CurrentSpeed;                //現在Speed
     private Rigidbody Rb;
     private bool IsGrounded;                                    //地面と触れているか
-    private CoinManager coinManager;                            //コインマネージャー本体
     private int Coin;                                           //コイン量
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
-        coinManager = FindObjectOfType<CoinManager>();
     }
 
     private void Start()
@@ -90,10 +88,7 @@ public class PlayerController : MonoBehaviour
             {
                 float ClimbSpeed = 5f;
                 // 上下移動の処理
-                if (MoveVertical > 0)
-                {
-                    DesiredMoveDirection = Vector3.up * ClimbSpeed;
-                }
+                if (MoveVertical > 0) DesiredMoveDirection = Vector3.up * ClimbSpeed;
             }
         }
 
@@ -125,13 +120,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        ////プレイヤーコイン量追加
-        //if (collision.gameObject.CompareTag("Coin"))
-        //{
-        //    collision.gameObject.GetComponents<CoinManager>();
-        //    Coin += coinManager.Coin;
-        //}
-        //Debug.Log(Coin);
+        //プレイヤーコイン量追加
+        if (collision.gameObject.CompareTag("Coin"))
+        {
+            CoinManager coinManager = collision.gameObject.GetComponent<CoinManager>();
+            if (coinManager != null)
+            {
+                Coin += coinManager.Coin;
+                Destroy(collision.gameObject);
+            }
+        }
+        Debug.Log(Coin);
     }
 
     private void OnCollisionStay(Collision collision)
