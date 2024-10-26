@@ -15,7 +15,7 @@ public class PlayerParameter : ScriptableObject
     public float PlayerShield;              //シールド耐久力
     public float PlayerAttack;              //攻撃力
     public float AttackSpeed;               //攻撃速度
-    public float AttackDistance;            //射程距離
+    public float AttackRange;               //射程距離
     public float ReloadSpeed;               //リロード速度
     public int MaxAmmo;                     //最大弾数
     public int Coin;                        //コイン枚数

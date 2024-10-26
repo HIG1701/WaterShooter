@@ -19,8 +19,8 @@ MonoBehaviour:
   PlayerHP: 90
   PlayerShield: 200
   PlayerAttack: 30
-  AttackSpeed: 0.1
-  AttackDistance: 100
+  AttackSpeed: 20
+  AttackRange: 100
   ReloadSpeed: 2
   MaxAmmo: 30
   Coin: 0

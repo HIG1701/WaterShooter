@@ -27,7 +27,14 @@ public class GunManager : MonoBehaviour
         if (CanShoot())
         {
             CurrentAmmo--;
-            Instantiate(BulletPrefab, Muzzle.position, Muzzle.rotation);
+            Debug.Log("Current Ammo: " + CurrentAmmo);                                  //現在の弾数をデバッグログに表示
+            GameObject bullet = Instantiate(BulletPrefab, Muzzle.position, Muzzle.rotation);
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = Muzzle.forward * playerParameter.AttackSpeed;             //発射速度で弾を前方に飛ばす
+            }
+            Destroy(bullet, playerParameter.AttackRange / playerParameter.AttackSpeed); //射程距離に達すると弾を消す
         }
     }
 
@@ -40,5 +47,6 @@ public class GunManager : MonoBehaviour
         //リセット
         CurrentAmmo = playerParameter.MaxAmmo;
         IsReloading = false;
+        Debug.Log("GO！！！");
     }
 }

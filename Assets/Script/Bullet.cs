@@ -1,0 +1,10 @@
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Õ“Ë‚É’e‚ğÁ‚·
+        Destroy(gameObject);
+    }
+}
