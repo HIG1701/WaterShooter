@@ -13,16 +13,20 @@ public class PlayerController : MonoBehaviour
     private bool IsGrounded;                                    //地面と触れているか
     private int Coin;                                           //コイン量
     private GameManager gameManager;                            //ゲームマネージャー
+    private GunManager gunManager;
+    private float CurrentHealth;                                //現在HP
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
+        gunManager = FindObjectOfType<GunManager>();
     }
 
     private void Start()
     {
-        CurrentSpeed = parameter.PlayerSpeed;
+        CurrentSpeed = parameter.PlayerSpeed;                   //ParameterからSpeedを代入
+        CurrentHealth = parameter.PlayerHP;                     //ParameterからHPを代入
 
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
@@ -39,7 +43,7 @@ public class PlayerController : MonoBehaviour
         PlayerMove();
         PlayerShift();
         Playerfire();
-        //リロードRキー
+        PlayerReload();
         //マウスScrollで飲料選択。数字でも可
         //壁に向かってWSキー
         //アビリティQキー
@@ -117,8 +121,13 @@ public class PlayerController : MonoBehaviour
 
     private void Playerfire()
     {
-        //左マウスで発射
+        if (Input.GetButtonDown("Fire1")) gunManager.Shoot();
         //右マウスでエイム
+    }
+
+    private void PlayerReload()
+    {
+        if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(gunManager.Reload());
     }
     private void Die()
     {

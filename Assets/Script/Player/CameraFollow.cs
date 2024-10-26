@@ -12,7 +12,6 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] float SphereCastRadius = 0.5f;                 //SphereCastの半径
     [SerializeField] LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
 
-
     private float CurrentX = 0f;
     private float CurrentY = 0f;
 

@@ -954,7 +954,6 @@ MonoBehaviour:
   - {fileID: 749504211382804364, guid: b1048d97ce0fb904bad66b85ec047111, type: 3}
   - {fileID: 3449205297162850911, guid: 06f143d504f495e4a81027bb28727dc8, type: 3}
   - {fileID: 8190073286319717543, guid: 2835c5c9dc97b2b428f9815d7d42b96f, type: 3}
-  player: {fileID: 2434101979341226941, guid: 12b8517007fda944f8a11c6e06190321, type: 3}
 --- !u!4 &407416494
 Transform:
   m_ObjectHideFlags: 0
