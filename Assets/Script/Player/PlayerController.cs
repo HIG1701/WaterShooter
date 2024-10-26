@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
     private void Playerfire()
     {
-        if (Input.GetButtonDown("Fire1")) gunManager.Shoot();
+        if (Input.GetButton("Fire1")) gunManager.Shoot();
         //右マウスでエイム
     }
 

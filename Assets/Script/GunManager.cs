@@ -29,6 +29,7 @@ public class GunManager : MonoBehaviour
             CurrentAmmo--;
             Debug.Log("Current Ammo: " + CurrentAmmo);                                  //現在の弾数をデバッグログに表示
             GameObject bullet = Instantiate(BulletPrefab, Muzzle.position, Muzzle.rotation);
+
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
