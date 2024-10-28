@@ -121,13 +121,13 @@ public class PlayerController : MonoBehaviour
 
     private void Playerfire()
     {
-        if (Input.GetButton("Fire1")) gunManager.Shoot();
+        if (Input.GetMouseButton(0)) gunManager.Shoot();  // 左クリック時にShootメソッドを呼び出す
         //右マウスでエイム
     }
 
     private void PlayerReload()
     {
-        if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(gunManager.Reload());
+        if (Input.GetKeyDown(KeyCode.R)) gunManager.Reload();
     }
     private void Die()
     {
@@ -149,14 +149,19 @@ public class PlayerController : MonoBehaviour
             }
         }
         Debug.Log(Coin);
-
-        if (collision.gameObject.CompareTag("DamageArea")) Die();
     }
 
     private void OnCollisionStay(Collision collision)
     {
         //地面に接触しているかどうかをチェック
         if (collision.gameObject.CompareTag("Ground")) IsGrounded = true;
+
+        //DamageAreaに触れている間にHPを減少させる
+        if (collision.gameObject.CompareTag("DamageArea"))
+        {
+            CurrentHealth -= 9999 * Time.deltaTime;
+            if (CurrentHealth <= 0) Die();
+        }
     }
 
     private void OnCollisionExit(Collision collision)

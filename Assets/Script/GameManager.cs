@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] public List<Transform> SpawnPoints;
     [SerializeField] public List<GameObject> Players;
+    [SerializeField] private Camera respawnCamera;                  //リスポーン中に使用するカメラ
 
     private void Start()
     {
@@ -83,10 +84,14 @@ public class GameManager : MonoBehaviour
     //プレイヤーをリスポーンさせるコルーチン
     private IEnumerator RespawnPlayer(GameObject player, float delay)
     {
+        //リスポーンカメラをアクティブにする
+        respawnCamera.gameObject.SetActive(true);
+
         yield return new WaitForSeconds(delay);
         int randomIndex = Random.Range(0, SpawnPoints.Count);                   //ランダムなスポーン地点を選択
         Transform respawnPoint = SpawnPoints[randomIndex];
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
+        respawnCamera.gameObject.SetActive(false);                              //リスポーンカメラを非アクティブにする
     }
 }
