@@ -5,7 +5,11 @@ using Photon.Realtime;
 public class CreateRoom : MonoBehaviourPunCallbacks
 {
     [SerializeField] CharBoxList charBoxList;
-    public string charKind = null;
+
+    private void Start()
+    {
+        PhotonNetwork.ConnectUsingSettings();
+    }
     //ルーム入室前に呼び出し
     public override void OnConnectedToMaster()
     {
@@ -18,12 +22,11 @@ public class CreateRoom : MonoBehaviourPunCallbacks
     {
         Debug.Log("ルーム入出後");
         //キャラキラー生成
-        if(charKind != null)
-        {
-            GameObject myChar = PhotonNetwork.Instantiate(charKind, Vector3.zero, Quaternion.identity, 0);
-            //自分のみ操作可能にする
-            PlayerController playerController = myChar.GetComponent<PlayerController>();
-            playerController.enabled = true;
-        }
+        GameObject myChar = PhotonNetwork.Instantiate(charBoxList.setCharName, 
+            new Vector3(transform.position.x,transform.position.y + 5f), 
+            Quaternion.identity, 0);
+        //自分のみ操作可能にする
+        PlayerController playerController = myChar.GetComponent<PlayerController>();
+        playerController.enabled = true;
     }
 }

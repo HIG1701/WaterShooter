@@ -5,4 +5,5 @@ using UnityEngine;
 public class CharBoxList : ScriptableObject
 {
     public List<GameObject> charBox = new List<GameObject>();
+    public string setCharName;
 }
