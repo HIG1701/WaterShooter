@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
     private void Playerfire()
     {
-        if (Input.GetMouseButton(0)) gunManager.Shoot();  // 左クリック時にShootメソッドを呼び出す
+        if (Input.GetMouseButton(0)) gunManager.Shoot();//左クリック時にShootメソッドを呼び出す
         //右マウスでエイム
     }
 

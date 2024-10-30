@@ -5,7 +5,7 @@ public class GunManager : MonoBehaviour
 {
     [SerializeField] Transform Muzzle;                      //発射口
     [SerializeField] GameObject BulletPrefab;               //弾のプレハブ
-    [SerializeField] PlayerParameter playerParameter;       //プレイヤーParameter
+    [SerializeField] GunParameter gunParameter;             //銃Parameter
 
     private int CurrentAmmo;                                //現在の弾数
     private bool IsReloading = false;                       //リロード中かどうか
@@ -13,7 +13,7 @@ public class GunManager : MonoBehaviour
     private void Start()
     {
         //ゲーム開始時、弾を補充
-        CurrentAmmo = playerParameter.MaxAmmo;
+        CurrentAmmo = gunParameter.MaxAmmo;
     }
 
     public bool CanShoot()
@@ -27,13 +27,13 @@ public class GunManager : MonoBehaviour
         if (CanShoot())
         {
             CurrentAmmo--;
-            Debug.Log("Current Ammo: " + CurrentAmmo);                                      //現在の弾数をデバッグログに表示
+            Debug.Log(CurrentAmmo);                                      //現在の弾数をデバッグログに表示
             GameObject bullet = Instantiate(BulletPrefab, Muzzle.position, Muzzle.rotation);
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             //発射速度で弾を前方に飛ばす
-            if (rb != null) rb.velocity = Muzzle.forward * playerParameter.AttackSpeed;
-            Destroy(bullet, playerParameter.AttackRange / playerParameter.AttackSpeed);     //射程距離に達すると弾を消す
+            if (rb != null) rb.velocity = Muzzle.forward * gunParameter.AttackSpeed;
+            Destroy(bullet, gunParameter.AttackRange / gunParameter.AttackSpeed);     //射程距離に達すると弾を消す
         }
     }
 
@@ -42,9 +42,9 @@ public class GunManager : MonoBehaviour
         IsReloading = true;
         Debug.Log("Reloading...");
         //待機時間
-        yield return new WaitForSeconds(playerParameter.ReloadSpeed);
+        yield return new WaitForSeconds(gunParameter.ReloadSpeed);
         //リセット
-        CurrentAmmo = playerParameter.MaxAmmo;
+        CurrentAmmo = gunParameter.MaxAmmo;
         IsReloading = false;
         Debug.Log("Reload Complete!");
     }
