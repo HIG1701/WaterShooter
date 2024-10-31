@@ -15,7 +15,7 @@ MonoBehaviour:
   WeaponName: SCAR
   GunPower: 0
   FireRate: 0.1
-  BulletSpeed: 20
+  BulletSpeed: 500
   AttackRange: 100
   ReloadTime: 3
   MaxAmmo: 30
