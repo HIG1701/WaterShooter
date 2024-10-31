@@ -27,10 +27,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         //スポーン地点が動くか確認するためのロードシーン
-        if (Input.GetKey(KeyCode.P))
-        {
-            SceneManager.LoadScene("SampleScene");
-        }
+        if (Input.GetKey(KeyCode.P)) SceneManager.LoadScene("SampleScene");
     }
 
     //リストの内容をシャッフルする
