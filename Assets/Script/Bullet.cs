@@ -1,5 +1,7 @@
 using UnityEngine;
 
+//玉に関するスクリプトはここ
+
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;

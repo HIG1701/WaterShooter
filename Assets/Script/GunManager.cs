@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+//e–{‘Ì‚Ìˆ—‚ğ‘‚­
+
 public class GunManager : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;             //eParameter
