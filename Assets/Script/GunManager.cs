@@ -39,6 +39,11 @@ public class GunManager : MonoBehaviour
         }
     }
 
+    public void StartReload()
+    {
+        if (!CanShoot()) StartCoroutine(Reload());
+    }
+
     public IEnumerator Reload()
     {
         IsReloading = true;

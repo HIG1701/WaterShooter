@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerReload()
     {
-        if (Input.GetKeyDown(KeyCode.R)) gunManager.Reload();
+        if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
     private void PlayerAbility()
