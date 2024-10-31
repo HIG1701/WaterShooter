@@ -2,20 +2,35 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float IgnoreCollisionTime = 1f;       //”­ËŒãÕ“Ë–³‹ŠÔi•bj
-    private float SpawnTime;
+    [SerializeField] private GunParameter gunParameter;
+    private float speed;                                           //’eŠÛ‚Ì‘¬“x
+    private float range;                                           //Ë’ö‹——£
+    private Vector3 startPosition;
 
     private void Start()
     {
-        SpawnTime = Time.time;
+        speed = gunParameter.BulletSpeed;
+        range = gunParameter.AttackRange;
+        startPosition = transform.position;
+    }
+    private void FixedUpdate()
+    {
+        AdvanceBullet();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void AdvanceBullet()
     {
-        //”­Ë’¼Œã‚ÌÕ“Ë‚ğ–³‹‚·‚é
-        if (Time.time - SpawnTime < IgnoreCollisionTime) return;
+        //’eŠÛ‚ğ‘O•û‚ÉˆÚ“®‚³‚¹‚é
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);
 
-        //Õ“Ë‚É’e‚ğÁ‚·
+        //Ë’ö‹——£‚É’B‚µ‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
+        if (Vector3.Distance(startPosition, transform.position) >= range) Destroy(gameObject);
+
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // áŠQ•¨‚É“–‚½‚Á‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
         Destroy(gameObject);
     }
 }

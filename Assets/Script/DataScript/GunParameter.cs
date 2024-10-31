@@ -10,8 +10,9 @@ public class GunParameter : ScriptableObject
 
     [Header("e‚ÌInGame‚É‰e‹¿‚·‚éParameter")]
     public float GunPower;                  //UŒ‚—Í
-    public float AttackSpeed;               //UŒ‚‘¬“x
+    public float FireRate;                  //UŒ‚‘¬“x
+    public float BulletSpeed;               //’e‘¬
     public float AttackRange;               //Ë’ö‹——£
-    public float ReloadSpeed;               //ƒŠƒ[ƒh‘¬“x
+    public float ReloadTime;                //ƒŠƒ[ƒhŠÔ
     public int MaxAmmo;                     //Å‘å’e”
 }

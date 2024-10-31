@@ -6,21 +6,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] PlayerParameter parameter;                 //プレイヤーパラメータ
-    [SerializeField] Transform CameraTransform;                 //カメラのTransform
-    [SerializeField] private float CurrentSpeed;                //現在Speed
+    [SerializeField] private PlayerParameter parameter;                 //プレイヤーパラメータ
+    [SerializeField] private Transform CameraTransform;                 //カメラのTransform
+    [SerializeField] private float CurrentSpeed;                        //現在Speed
     private Rigidbody Rb;
-    private bool IsGrounded;                                    //地面と触れているか
-    private int Coin;                                           //コイン量
-    private GameManager gameManager;                            //ゲームマネージャー
+    private bool IsGrounded;                                            //地面と触れているか
+    private int Coin;                                                   //コイン量
+    private GameManager gameManager;                                    //ゲームマネージャー
     private GunManager gunManager;
-    private float CurrentHealth;                                //現在HP
+    private AbilityControl ability;                    //Abilityスクリプト
+    private float CurrentHealth;                                        //現在HP
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
         gunManager = FindObjectOfType<GunManager>();
+        ability = FindObjectOfType<AbilityControl>();
     }
 
     private void Start()
@@ -38,15 +40,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        PlayerJump();
-        PlayerSpeedControl();
-        PlayerMove();
-        PlayerShift();
-        Playerfire();
-        PlayerReload();
+        PlayerJump();                                           //ジャンプ処理
+        PlayerSpeedControl();                                   //ダッシュ処理
+        PlayerMove();                                           //プレイヤーの移動
+        PlayerShift();                                          //しゃがむ処理（内容未実装）
+        Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
+        PlayerReload();                                         //リロード
+        PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
-        //壁に向かってWSキー
-        //アビリティQキー
     }
 
     private void PlayerMove()
@@ -129,6 +130,11 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R)) gunManager.Reload();
     }
+
+    private void PlayerAbility()
+    {
+        ability.Ability();
+    }
     private void Die()
     {
         gameObject.SetActive(false);
@@ -162,6 +168,9 @@ public class PlayerController : MonoBehaviour
             CurrentHealth -= 9999 * Time.deltaTime;
             if (CurrentHealth <= 0) Die();
         }
+
+        ////給水エリア場で、常に玉がフル装填される
+        //if (collision.gameObject.CompareTag("WaterArea")) gunManager.WaterReload();
     }
 
     private void OnCollisionExit(Collision collision)

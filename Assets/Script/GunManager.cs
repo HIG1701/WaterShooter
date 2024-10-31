@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class GunManager : MonoBehaviour
 {
-    [SerializeField] Transform Muzzle;                      //発射口
-    [SerializeField] GameObject BulletPrefab;               //弾のプレハブ
-    [SerializeField] GunParameter gunParameter;             //銃Parameter
+    [SerializeField] private GunParameter gunParameter;             //銃Parameter
+    [SerializeField] private Transform Muzzle;                      //発射口
+    [SerializeField] private GameObject BulletPrefab;               //弾のプレハブ
 
-    private int CurrentAmmo;                                //現在の弾数
-    private bool IsReloading = false;                       //リロード中かどうか
+    private int CurrentAmmo;                                        //現在の弾数
+    private bool IsReloading = false;                               //リロード中かどうか
+    private float NextFireTime;                                     //リロード間隔
+    private float bulletOffset = 1f;                                //弾丸の生成オフセット距離
 
     private void Start()
     {
@@ -16,24 +18,24 @@ public class GunManager : MonoBehaviour
         CurrentAmmo = gunParameter.MaxAmmo;
     }
 
-    public bool CanShoot()
+    private bool CanShoot()
     {
-        //リロード中でない　＆　弾が残っている
+        //リロード中でない　＆　弾が残っている ==> trueを返す
         return !IsReloading && CurrentAmmo > 0;
     }
 
     public void Shoot()
     {
-        if (CanShoot())
+        if (CanShoot() && Time.time >= NextFireTime)
         {
-            CurrentAmmo--;
-            Debug.Log(CurrentAmmo);                                      //現在の弾数をデバッグログに表示
-            GameObject bullet = Instantiate(BulletPrefab, Muzzle.position, Muzzle.rotation);
+            //発射位置の前方にオフセットを追加
+            Vector3 spawnPosition = Muzzle.position + Muzzle.forward * bulletOffset;
 
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            //発射速度で弾を前方に飛ばす
-            if (rb != null) rb.velocity = Muzzle.forward * gunParameter.AttackSpeed;
-            Destroy(bullet, gunParameter.AttackRange / gunParameter.AttackSpeed);     //射程距離に達すると弾を消す
+            //弾丸を生成し、発射位置に配置
+            Instantiate(BulletPrefab, spawnPosition, Muzzle.rotation);
+            NextFireTime = Time.time + gunParameter.FireRate;                           //次に発射できる時間を設定
+            CurrentAmmo--;
+            Debug.Log(CurrentAmmo);                                                     //現在の弾数をデバッグログに表示
         }
     }
 
@@ -42,10 +44,15 @@ public class GunManager : MonoBehaviour
         IsReloading = true;
         Debug.Log("Reloading...");
         //待機時間
-        yield return new WaitForSeconds(gunParameter.ReloadSpeed);
+        yield return new WaitForSeconds(gunParameter.ReloadTime);
         //リセット
         CurrentAmmo = gunParameter.MaxAmmo;
         IsReloading = false;
         Debug.Log("Reload Complete!");
+    }
+
+    public void WaterReload()
+    {
+        CurrentAmmo = gunParameter.MaxAmmo;
     }
 }

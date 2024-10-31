@@ -146,4 +146,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a136fbafa75cc94dbbdc644b263c98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IgnoreCollisionTime: 2
+  gunParameter: {fileID: 11400000, guid: dd718d4a324b08e4c804cffa46c0e873, type: 2}

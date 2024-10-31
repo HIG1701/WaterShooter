@@ -810,9 +810,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c869f24e42d8f474e829853500e4da3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunParameter: {fileID: 11400000, guid: dd718d4a324b08e4c804cffa46c0e873, type: 2}
   Muzzle: {fileID: 4980710067108653469}
   BulletPrefab: {fileID: 352286881217711935, guid: f53d0988c2c93c240962427a82c26332, type: 3}
-  playerParameter: {fileID: 11400000, guid: de694b03a0ed85c4a97c774623a84a31, type: 2}
 --- !u!1 &6427882773776897673
 GameObject:
   m_ObjectHideFlags: 0

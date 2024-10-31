@@ -363,7 +363,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1115,6 +1115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 407416494}
   - component: {fileID: 407416493}
+  - component: {fileID: 407416495}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1164,6 +1165,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &407416495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407416492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cb5e77148509f443978cd26f8eb510e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &461702753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1544,7 +1557,7 @@ GameObject:
   - component: {fileID: 623104910}
   m_Layer: 0
   m_Name: StartFloor0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1905,7 +1918,7 @@ GameObject:
   - component: {fileID: 750642535}
   m_Layer: 0
   m_Name: StartFloor5
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2172,7 +2185,7 @@ GameObject:
   - component: {fileID: 848687249}
   m_Layer: 0
   m_Name: StartFloor1
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3182,7 +3195,7 @@ GameObject:
   - component: {fileID: 1273998754}
   m_Layer: 0
   m_Name: StartFloor4
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3525,7 +3538,7 @@ GameObject:
   - component: {fileID: 1542012535}
   m_Layer: 0
   m_Name: StartFloor2
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3764,7 +3777,7 @@ GameObject:
   - component: {fileID: 1585791338}
   m_Layer: 0
   m_Name: StartFloor3
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4519,7 +4532,7 @@ GameObject:
   - component: {fileID: 2108437918}
   - component: {fileID: 2108437917}
   m_Layer: 6
-  m_Name: Wall (1)
+  m_Name: WallFloor
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

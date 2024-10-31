@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557b7a6e66882b247a64f4f4cee5c0f2, type: 3}
   m_Name: GunForShino
   m_EditorClassIdentifier: 
-  WeaponName: 
-  PlayerAttack: 0
-  AttackSpeed: 0
-  AttackRange: 0
-  ReloadSpeed: 0
-  MaxAmmo: 0
+  WeaponName: SCAR
+  GunPower: 0
+  FireRate: 0.1
+  BulletSpeed: 20
+  AttackRange: 100
+  ReloadTime: 3
+  MaxAmmo: 30
