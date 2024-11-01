@@ -68,14 +68,15 @@ public class CreateRoom : MonoBehaviourPunCallbacks
             {
                 GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[i].charName,
                     charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-                if (myChar == null)
-                {
-                    Debug.LogError("Failed to instantiate character prefab.");
-                }
                 //é©ï™ÇÃÇ›ëÄçÏâ¬î\Ç…Ç∑ÇÈ
                 PlayerController playerController = myChar.GetComponent<PlayerController>();
                 playerController.enabled = true;
-                GameObject myCharChil = gameObject.transform.FindChild("PlayerCamera").gameObject;
+                GameObject myCharChil = gameObject.transform.Find("PlayerCamera")?.gameObject;
+                if (myCharChil == null)
+                {
+                    Debug.LogError("PlayerCamera not found or is inactive.");
+                }
+
                 CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
                 cameraFollow.enabled = true;
             }
