@@ -71,14 +71,18 @@ public class CreateRoom : MonoBehaviourPunCallbacks
                 //é©ï™ÇÃÇ›ëÄçÏâ¬î\Ç…Ç∑ÇÈ
                 PlayerController playerController = myChar.GetComponent<PlayerController>();
                 playerController.enabled = true;
-                GameObject myCharChil = gameObject.transform.Find("PlayerCamera")?.gameObject;
+                Transform childTransform = myChar.transform.Find("PlayerCamera");
+                GameObject myCharChil = childTransform.gameObject;
+                CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
+                cameraFollow.enabled = true;
+                //GameObject myCharChil = gameObject.transform.Find("PlayerCamera")?.gameObject;
                 if (myCharChil == null)
                 {
                     Debug.LogError("PlayerCamera not found or is inactive.");
                 }
 
-                CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
-                cameraFollow.enabled = true;
+                //CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
+                //cameraFollow.enabled = true;
             }
             else if (charBoxList.charBox[i].charPrefab.tag == "NPC")
             {
