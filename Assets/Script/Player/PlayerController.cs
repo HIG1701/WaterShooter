@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private int Coin;                                                   //コイン量
     private GameManager gameManager;                                    //ゲームマネージャー
     private GunManager gunManager;
-    private AbilityControl ability;                    //Abilityスクリプト
+    private AbilityControl ability;                                     //Abilityスクリプト
     private float CurrentHealth;                                        //現在HP
 
     private void Awake()
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
-        Physics.gravity *= parameter.GravityMultiplier;         //重力を強める
+        if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
         Coin = parameter.Coin;                                  //Parameterコインを代入
     }
 
@@ -122,7 +122,8 @@ public class PlayerController : MonoBehaviour
 
     private void Playerfire()
     {
-        if (Input.GetMouseButton(0)) gunManager.Shoot();//左クリック時にShootメソッドを呼び出す
+        //左クリック時にShootメソッドを呼び出す
+        if (Input.GetMouseButton(0)) gunManager.Shoot();
         //右マウスでエイム
     }
 
