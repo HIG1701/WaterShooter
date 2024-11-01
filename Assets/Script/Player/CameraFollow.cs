@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] Transform Player;                              //プレイヤーのTransform
-    [SerializeField] Vector3 Offset;                                //カメラのオフセット
-    [SerializeField] float Sensitivity = 5f;                        //マウス感度
-    [SerializeField] float Distance = 5f;                           //プレイヤーからの距離
-    [SerializeField] float SphereCastRadius = 0.5f;                 //SphereCastの半径
-    [SerializeField] LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
+    [SerializeField] private Transform Player;                              //プレイヤーのTransform
+    [SerializeField] private Vector3 Offset;                                //カメラのオフセット
+    [SerializeField] private float Sensitivity = 5f;                        //マウス感度
+    [SerializeField] private float Distance = 5f;                           //プレイヤーからの距離
+    [SerializeField] private float SphereCastRadius = 0.5f;                 //SphereCastの半径
+    [SerializeField] private LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
 
     private float CurrentX = 0f;
     private float CurrentY = 0f;
