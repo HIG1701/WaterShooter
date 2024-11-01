@@ -1,3 +1,4 @@
+using Photon.Realtime;
 using UnityEngine;
 
 //このスクリプトでは、マウスがプレイヤーを中心に追従するような処理を実装する
@@ -23,6 +24,10 @@ public class CameraFollow : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
         Cursor.visible = false;                                     //カーソル非表示
+
+        //カメラのフィールドオブビュー（FOV）を設定
+        //Camera.main.fieldOfView：簡単に言えばカメラの視野角をいじる事ができるぞ！！
+        //Camera.main.fieldOfView = 90;
     }
 
     private void Update()
