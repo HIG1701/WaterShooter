@@ -60,14 +60,13 @@ public class CreateRoom : MonoBehaviourPunCallbacks
         for (int i = 0; i < charBoxList.charBox.Count; i++)
         {
             int SpawnIndex = SpawnIndices[i];
-            Debug.Log(charBoxList.charBox[i].charPrefab);
             //charBoxList.charBox[i]：現在のプレイヤー
             //charBoxList.posBox[spawnIndex].position：対応するスポーン位置
             //charBoxList.posBox[spawnIndex].rotation：対応するスポーンの向き
             //Instantiate(charBoxList.charBox[i], charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
             if (charBoxList.charBox[i].charPrefab.tag == "Player")
             {
-                GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[SpawnIndex].charName,
+                GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[i].charName,
                     charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
                 if (myChar == null)
                 {
