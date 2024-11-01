@@ -1,31 +1,22 @@
-using UnityEngine;
-using Photon.Pun;
-using Photon.Realtime;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class CreateRoom : MonoBehaviourPunCallbacks
+public class GM_Revision : MonoBehaviour
 {
-    [SerializeField] CharBoxList charBoxList;
+    [SerializeField] public CharBoxList charBoxList;
     [SerializeField] private Camera respawnCamera;                  //リスポーン中に使用するカメラ
 
     private void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
-    }
-    //ルーム入室前に呼び出し
-    public override void OnConnectedToMaster()
-    {
-        //"room1"という名前のルームに参加(ルームがないなら作成してから参加)
-        Debug.Log("ルーム入出前");
-        PhotonNetwork.JoinOrCreateRoom("room1",new RoomOptions(),TypedLobby.Default);
-    }
-    //ルーム入室後に呼び出し
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("ルーム入出後");
-        //キャラキラー生成
         SpawnPlayers();
+    }
+
+    private void Update()
+    {
+        //スポーン地点が動くか確認するためのロードシーン
+        if (Input.GetKey(KeyCode.P)) SceneManager.LoadScene("SampleScene");
     }
 
     //リストの内容をシャッフルする
@@ -43,6 +34,7 @@ public class CreateRoom : MonoBehaviourPunCallbacks
             Index[RandomIndex] = Temp;
         }
     }
+
     //プレイヤーをスポーンさせるメソッド
     private void SpawnPlayers()
     {
@@ -60,26 +52,11 @@ public class CreateRoom : MonoBehaviourPunCallbacks
         for (int i = 0; i < charBoxList.charBox.Count; i++)
         {
             int SpawnIndex = SpawnIndices[i];
-            Debug.Log(charBoxList.charBox[i].charPrefab);
+
             //charBoxList.charBox[i]：現在のプレイヤー
             //charBoxList.posBox[spawnIndex].position：対応するスポーン位置
             //charBoxList.posBox[spawnIndex].rotation：対応するスポーンの向き
-            //Instantiate(charBoxList.charBox[i], charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-            if (charBoxList.charBox[i].charPrefab.tag == "Player")
-            {
-                GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[SpawnIndex].charName,
-                    charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-                //自分のみ操作可能にする
-                PlayerController playerController = myChar.GetComponent<PlayerController>();
-                playerController.enabled = true;
-                GameObject myCharChil = gameObject.transform.FindChild("PlayerCamera").gameObject;
-                CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
-                cameraFollow.enabled = true;
-            }
-            else if (charBoxList.charBox[i].charPrefab.tag == "NPC")
-            {
-                Instantiate(charBoxList.charBox[i].charPrefab, charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-            }
+            Instantiate(charBoxList.charBox[i].charPrefab, charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
         }
     }
 
@@ -103,4 +80,5 @@ public class CreateRoom : MonoBehaviourPunCallbacks
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
         respawnCamera.gameObject.SetActive(false);                              //リスポーンカメラを非アクティブにする
     }
+
 }

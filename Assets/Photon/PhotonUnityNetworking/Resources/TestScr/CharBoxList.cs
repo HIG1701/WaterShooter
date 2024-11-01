@@ -4,6 +4,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObject/CharBox")]
 public class CharBoxList : ScriptableObject
 {
-    public List<GameObject> charBox = new List<GameObject>();
-    public string setCharName;
+    [System.Serializable]
+    public class charClass
+    {
+        public GameObject charPrefab;
+        public string charName;
+    }
+    public List<charClass> charBox = new List<charClass>();       //Player‚ÌPrefabŠÇ—‚·‚éList
+    public List<Transform> posBox = new List<Transform>();          //Player‚ÌTransformŠÇ—‚·‚éList
 }

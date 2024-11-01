@@ -13,5 +13,22 @@ MonoBehaviour:
   m_Name: CharBox
   m_EditorClassIdentifier: 
   charBox:
-  - {fileID: 5025737555777214237, guid: 129f23acbbada934fb46435679137748, type: 3}
-  - {fileID: 5025737555777214237, guid: 2f01070a7453e604b838533be0be3295, type: 3}
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
+    charName: PlayerNPC
+  posBox:
+  - {fileID: 2453561418924621502, guid: 1a5212dc78d40ca4a97b1607af0395c7, type: 3}
+  - {fileID: 8096464798942491266, guid: 33ac8145132124f42976d1724c9e701c, type: 3}
+  - {fileID: 873277043648497928, guid: 4d56a14f2d07fd446981f889feb46cc1, type: 3}
+  - {fileID: 7397248090076930143, guid: 6e16a32cbb0129449a506b239f472a0e, type: 3}
+  - {fileID: 8345397825966528310, guid: c84ce62f6a7cdd1468ba1aa130b606ca, type: 3}
+  - {fileID: 5391120034678345527, guid: d867fc6e47a097746b6ab914bbf4edfc, type: 3}
