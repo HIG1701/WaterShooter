@@ -9,19 +9,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerParameter parameter;                 //プレイヤーパラメータ
     [SerializeField] private Transform CameraTransform;                 //カメラのTransform
     [SerializeField] private float CurrentSpeed;                        //現在Speed
+    [SerializeField] private GunManager gunManager;
+    private GameManager gameManager;                                    //ゲームマネージャー
+    private AbilityControl ability;                                     //Abilityスクリプト
     private Rigidbody Rb;
     private bool IsGrounded;                                            //地面と触れているか
     private int Coin;                                                   //コイン量
-    private GameManager gameManager;                                    //ゲームマネージャー
-    private GunManager gunManager;
-    private AbilityControl ability;                                     //Abilityスクリプト
     private float CurrentHealth;                                        //現在HP
 
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
-        gunManager = FindObjectOfType<GunManager>();
         ability = FindObjectOfType<AbilityControl>();
     }
 
@@ -76,18 +75,19 @@ public class PlayerController : MonoBehaviour
         if (!Physics.Raycast(RayStart, RayDirection, out Hit, 0.5f))
         {
             //Rayがヒットせず、かつプレイヤーが移動している場合
+            //Vector3.zero：移動していない
             if (DesiredMoveDirection != Vector3.zero)
             {
-                Quaternion TargetRotation = Quaternion.LookRotation(DesiredMoveDirection);
-                Rb.MoveRotation(Quaternion.Slerp(transform.rotation, TargetRotation, Time.fixedDeltaTime * 10f));
-
-                //メモ
-                //Quaternion.LookRotation(DesiredMoveDirection)：DesiredMoveDirectionの方向を向く回転を計算
-                //Quaternion.Slerp(a,b,c)：aからbへの回転を補完
+                //プレイヤーが前進する場合のみ回転
+                if (MoveVertical != 0)
+                {
+                    Rb.MovePosition(transform.position + DesiredMoveDirection * CurrentSpeed * Time.fixedDeltaTime);
+                }
             }
         }
         else
         {
+            //TODO:ダッシュ壁抜け
             //ダッシュ中にすり抜ける問題を解決できていない
             CurrentSpeed = parameter.DownSpeed;
 
@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
             if (Hit.collider.CompareTag("Wall"))
             {
                 float ClimbSpeed = 5f;
-                // 上下移動の処理
+                //上下移動の処理
                 if (MoveVertical > 0) DesiredMoveDirection = Vector3.up * ClimbSpeed;
             }
         }
@@ -134,6 +134,7 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerAbility()
     {
+        if (ability == null) return;
         ability.Ability();
     }
     private void Die()

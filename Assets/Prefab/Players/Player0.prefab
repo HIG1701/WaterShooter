@@ -479,6 +479,7 @@ MonoBehaviour:
   parameter: {fileID: 11400000, guid: de694b03a0ed85c4a97c774623a84a31, type: 2}
   CameraTransform: {fileID: 7257605199875539756}
   CurrentSpeed: 0
+  gunManager: {fileID: 7365601463160163544}
 --- !u!1 &4052478971495517395
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,7 +27,8 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        GetMouthPos();
+        GetMousePos();
+        RotatePlayerWithCamera();
     }
 
     private void LateUpdate()
@@ -35,7 +36,7 @@ public class CameraFollow : MonoBehaviour
         CameraMove();
     }
 
-    private void GetMouthPos()
+    private void GetMousePos()
     {
         CurrentX += Input.GetAxis("Mouse X") * Sensitivity;         //マウスX軸取得
         CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;         //マウスY軸取得
@@ -79,5 +80,17 @@ public class CameraFollow : MonoBehaviour
         //transform.LookAt：カメラに特定の位置を向かせ続ける
         //カメラがプレイヤーの位置を向くよう設定
         transform.LookAt(Player.position + Offset);
+    }
+
+    //水平回転角度取得メソッド
+    public float GetCurrentX()
+    {
+        return CurrentX;
+    }
+
+    //Playerの回転に応じてカメラを回転させる
+    private void RotatePlayerWithCamera()
+    {
+        Player.rotation = Quaternion.Euler(0, CurrentX, 0);
     }
 }
