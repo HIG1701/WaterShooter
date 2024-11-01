@@ -18,7 +18,7 @@ public class CreateRoom : MonoBehaviourPunCallbacks
     {
         //"room1"という名前のルームに参加(ルームがないなら作成してから参加)
         Debug.Log("ルーム入出前");
-        PhotonNetwork.JoinOrCreateRoom("room1",new RoomOptions(),TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom("room1", new RoomOptions(), TypedLobby.Default);
     }
     //ルーム入室後に呼び出し
     public override void OnJoinedRoom()
@@ -69,6 +69,10 @@ public class CreateRoom : MonoBehaviourPunCallbacks
             {
                 GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[SpawnIndex].charName,
                     charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+                if (myChar == null)
+                {
+                    Debug.LogError("Failed to instantiate character prefab.");
+                }
                 //自分のみ操作可能にする
                 PlayerController playerController = myChar.GetComponent<PlayerController>();
                 playerController.enabled = true;
