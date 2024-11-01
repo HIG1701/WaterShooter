@@ -1,4 +1,3 @@
-using Photon.Realtime;
 using UnityEngine;
 
 //このスクリプトでは、マウスがプレイヤーを中心に追従するような処理を実装する
