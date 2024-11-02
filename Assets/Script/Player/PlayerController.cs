@@ -97,6 +97,7 @@ public class PlayerController : MonoBehaviour
             //ダッシュ中にすり抜ける問題を解決できていない
             CurrentSpeed = parameter.DownSpeed;
 
+            //TODO:壁のぼり時がたつく
             //Rayが壁にヒットしていれば、壁を上る
             if (Hit.collider.CompareTag("Wall"))
             {
@@ -123,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerShift()
     {
+        //TODO:しゃがむ
         //シフトでしゃがむ
     }
 
@@ -130,6 +132,7 @@ public class PlayerController : MonoBehaviour
     {
         //左クリック時にShootメソッドを呼び出す
         if (Input.GetMouseButton(0)) gunManager.Shoot();
+        //TODO:エイム
         //右マウスでエイム
     }
 
