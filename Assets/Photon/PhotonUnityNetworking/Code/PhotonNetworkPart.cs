@@ -262,7 +262,7 @@ namespace Photon.Pun
                 _AsyncLevelLoadingOperation.allowSceneActivation = false;
                 _AsyncLevelLoadingOperation = null;
             }
-            
+
             rpcEvent.Clear();   // none of the last RPC parameters are needed anymore
 
             bool wasInRoom = NetworkingClient.CurrentRoom != null;
@@ -283,7 +283,6 @@ namespace Photon.Pun
         /// <summary>
         /// Cleans up anything that was instantiated in-game (not loaded with the scene). Resets views that are not destroyed.
         /// </summary>
-        // TODO: This method name no longer matches is function. It also resets room object's views.
         internal static void LocalCleanupAnythingInstantiated(bool destroyInstantiatedGameObjects)
         {
             //if (tempInstantiationData.Count > 0)
@@ -825,7 +824,6 @@ namespace Photon.Pun
                     continue;
                 }
 
-                // TODO: Probably should have a enum that defines when auto-detachment should occur.
                 // Check nested PVs for different creator. Detach if different, to avoid destroying reparanted objects.
                 if (j != 0)
                 {
@@ -855,7 +853,7 @@ namespace Photon.Pun
             {
                 Debug.Log("Network destroy Instantiated GO: " + go.name);
             }
-            
+
             foundPVs.Clear();           // as foundPVs is re-used, clean it to avoid lingering references
 
             go.SetActive(false);        // PUN 2 disables objects before the return to the pool
@@ -1064,7 +1062,7 @@ namespace Photon.Pun
             opParameters[ParameterCode.Code] = (byte)0;		// any event
             opParameters[ParameterCode.Cache] = (byte)EventCaching.RemoveFromRoomCacheForActorsLeft;    // option to clear the room cache of all events of players who left
 
-            NetworkingClient.LoadBalancingPeer.SendOperation((byte)OperationCode.RaiseEvent, opParameters, SendOptions.SendReliable);   // TODO: Check if this is the best implementation possible
+            NetworkingClient.LoadBalancingPeer.SendOperation((byte)OperationCode.RaiseEvent, opParameters, SendOptions.SendReliable);
         }
 
         // Remove RPCs of view (if they are local player's RPCs)
@@ -1167,10 +1165,8 @@ namespace Photon.Pun
         /// <param name="prefix">Max value is short.MaxValue = 255</param>
         public static void SetLevelPrefix(byte prefix)
         {
-            // TODO: check can use network
 
             currentLevelPrefix = prefix;
-            // TODO: should we really change the prefix for existing PVs?! better keep it!
             //foreach (PhotonView view in photonViewList.Values)
             //{
             //    view.prefix = prefix;
@@ -1343,7 +1339,6 @@ namespace Photon.Pun
         /// <param name="enableGroups">The interest groups to enable (or null).</param>
         public static void SetInterestGroups(byte[] disableGroups, byte[] enableGroups)
         {
-            // TODO: check can use network
 
             if (disableGroups != null)
             {
@@ -1418,7 +1413,6 @@ namespace Photon.Pun
         /// <param name="enabled">Sets if sending to group is enabled (or not).</param>
         public static void SetSendingEnabled(byte group, bool enabled)
         {
-            // TODO: check can use network
 
             if (!enabled)
             {
@@ -1443,7 +1437,6 @@ namespace Photon.Pun
         /// <param name="disableGroups">The interest groups to disable sending on (or null).</param>
         public static void SetSendingEnabled(byte[] disableGroups, byte[] enableGroups)
         {
-            // TODO: check can use network
 
             if (disableGroups != null)
             {
@@ -1478,7 +1471,6 @@ namespace Photon.Pun
                 PhotonNetwork.SetLevelInPropsIfSynced(SceneManagerHelper.ActiveSceneName);
             }
 
-            // Debug.Log("OnLevelWasLoaded photonViewList.Count: " + photonViewList.Count); // Exit Games internal log
 
             List<int> removeKeys = new List<int>();
             foreach (KeyValuePair<int, PhotonView> kvp in photonViewList)
@@ -1753,14 +1745,14 @@ namespace Photon.Pun
                     }
 
                     view.mixedModeIsReliable = true;
-                    List<object> temp = view.lastOnSerializeDataSent;   // TODO: extract "exchange" into method in PV
+                    List<object> temp = view.lastOnSerializeDataSent;
                     view.lastOnSerializeDataSent = currentValues;
                     view.syncValues = temp;
                 }
                 else
                 {
                     view.mixedModeIsReliable = false;
-                    List<object> temp = view.lastOnSerializeDataSent;   // TODO: extract "exchange" into method in PV
+                    List<object> temp = view.lastOnSerializeDataSent;
                     view.lastOnSerializeDataSent = currentValues;
                     view.syncValues = temp;
                 }
@@ -1771,14 +1763,13 @@ namespace Photon.Pun
 
             if (view.Synchronization == ViewSynchronization.ReliableDeltaCompressed)
             {
-                // TODO: fix delta compression / comparison
 
                 // compress content of data set (by comparing to view.lastOnSerializeDataSent)
                 // the "original" dataArray is NOT modified by DeltaCompressionWrite
                 List<object> dataToSend = DeltaCompressionWrite(view.lastOnSerializeDataSent, currentValues);
 
                 // cache the values that were written this time (not the compressed values)
-                List<object> temp = view.lastOnSerializeDataSent;   // TODO: extract "exchange" into method in PV
+                List<object> temp = view.lastOnSerializeDataSent;
                 view.lastOnSerializeDataSent = currentValues;
                 view.syncValues = temp;
 
@@ -1845,9 +1836,7 @@ namespace Photon.Pun
                 data = uncompressed;
             }
 
-            // TODO: re-check if ownership needs to be adjusted based on updates.
             // most likely, only the PhotonView.Controller should be affected, if anything at all.
-            // TODO: find a way to sync the owner of a PV for late joiners.
 
             //// This is when joining late to assign ownership to the sender
             //// this has nothing to do with reading the actual synchronization update.
@@ -2385,7 +2374,7 @@ namespace Photon.Pun
                             {
                                 Player prevOwner = requestedView.Owner;
 
-                                requestedView.OwnerActorNr= newOwnerId;
+                                requestedView.OwnerActorNr = newOwnerId;
                                 requestedView.ControllerActorNr = newOwnerId;
 
                                 if (PhotonNetwork.OnOwnershipTransferedEv != null)
@@ -2439,7 +2428,7 @@ namespace Photon.Pun
                             Player prevOwner = view.Owner;
                             Player newOwner = CurrentRoom.GetPlayer(newOwnerId, true);
 
-                            view.OwnerActorNr= newOwnerId;
+                            view.OwnerActorNr = newOwnerId;
                             view.ControllerActorNr = newOwnerId;
 
                             reusablePVHashset.Add(view);
@@ -2530,17 +2519,17 @@ namespace Photon.Pun
 
 
             // the dev region overrides the best region selection in "development" builds (unless it was set but is empty).
-            
-            #if UNITY_EDITOR
+
+#if UNITY_EDITOR
             if (!PhotonServerSettings.DevRegionSetOnce)
             {
                 // if no dev region was defined before or if the dev region is unavailable, set a new dev region
                 PhotonServerSettings.DevRegionSetOnce = true;
                 PhotonServerSettings.DevRegion = _cachedRegionHandler.BestRegion.Code;
             }
-            #endif
+#endif
 
-            #if DEVELOPMENT_BUILD || UNITY_EDITOR
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
             if (!string.IsNullOrEmpty(PhotonServerSettings.DevRegion) && ConnectMethod == ConnectMethod.ConnectToBest)
             {
                 Debug.LogWarning("PUN is in development mode (development build). As the 'dev region' is not empty (" + PhotonServerSettings.DevRegion + ") it overrides the found best region. See PhotonServerSettings.");
@@ -2560,7 +2549,7 @@ namespace Photon.Pun
                 }
                 return;
             }
-            #endif
+#endif
 
             if (NetworkClientState == ClientState.ConnectedToNameServer)
             {

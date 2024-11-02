@@ -41,7 +41,6 @@ namespace Photon.Pun.Demo
                     {
                         switch (webRpcResponse.Name)
                         {
-                            // todo: add your code here
                             case GetGameListWebRpcMethodName: // example
                                 // ... 
                                 break;

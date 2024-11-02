@@ -4,6 +4,8 @@ using UnityEngine;
 //コードが長くなるので、銃撃とかは分けるかもしれない
 //今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
 
+//TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerParameter parameter;                 //プレイヤーパラメータ
