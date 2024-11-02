@@ -8,16 +8,17 @@ public class GunManager : MonoBehaviour
     [SerializeField] private GunParameter gunParameter;             //銃Parameter
     [SerializeField] private Transform Muzzle;                      //発射口
     [SerializeField] private GameObject BulletPrefab;               //弾のプレハブ
-
     private int CurrentAmmo;                                        //現在の弾数
-    private bool IsReloading = false;                               //リロード中かどうか
+    private bool IsReloading;                                       //リロード中かどうか
     private float NextFireTime;                                     //リロード間隔
-    private float bulletOffset = 1f;                                //弾丸の生成オフセット距離
+    private float bulletOffset;                                     //弾丸の生成オフセット距離
 
     private void Start()
     {
         //ゲーム開始時、弾を補充
         CurrentAmmo = gunParameter.MaxAmmo;
+        IsReloading = false;
+        bulletOffset = 1f;
     }
 
     private bool CanShoot()
@@ -43,10 +44,13 @@ public class GunManager : MonoBehaviour
 
     public void StartReload()
     {
+        //コルーチンを作動させるメソッド
+        //他スクリプトで呼び出す為に作りました
+        //!CanShoot：Reload中＆玉もない状態
         if (!CanShoot()) StartCoroutine(Reload());
     }
 
-    public IEnumerator Reload()
+    private IEnumerator Reload()
     {
         IsReloading = true;
         Debug.Log("Reloading...");

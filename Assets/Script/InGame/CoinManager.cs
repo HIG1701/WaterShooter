@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CoinManager : MonoBehaviour
 {
+    //パブリックだけど変更してほしくないので隠してます
     [HideInInspector] public int Coin;
 
     private void Start()

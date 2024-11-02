@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//玉に関するスクリプトはここ
+//玉に関するスクリプトはここに書くよ
 
 public class Bullet : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public class Bullet : MonoBehaviour
 
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         // 障害物に当たったら弾丸を破壊する
         Destroy(gameObject);

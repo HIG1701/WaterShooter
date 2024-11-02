@@ -7,15 +7,15 @@ public class CameraFollow : MonoBehaviour
 {
     [SerializeField] private Transform Player;                              //プレイヤーのTransform
     [SerializeField] private Vector3 Offset;                                //カメラのオフセット
-    [SerializeField] private float Sensitivity = 5f;                        //マウス感度
-    [SerializeField] private float Distance = 5f;                           //プレイヤーからの距離
-    [SerializeField] private float SphereCastRadius = 0.5f;                 //SphereCastの半径
+    [SerializeField] private float Sensitivity;                             //マウス感度
+    [SerializeField] private float Distance;                                //プレイヤーからの距離
+    [SerializeField] private const float SphereCastRadius = 0.5f;           //SphereCastの半径
     [SerializeField] private LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
-
-    private float CurrentX = 0f;
-    private float CurrentY = 0f;
-
+    //現在のＸ，Ｙを代入する
+    private float CurrentX;
+    private float CurrentY;
     //垂直方向の回転角度の制限
+    //constで変更できないようにしている
     private const float AngleMIN = -5f;
     private const float AngleMAX = 80f;
 
@@ -23,6 +23,10 @@ public class CameraFollow : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
         Cursor.visible = false;                                     //カーソル非表示
+        Sensitivity = 5f;                                           //感度設定
+        Distance = 5f;                                              //距離設定
+        CurrentX = 0f;
+        CurrentY = 0f;
 
         //カメラのフィールドオブビュー（FOV）を設定
         //Camera.main.fieldOfView：簡単に言えばカメラの視野角をいじる事ができるぞ！！
