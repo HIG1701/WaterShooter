@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform CameraTransform;                 //カメラのTransform
     [SerializeField] private float CurrentSpeed;                        //現在Speed
     [SerializeField] private GunManager gunManager;
+    [SerializeField] private Camera MainCamera;                         //mainカメラ
+    [SerializeField] private Camera DeathCamera;                        //死亡時カメラ
     private GameManager gameManager;                                    //ゲームマネージャー
     private AbilityControl ability;                                     //Abilityスクリプト
     private Rigidbody Rb;
@@ -29,12 +31,14 @@ public class PlayerController : MonoBehaviour
         CurrentSpeed = parameter.PlayerSpeed;                   //ParameterからSpeedを代入
         CurrentHealth = parameter.PlayerHP;                     //ParameterからHPを代入
 
+
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
         if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
         Coin = parameter.Coin;                                  //Parameterコインを代入
+        DeathCamera.gameObject.SetActive(false);                //死亡時カメラを無効化
     }
 
     private void FixedUpdate()
@@ -99,7 +103,6 @@ public class PlayerController : MonoBehaviour
                 if (MoveVertical > 0) DesiredMoveDirection = Vector3.up * ClimbSpeed;
             }
         }
-
         Rb.MovePosition(transform.position + DesiredMoveDirection * CurrentSpeed * Time.fixedDeltaTime);
     }
 
@@ -115,6 +118,7 @@ public class PlayerController : MonoBehaviour
         //AddForceだと何故かうまくいかなかったので、ベロシティでやってます
         if (IsGrounded && Input.GetKeyDown(KeyCode.Space)) Rb.velocity = new Vector3(Rb.velocity.x, parameter.JumpVelocity, Rb.velocity.z);
     }
+
     private void PlayerShift()
     {
         //シフトでしゃがむ
@@ -137,11 +141,25 @@ public class PlayerController : MonoBehaviour
         if (ability == null) return;
         ability.Ability();
     }
+
     private void Die()
     {
         gameObject.SetActive(false);
         //リスポーンタイマーを開始させる
         gameManager.StartRespawnTimer(gameObject);
+        //メインカメラを無効化し、死亡時カメラを有効化
+        MainCamera.gameObject.SetActive(false);
+        DeathCamera.gameObject.SetActive(true);
+        DeathCamera.transform.position = transform.position + new Vector3(0, 10, 0); //上空に配置
+        DeathCamera.transform.LookAt(transform.position);
+    }
+    public void Respawn()
+    {
+        gameObject.SetActive(true);
+
+        //死亡時カメラを無効化し、メインカメラを有効化
+        DeathCamera.gameObject.SetActive(false);
+        MainCamera.gameObject.SetActive(true);
     }
 
     private void OnCollisionEnter(Collision collision)
