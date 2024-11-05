@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/KamexPhotonTest/SumpleTitle.unity
+    path: Assets/Scenes/KamexPhotonTest/1_SumpleTitle.unity
     guid: 7f9053d4ffd64804cb6f526fb4b3cb60
   - enabled: 1
-    path: Assets/Scenes/KamexPhotonTest/CharacterSelect.unity
+    path: Assets/Scenes/KamexPhotonTest/2_CharacterSelect.unity
     guid: b8be97f2e994ab847a346b48e0230d6c
   - enabled: 1
-    path: Assets/Scenes/KamexPhotonTest/K_GameScene.unity
+    path: Assets/Scenes/KamexPhotonTest/3_K_GameScene.unity
     guid: 4de7500109997e04798b62187e44da28
   m_configObjects: {}

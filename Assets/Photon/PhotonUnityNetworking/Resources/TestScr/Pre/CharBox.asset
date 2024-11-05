@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CharBox
   m_EditorClassIdentifier: 
   charBox:
-  - charPrefab: {fileID: 5025737555777214237, guid: 129f23acbbada934fb46435679137748, type: 3}
-    charName: Player1
+  - charPrefab: {fileID: 5269159743176124365, guid: c46a63b71ab315e49b19a85a0d2b86e0, type: 3}
+    charName: Player3
   - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
     charName: PlayerNPC
   - charPrefab: {fileID: 8895914862239363898, guid: 80bd3dbe3fa31f949a58bffb58f50d27, type: 3}
