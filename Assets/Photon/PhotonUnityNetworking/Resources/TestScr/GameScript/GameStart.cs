@@ -1,24 +1,17 @@
-using System.Collections;
+using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
 
-public class GM_Revision : MonoBehaviour
+public class GameStart : MonoBehaviour
 {
-    [SerializeField] public CharBoxList charBoxList;
+    [SerializeField] CharBoxList charBoxList;
     [SerializeField] private Camera respawnCamera;                  //リスポーン中に使用するカメラ
 
     private void Start()
     {
         SpawnPlayers();
     }
-
-    private void Update()
-    {
-        //スポーン地点が動くか確認するためのロードシーン
-        if (Input.GetKey(KeyCode.P)) SceneManager.LoadScene("SampleScene");
-    }
-
     //リストの内容をシャッフルする
     //フィッシャーイェーツのシャッフルアルゴリズムについて、以下リンクが参考。
     //参考リンク：https://qiita.com/nkojima/items/c734f786b61a366de831
@@ -34,7 +27,6 @@ public class GM_Revision : MonoBehaviour
             Index[RandomIndex] = Temp;
         }
     }
-
     //プレイヤーをスポーンさせるメソッド
     private void SpawnPlayers()
     {
@@ -52,11 +44,34 @@ public class GM_Revision : MonoBehaviour
         for (int i = 0; i < charBoxList.charBox.Count; i++)
         {
             int SpawnIndex = SpawnIndices[i];
-
             //charBoxList.charBox[i]：現在のプレイヤー
             //charBoxList.posBox[spawnIndex].position：対応するスポーン位置
             //charBoxList.posBox[spawnIndex].rotation：対応するスポーンの向き
-            Instantiate(charBoxList.charBox[i].charPrefab, charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+            //Instantiate(charBoxList.charBox[i], charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+            if (charBoxList.charBox[i].charPrefab.tag == "Player")
+            {
+                GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[i].charName,
+                    charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+                //自分のみ操作可能にする
+                PlayerController playerController = myChar.GetComponent<PlayerController>();
+                playerController.enabled = true;
+                Transform childTransform = myChar.transform.Find("PlayerCamera");
+                GameObject myCharChil = childTransform.gameObject;
+                CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
+                cameraFollow.enabled = true;
+                //GameObject myCharChil = gameObject.transform.Find("PlayerCamera")?.gameObject;
+                if (myCharChil == null)
+                {
+                    Debug.LogError("PlayerCamera not found or is inactive.");
+                }
+
+                //CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
+                //cameraFollow.enabled = true;
+            }
+            else if (charBoxList.charBox[i].charPrefab.tag == "NPC")
+            {
+                Instantiate(charBoxList.charBox[i].charPrefab, charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+            }
         }
     }
 
@@ -80,5 +95,4 @@ public class GM_Revision : MonoBehaviour
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
         respawnCamera.gameObject.SetActive(false);                              //リスポーンカメラを非アクティブにする
     }
-
 }

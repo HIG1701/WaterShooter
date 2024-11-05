@@ -1090,6 +1090,7 @@ GameObject:
   - component: {fileID: 407416494}
   - component: {fileID: 407416493}
   - component: {fileID: 407416495}
+  - component: {fileID: 407416496}
   - component: {fileID: 407416497}
   m_Layer: 0
   m_Name: GameManager
@@ -1152,7 +1153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb5e77148509f443978cd26f8eb510e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &407416497
+--- !u!114 &407416496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1161,11 +1162,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 407416492}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33f4364fa005db449a00c84a81ec4458, type: 3}
+  m_Script: {fileID: 11500000, guid: 25c6e4b81511dd34e99e2c6a9c3ff8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   charBoxList: {fileID: 11400000, guid: 7381dd277c54be44eb8a469ad3dca788, type: 2}
   respawnCamera: {fileID: 138512385}
+--- !u!114 &407416497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407416492}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33f4364fa005db449a00c84a81ec4458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &461702753
 GameObject:
   m_ObjectHideFlags: 0
