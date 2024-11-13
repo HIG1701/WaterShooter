@@ -1,10 +1,8 @@
 using UnityEngine;
 
-/// <summary>
-///このスクリプトでは、プレイヤーの動き全般を実装する
-///コードが長くなるので、銃撃とかは分けるかもしれない。
-///今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
-/// </summary>
+//このスクリプトでは、プレイヤーの動き全般を実装する
+//コードが長くなるので、銃撃とかは分けるかもしれない
+//今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
 
 //TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
 
@@ -27,7 +25,6 @@ public class PlayerController : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
-        ability = new AbilityControl();
     }
 
     private void Start()
@@ -170,6 +167,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //プレイヤーコイン量追加
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
             Coin += coinManager.Coin;
