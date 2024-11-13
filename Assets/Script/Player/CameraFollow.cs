@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform Player;                              //プレイヤーのTransform
-    [SerializeField] private Vector3 Offset;                                //カメラのオフセット
-    [SerializeField] private float Sensitivity;                             //マウス感度
-    [SerializeField] private float Distance;                                //プレイヤーからの距離
-    [SerializeField] private const float SphereCastRadius = 0.5f;           //SphereCastの半径
-    [SerializeField] private LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
-    //現在のＸ，Ｙを代入する
-    private float CurrentX;
-    private float CurrentY;
+    [SerializeField] Transform Player;                              //プレイヤーのTransform
+    [SerializeField] Vector3 Offset;                                //カメラのオフセット
+    [SerializeField] float Sensitivity = 5f;                        //マウス感度
+    [SerializeField] float Distance = 5f;                           //プレイヤーからの距離
+    [SerializeField] float SphereCastRadius = 0.5f;                 //SphereCastの半径
+    [SerializeField] LayerMask CollisionLayers;                     //衝突を検出するレイヤー（インスペクターでWallを指定）
+
+    private float CurrentX = 0f;
+    private float CurrentY = 0f;
+
     //垂直方向の回転角度の制限
-    //constで変更できないようにしている
     private const float AngleMIN = -5f;
     private const float AngleMAX = 80f;
 
@@ -23,20 +23,11 @@ public class CameraFollow : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
         Cursor.visible = false;                                     //カーソル非表示
-        Sensitivity = 5f;                                           //感度設定
-        Distance = 5f;                                              //距離設定
-        CurrentX = 0f;
-        CurrentY = 0f;
-
-        //カメラのフィールドオブビュー（FOV）を設定
-        //Camera.main.fieldOfView：簡単に言えばカメラの視野角をいじる事ができるぞ！！
-        //Camera.main.fieldOfView = 90;
     }
 
     private void Update()
     {
-        GetMousePos();
-        RotatePlayerWithCamera();
+        GetMouthPos();
     }
 
     private void LateUpdate()
@@ -44,7 +35,7 @@ public class CameraFollow : MonoBehaviour
         CameraMove();
     }
 
-    private void GetMousePos()
+    private void GetMouthPos()
     {
         CurrentX += Input.GetAxis("Mouse X") * Sensitivity;         //マウスX軸取得
         CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;         //マウスY軸取得
@@ -88,17 +79,5 @@ public class CameraFollow : MonoBehaviour
         //transform.LookAt：カメラに特定の位置を向かせ続ける
         //カメラがプレイヤーの位置を向くよう設定
         transform.LookAt(Player.position + Offset);
-    }
-
-    //水平回転角度取得メソッド
-    public float GetCurrentX()
-    {
-        return CurrentX;
-    }
-
-    //Playerの回転に応じてカメラを回転させる
-    private void RotatePlayerWithCamera()
-    {
-        Player.rotation = Quaternion.Euler(0, CurrentX, 0);
     }
 }

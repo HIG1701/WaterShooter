@@ -4378,11 +4378,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1139915008999677709, guid: 0f2f1b8c59a0c814aba1603dae1b9507, type: 3}
       propertyPath: Offset.y
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1139915008999677709, guid: 0f2f1b8c59a0c814aba1603dae1b9507, type: 3}
       propertyPath: Offset.z
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2883479252625661620, guid: 0f2f1b8c59a0c814aba1603dae1b9507, type: 3}
       propertyPath: m_Name
