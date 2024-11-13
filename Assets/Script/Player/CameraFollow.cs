@@ -28,6 +28,7 @@ public class CameraFollow : MonoBehaviour
     private void Update()
     {
         GetMouthPos();
+        RotatePlayer();
     }
 
     private void LateUpdate()
@@ -44,6 +45,12 @@ public class CameraFollow : MonoBehaviour
         //Mathf.Clamp：値を指定された範囲の中にとどめる
         //すなわち、Y軸を極端な角度に回転させることを防ぐ
         CurrentY = Mathf.Clamp(CurrentY, AngleMIN, AngleMAX);
+    }
+
+    private void RotatePlayer()
+    {
+        // プレイヤーの回転をカメラの回転に合わせる
+        Player.rotation = Quaternion.Euler(0, CurrentX, 0);
     }
 
     private void CameraMove()
