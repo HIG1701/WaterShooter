@@ -12,20 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b61dee17ec01d14f9016b348e00a995, type: 3}
   m_Name: Shino Amamiya
   m_EditorClassIdentifier: 
-  PlayerID: 0
-  PlayerName: "\u96E8\u5BAE\u30B7\u30CE"
-  WeaponName: WaterFN SCAR
-  PlayerHeight: 142
-  PlayerHP: 90
-  PlayerShield: 200
-  PlayerAttack: 30
-  AttackSpeed: 100
-  AttackRange: 100
-  ReloadSpeed: 2
-  MaxAmmo: 30
-  Coin: 0
-  PlayerSpeed: 30
-  SprintSpeed: 60
-  DownSpeed: 10
-  JumpVelocity: 15
-  GravityMultiplier: 2
+  playerID: 0
+  playerName: "\u96E8\u5BAE\u30B7\u30CE"
+  playerHeight: 142
+  playerHP: 90
+  playerShield: 200
+  playerSpeed: 30
+  sprintSpeed: 60
+  downSpeed: 10
+  jumpVelocity: 15
+  gravityMultiplier: 2

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CoinScript : MonoBehaviour
 {
-    //パブリックだけど変更してほしくないので隠してます
     [SerializeField] private int coin;
 
     public int Coin => coin;

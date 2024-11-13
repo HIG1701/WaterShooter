@@ -1,7 +1,6 @@
 using UnityEngine;
 
 //このスクリプタブルオブジェクトに、銃のParameterを書きます
-//TOOD:ゲッター
 [CreateAssetMenu(menuName = "ScriptableObject/GunParameter")]
 
 public class GunParameter : ScriptableObject
