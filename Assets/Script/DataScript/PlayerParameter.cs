@@ -2,25 +2,34 @@ using UnityEngine;
 
 //このスクリプタブルオブジェクトに、プレイヤーのParameterを書きます
 [CreateAssetMenu(menuName = "ScriptableObject/PlayerParameter")]
-
 public class PlayerParameter : ScriptableObject
 {
     [Header("プレイヤーの設定に関するParameter")]
-    public int PlayerID;                    //プレイヤーID
-    public string PlayerName;               //プレイヤー名
-    public float PlayerHeight;              //プレイヤー身長
+    [SerializeField] private int playerID;                    //プレイヤーID
+    [SerializeField] private string playerName;               //プレイヤー名
+    [SerializeField] private float playerHeight;              //プレイヤー身長
 
     [Header("プレイヤーのInGameに影響するParameter")]
-    public float PlayerHP;                  //体力
-    public float PlayerShield;              //シールド耐久力
-    public int Coin;                        //コイン枚数
+    [SerializeField] private float playerHP;                  //体力
+    [SerializeField] private float playerShield;              //シールド耐久力
 
     [Header("速度に関するParameter")]
-    public float PlayerSpeed;               //通常速度
-    public float SprintSpeed;               //加速
-    public float DownSpeed;                 //壁に当たっている時
-    public float JumpVelocity;              //ジャンプ速度
+    [SerializeField] private float playerSpeed;               //通常速度
+    [SerializeField] private float sprintSpeed;               //加速
+    [SerializeField] private float downSpeed;                 //壁に当たっている時
+    [SerializeField] private float jumpVelocity;              //ジャンプ速度
 
     [Header("重力に関するParameter")]
-    public float GravityMultiplier;         //このオブジェクトのみ、重力の影響を強める
+    [SerializeField] private float gravityMultiplier;         //このオブジェクトのみ、重力の影響を強める
+
+    public int PlayerID => playerID;
+    public string PlayerName => playerName;
+    public float PlayerHeight => playerHeight;
+    public float PlayerHP => playerHP;
+    public float PlayerShield => playerShield;
+    public float PlayerSpeed => playerSpeed;
+    public float SprintSpeed => sprintSpeed;
+    public float DownSpeed => downSpeed;
+    public float JumpVelocity => jumpVelocity;
+    public float GravityMultiplier => gravityMultiplier;
 }

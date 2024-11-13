@@ -1,6 +1,7 @@
 using UnityEngine;
 
 //玉に関するスクリプトはここに書くよ
+//TODO:リジッドボディとTrigger
 
 public class Bullet : MonoBehaviour
 {

@@ -1,8 +1,10 @@
 using UnityEngine;
 
-//このスクリプトでは、プレイヤーの動き全般を実装する
-//コードが長くなるので、銃撃とかは分けるかもしれない
-//今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
+/// <summary>
+///このスクリプトでは、プレイヤーの動き全般を実装する
+///コードが長くなるので、銃撃とかは分けるかもしれない。
+///今後プレイヤーのパラメータを実装する際、スクリプタブルオブジェクトを用いるので、このコードももう少しコンパクトになるかも
+/// </summary>
 
 //TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
 
@@ -25,7 +27,7 @@ public class PlayerController : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
-        ability = FindObjectOfType<AbilityControl>();
+        ability = new AbilityControl();
     }
 
     private void Start()
@@ -39,7 +41,6 @@ public class PlayerController : MonoBehaviour
         //Physics.gravity：デフォルト：(0, -9.81, 0)
         //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
         if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
-        Coin = parameter.Coin;                                  //Parameterコインを代入
         DeathCamera.gameObject.SetActive(false);                //死亡時カメラを無効化
     }
 
@@ -169,15 +170,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //プレイヤーコイン量追加
-        if (collision.gameObject.CompareTag("Coin"))
+        if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
-            CoinManager coinManager = collision.gameObject.GetComponent<CoinManager>();
-            if (coinManager != null)
-            {
-                Coin += coinManager.Coin;
-                Destroy(collision.gameObject);
-            }
+            Coin += coinManager.Coin;
+            Destroy(collision.gameObject);
         }
         Debug.Log(Coin);
     }

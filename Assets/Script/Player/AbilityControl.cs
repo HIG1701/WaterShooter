@@ -3,7 +3,7 @@ using UnityEngine;
 //このスクリプトでは、プレイイヤーのAbilityについて、色々記載していく。
 //プレイヤーのほうでかくと長くなるので、こっちにまとめます。
 
-public class AbilityControl : MonoBehaviour
+public class AbilityControl
 {
     public void Ability()
     {
