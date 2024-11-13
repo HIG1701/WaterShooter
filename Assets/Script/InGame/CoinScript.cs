@@ -1,6 +1,8 @@
 using UnityEngine;
 
-//コイン関連の処理を書きます。
+/// <summary>
+/// コインに関するクラス
+/// </summary>
 
 public class CoinScript : MonoBehaviour
 {

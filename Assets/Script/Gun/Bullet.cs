@@ -1,6 +1,8 @@
 using UnityEngine;
 
-//玉に関するスクリプトはここに書くよ
+/// <summary>
+/// 弾丸に関するクラス
+/// </summary>
 //TODO:リジッドボディとTrigger
 
 public class Bullet : MonoBehaviour
