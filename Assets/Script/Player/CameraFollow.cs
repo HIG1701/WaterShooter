@@ -2,6 +2,9 @@ using UnityEngine;
 
 //このスクリプトでは、マウスがプレイヤーを中心に追従するような処理を実装する
 //参考リンク：https://chamucode.com/unity-camera-follow/
+/// <summary>
+/// カメラに関するクラス
+/// </summary>
 
 public class CameraFollow : MonoBehaviour
 {
