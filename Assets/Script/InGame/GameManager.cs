@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//TODO:ゲームシステム全体について記載する
+//TODO:プレイヤーのメソッドを読んだりしてるので、設計を見直そう
 /*
  * このスクリプトに必要なこと
  * 
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SpawnPlayers();
+        StartSpawnPlayers();
     }
 
     private void Update()
@@ -34,7 +34,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKey(KeyCode.P)) SceneManager.LoadScene("SampleScene");
     }
 
-    //リストの内容をシャッフルする
+    /// <summary>
+    /// リストのシャッフルを行うメソッド
+    /// </summary>
+    /// <param name="index"></param>
     //フィッシャーイェーツのシャッフルアルゴリズムについて、以下リンクが参考。
     //参考リンク：https://qiita.com/nkojima/items/c734f786b61a366de831
     private void ShuffleIndex(List<int> index)
@@ -50,8 +53,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //プレイヤーをスポーンさせるメソッド
-    private void SpawnPlayers()
+    private void StartSpawnPlayers()
     {
         //スポーン地点の数だけインデックスを作成
         List<int> spawnIndices = new List<int>();
@@ -60,29 +62,28 @@ public class GameManager : MonoBehaviour
             spawnIndices.Add(i);
         }
 
-        //シャッフルメソッドを呼び出し、シャッフル。
         ShuffleIndex(spawnIndices);
 
-        //プレイヤーをスポーン
         for (int i = 0; i < players.Count; i++)
         {
             int spawnIndex = spawnIndices[i];
 
-            //players[i]：現在のプレイヤー
             //spawnPoints[spawnIndex].position：対応するスポーン位置
             //spawnPoints[spawnIndex].rotation：対応するスポーンの向き
             Instantiate(players[i], spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation);
         }
     }
 
-    //死亡後のリスポーンタイマーを開始するメソッド
     public void StartRespawnTimer(GameObject player)
     {
         //5秒後にリスポーン
         StartCoroutine(RespawnPlayer(player, 5f));
     }
 
-    //プレイヤーをリスポーンさせるコルーチン
+    /// <summary>
+    /// プレイヤーをスポーンさせるメソッド
+    /// （コルーチンで起動させます。）
+    /// </summary>
     private IEnumerator RespawnPlayer(GameObject player, float delay)
     {
         yield return new WaitForSeconds(delay);

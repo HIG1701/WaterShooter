@@ -30,12 +30,11 @@ public class Bullet : MonoBehaviour
 
         //Ë’ö‹——£‚É’B‚µ‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
         if (Vector3.Distance(startPosition, transform.position) >= range) Destroy(gameObject);
-
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // áŠQ•¨‚É“–‚½‚Á‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
+        //áŠQ•¨‚É“–‚½‚Á‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
         Destroy(gameObject);
     }
 }
