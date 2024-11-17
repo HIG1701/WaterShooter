@@ -1,14 +1,26 @@
 using Photon.Pun;
+using Photon.Pun.Demo.Cockpit;
+using Photon.Realtime;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance;
 
-    [SerializeField] TMP_InputField playerNameInput;
-    [SerializeField] TMP_Text titleWelcomeText;
+    [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
+    [SerializeField] TMP_Text titleWelcomeText;             //
+    [SerializeField] TMP_InputField roomNameInput;          //ルームの名前を入れる
+    [SerializeField] Transform roomListContent;
+    [SerializeField] Text roomName;                     //ルームの名前を入れる
+    [SerializeField] Transform playerListContent;
+    [SerializeField] GameObject playerListCharPrefab;
+    [SerializeField] GameObject startGameBtn;
+
     private void Awake()
     {
         //現在のインスタンスが静的プロパティに割り当てられる
@@ -65,6 +77,96 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public void CreatRoom()
     {
-
+        //ルームメニューが入力されている場合、新しいルーム作成
+        if(!string.IsNullOrEmpty(roomNameInput.text))
+        {
+            PhotonNetwork.CreateRoom(roomNameInput.text);
+            MenuMng.Instance.OpenMenu("loading");
+            roomNameInput.text = "";
+        }
+        else
+        {
+            Debug.Log("ルーム名が入力されていません");
+        }
     }
+    public override void OnJoinedRoom()
+    {
+        //ルームに参加するとルームUIを設定
+        //プレイヤーリストを更新
+        //マスタークライアントならゲームスタートボタン有効
+        MenuMng.Instance.OpenMenu("room");
+        roomName.text = PhotonNetwork.CurrentRoom.Name;
+        Player[] players = PhotonNetwork.PlayerList;
+        foreach (Transform trans in playerListContent)
+        {
+            Destroy(this.gameObject);
+        }
+        for (int i = 0; i < players.Count(); i++)
+        {
+            //TODO (1)_キャラクタの生成
+        }
+    }
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        //マスタークライアントが変えあったとき呼び出し
+        //スタートボタンの有無を設定
+        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+    }
+    public void LeaveRoom()
+    {
+        //ルーム退出し、ローディング画面を表示
+        PhotonNetwork.LeaveRoom();
+        MenuMng.Instance.OpenMenu("loadeing");
+    }
+    public void JoinRoom(RoomInfo info)
+    {
+        //指定されたルームに参加
+        PhotonNetwork.JoinRoom(info.Name);
+        MenuMng.Instance.OpenMenu("title");
+    }
+    public override void OnLeftRoom()
+    {
+        //Playerがroomを退出したとき
+        MenuMng.Instance.OpenMenu("title");
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        //ロビーのルームリストが更新んされたときに呼び出し
+        //リスト更新
+        foreach (Transform trans in roomListContent)
+        {
+            Destroy(trans.gameObject);
+        }
+        for (int i = 0; i < roomList.Count(); i++)
+        {
+            //TODO (2)_
+        }
+        //TODO (3)_キャラ生成
+    }
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        //TODO (4)_ルーム作成に失敗したとき
+        //errorText.text = "Room Creation Failed: " + message;
+        //MenuManager.Instance.OpenMenu("error");
+    }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        //TODO (5)_新しいplayrが参加したとき
+        //playrリストを更新
+    }
+    public void StartGame()
+    {
+        //ゲーム開始
+        //マスタークライアントがゲームを開始
+        //全員がゲームシーンへ移動
+        PhotonNetwork.LoadLevel("3_K_GameScene");
+    }
+    public void QuitGame()
+    {
+        //ゲーム終了
+        Application.Quit();
+    }
+
+
 }
