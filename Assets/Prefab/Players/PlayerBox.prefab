@@ -917,11 +917,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parameter: {fileID: 11400000, guid: de694b03a0ed85c4a97c774623a84a31, type: 2}
-  CameraTransform: {fileID: 496128058201873708}
-  CurrentSpeed: 0
+  cameraTransform: {fileID: 496128058201873708}
+  currentSpeed: 0
   gunManager: {fileID: 1507687523948513340}
-  MainCamera: {fileID: 3078204871249675466}
-  DeathCamera: {fileID: 3239267529199078183}
+  mainCamera: {fileID: 3078204871249675466}
+  deathCamera: {fileID: 3239267529199078183}
 --- !u!1 &8764633531833431275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,8 +1044,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunParameter: {fileID: 11400000, guid: dd718d4a324b08e4c804cffa46c0e873, type: 2}
-  Muzzle: {fileID: 8778451877461963613}
-  BulletPrefab: {fileID: 352286881217711935, guid: f53d0988c2c93c240962427a82c26332, type: 3}
+  muzzle: {fileID: 8778451877461963613}
+  bulletPrefab: {fileID: 352286881217711935, guid: f53d0988c2c93c240962427a82c26332, type: 3}
 --- !u!1 &9056233621197735842
 GameObject:
   m_ObjectHideFlags: 0
