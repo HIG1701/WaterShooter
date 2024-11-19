@@ -16,10 +16,12 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text titleWelcomeText;             //
     [SerializeField] TMP_InputField roomNameInput;          //ルームの名前を入れる
     [SerializeField] Transform roomListContent;
-    [SerializeField] Text roomName;                     //ルームの名前を入れる
+    [SerializeField] Text roomName;                         //ルームの名前を入れる
+    [SerializeField] GameObject roomListPrefab;
     [SerializeField] Transform playerListContent;
-    [SerializeField] GameObject playerListCharPrefab;
+    [SerializeField] GameObject playerListPrefab;
     [SerializeField] GameObject startGameBtn;
+    
 
     private void Awake()
     {
@@ -92,19 +94,24 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         //ルームに参加するとルームUIを設定
-        //プレイヤーリストを更新
-        //マスタークライアントならゲームスタートボタン有効
         MenuMng.Instance.OpenMenu("room");
         roomName.text = PhotonNetwork.CurrentRoom.Name;
+        //プレイヤーリストを更新
         Player[] players = PhotonNetwork.PlayerList;
+        //既存のプレイヤーリストをクリア
         foreach (Transform trans in playerListContent)
         {
-            Destroy(this.gameObject);
+            Destroy(trans.gameObject);
+            //TODO (6)_プレイヤーリストクリア
         }
+        //新しいプレイヤーリストを作成
         for (int i = 0; i < players.Count(); i++)
         {
             //TODO (1)_キャラクタの生成
+            Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
+        //マスタークライアントならゲームスタートボタン有効
+        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
@@ -140,6 +147,12 @@ public class Launcher : MonoBehaviourPunCallbacks
         }
         for (int i = 0; i < roomList.Count(); i++)
         {
+            if (roomList[i].RemovedFromList)
+            {
+                // Don't instantiate stale rooms
+                continue;
+            }
+            Instantiate(roomListPrefab, roomListContent).GetComponent<RoomList>().SetUp(roomList[i]);
             //TODO (2)_
         }
         //TODO (3)_キャラ生成
@@ -160,7 +173,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         //ゲーム開始
         //マスタークライアントがゲームを開始
         //全員がゲームシーンへ移動
-        PhotonNetwork.LoadLevel("3_K_GameScene");
+        PhotonNetwork.LoadLevel("3_GameScene");
     }
     public void QuitGame()
     {

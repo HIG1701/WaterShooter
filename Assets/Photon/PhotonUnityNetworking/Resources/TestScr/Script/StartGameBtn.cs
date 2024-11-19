@@ -7,7 +7,12 @@ public class StartGameBtn : MonoBehaviour
     [SerializeField] Text text;
     [SerializeField] SelectCharKeep selectCharKeep;
     [SerializeField] CharBoxList charBoxList;
+    bool isSelectChar;
 
+    private void Start()
+    {
+        isSelectChar = false;
+    }
     /// <summary>
     /// ゲームを開始するボタンを押したときに発生
     /// </summary>
@@ -30,7 +35,10 @@ public class StartGameBtn : MonoBehaviour
                 break;
             }
         }
-        SceneManager.LoadScene("3_K_GameScene");
+        isSelectChar = true;
     }
-
+    public bool IsSelectChar()
+    {
+        return isSelectChar;
+    }
 }
