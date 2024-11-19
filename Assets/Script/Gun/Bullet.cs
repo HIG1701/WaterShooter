@@ -3,8 +3,6 @@ using UnityEngine;
 /// <summary>
 /// 弾丸に関するクラス
 /// </summary>
-//TODO:リジッドボディとTrigger
-
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;
@@ -23,9 +21,13 @@ public class Bullet : MonoBehaviour
         AdvanceBullet();
     }
 
+    /// <summary>
+    /// 弾丸を前方に進める
+    /// </summary>
     private void AdvanceBullet()
     {
         //弾丸を前方に移動させる
+        //TODO:リジッドボディとTrigger
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
 
         //射程距離に達したら弾丸を破壊する

@@ -6,13 +6,13 @@ using UnityEngine;
 /// </summary>
 public class GunManager : MonoBehaviour
 {
-    [SerializeField] private GunParameter gunParameter;             //銃Parameter
+    [SerializeField] private GunParameter gunParameter;
     [SerializeField] private Transform muzzle;                      //発射口
-    [SerializeField] private GameObject bulletPrefab;               //弾のプレハブ
-    private int currentAmmo;                                        //現在の弾数
-    private bool isReloading;                                       //リロード中かどうか
-    private float nextFireTime;                                     //リロード間隔
-    private float bulletOffset;                                     //弾丸の生成オフセット距離
+    [SerializeField] private GameObject bulletPrefab;
+    private int currentAmmo;
+    private bool isReloading;
+    private float nextFireTime;
+    private float bulletOffset;
 
     private void Start()
     {

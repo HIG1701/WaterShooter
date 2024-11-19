@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 //TODO:プレイヤーのメソッドを読んだりしてるので、設計を見直そう
-/*
- * このスクリプトに必要なこと
+/* このスクリプトに必要なこと
  * 
  * ゲーム開始時、６つのスポーン地点に移動。これらをランダムに決める。
  * ゲーム開始から１５分測り、１５分後ゲームを終了する。
@@ -17,7 +16,6 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// ゲームシステム全体に関するクラス
 /// </summary>
-
 public class GameManager : MonoBehaviour
 {
     [SerializeField] public List<Transform> spawnPoints;
@@ -37,8 +35,6 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// リストのシャッフルを行うメソッド
     /// </summary>
-    /// <param name="index"></param>
-    //フィッシャーイェーツのシャッフルアルゴリズムについて、以下リンクが参考。
     //参考リンク：https://qiita.com/nkojima/items/c734f786b61a366de831
     private void ShuffleIndex(List<int> index)
     {
@@ -76,13 +72,11 @@ public class GameManager : MonoBehaviour
 
     public void StartRespawnTimer(GameObject player)
     {
-        //5秒後にリスポーン
         StartCoroutine(RespawnPlayer(player, 5f));
     }
 
     /// <summary>
     /// プレイヤーをスポーンさせるメソッド
-    /// （コルーチンで起動させます。）
     /// </summary>
     private IEnumerator RespawnPlayer(GameObject player, float delay)
     {
@@ -92,7 +86,6 @@ public class GameManager : MonoBehaviour
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
 
-        //プレイヤーのRespawnメソッドを呼び出す
         player.GetComponent<PlayerController>().Respawn();
     }
 }

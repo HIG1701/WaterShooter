@@ -79,10 +79,7 @@ public class PlayerController : MonoBehaviour
         {
             if (desiredMoveDirection != Vector3.zero)
             {
-                if (moveVertical != 0)
-                {
-                    rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
-                }
+                if (moveVertical != 0) rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
             }
         }
         else

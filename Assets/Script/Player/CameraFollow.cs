@@ -74,10 +74,7 @@ public class CameraFollow : MonoBehaviour
             //hit.normal：衝突のベクトル
             transform.position = hit.point + hit.normal * SphereCastRadius;
         }
-        else
-        {
-            transform.position = DesiredPosition;
-        }
+        else transform.position = DesiredPosition;
 
         //transform.LookAt：カメラに特定の位置を向かせ続ける
         transform.LookAt(Player.position + Offset);
