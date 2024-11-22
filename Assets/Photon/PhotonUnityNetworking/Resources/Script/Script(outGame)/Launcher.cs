@@ -1,12 +1,10 @@
 using Photon.Pun;
-using Photon.Pun.Demo.Cockpit;
 using Photon.Realtime;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -21,6 +19,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] Transform playerListContent;
     [SerializeField] GameObject playerListPrefab;
     [SerializeField] GameObject startGameBtn;
+    [SerializeField] GameObject readyBtn;
     
 
     private void Awake()
@@ -82,7 +81,9 @@ public class Launcher : MonoBehaviourPunCallbacks
         //ルームメニューが入力されている場合、新しいルーム作成
         if(!string.IsNullOrEmpty(roomNameInput.text))
         {
-            PhotonNetwork.CreateRoom(roomNameInput.text);
+            var roomOptions = new RoomOptions();
+            roomOptions.MaxPlayers = 6;             //最大参加可能人数
+            PhotonNetwork.CreateRoom(roomNameInput.text, roomOptions, TypedLobby.Default);
             MenuMng.Instance.OpenMenu("loading");
             roomNameInput.text = "";
         }
@@ -102,12 +103,10 @@ public class Launcher : MonoBehaviourPunCallbacks
         foreach (Transform trans in playerListContent)
         {
             Destroy(trans.gameObject);
-            //TODO (6)_プレイヤーリストクリア
         }
         //新しいプレイヤーリストを作成
         for (int i = 0; i < players.Count(); i++)
         {
-            //TODO (1)_キャラクタの生成
             Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
         //マスタークライアントならゲームスタートボタン有効
@@ -153,7 +152,6 @@ public class Launcher : MonoBehaviourPunCallbacks
                 continue;
             }
             Instantiate(roomListPrefab, roomListContent).GetComponent<RoomList>().SetUp(roomList[i]);
-            //TODO (2)_
         }
         //TODO (3)_キャラ生成
     }
@@ -165,8 +163,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        //TODO (5)_新しいplayrが参加したとき
-        //playrリストを更新
+        Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(newPlayer); 
     }
     public void StartGame()
     {
@@ -180,6 +177,4 @@ public class Launcher : MonoBehaviourPunCallbacks
         //ゲーム終了
         Application.Quit();
     }
-
-
 }
