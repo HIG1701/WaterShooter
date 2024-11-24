@@ -1,20 +1,20 @@
 ﻿// Copyright(c) 2018, Benjamin Ward
 // All rights reserved.
-   
+
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-   
+
 // * Redistributions of source code must retain the above copyright notice, this
 //   list of conditions and the following disclaimer.
-   
+
 // * Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
-   
+
 // * Neither the name of the copyright holder nor the names of its
 //   contributors may be used to endorse or promote products derived from
 //   this software without specific prior written permission.
-   
+
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -207,7 +207,7 @@ namespace Simplex
 
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to return values in the interval [-1,1].
-            return 40.0f * (n0 + n1 + n2); // TODO: The scale factor is preliminary!
+            return 40.0f * (n0 + n1 + n2);
         }
 
 
@@ -311,7 +311,7 @@ namespace Simplex
 
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to stay just inside [-1,1]
-            return 32.0f * (n0 + n1 + n2 + n3); // TODO: The scale factor is preliminary!
+            return 32.0f * (n0 + n1 + n2 + n3);
         }
 
         private static byte[] perm;

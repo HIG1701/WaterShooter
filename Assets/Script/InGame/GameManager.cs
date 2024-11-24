@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//ゲームシステム全体について記載する
+//TODO:ゲームシステム全体について記載する
 /*
  * このスクリプトに必要なこと
  * 
@@ -11,13 +11,17 @@ using UnityEngine.SceneManagement;
  * ゲーム開始から１５分測り、１５分後ゲームを終了する。
  * マップ外に、ダメージウォールを表示
  * プレイヤー死亡時に蘇生する処理を行う。
+ * コインの量などで勝敗を決めるのはこのクラス？
  */
+
+/// <summary>
+/// ゲームシステム全体に関するクラス
+/// </summary>
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] public List<Transform> SpawnPoints;
-    [SerializeField] public List<GameObject> Players;
-    [SerializeField] private Camera respawnCamera;                  //リスポーン中に使用するカメラ
+    [SerializeField] public List<Transform> spawnPoints;
+    [SerializeField] public List<GameObject> players;
 
     private void Start()
     {
@@ -33,16 +37,16 @@ public class GameManager : MonoBehaviour
     //リストの内容をシャッフルする
     //フィッシャーイェーツのシャッフルアルゴリズムについて、以下リンクが参考。
     //参考リンク：https://qiita.com/nkojima/items/c734f786b61a366de831
-    private void ShuffleIndex(List<int> Index)
+    private void ShuffleIndex(List<int> index)
     {
-        for (int i = 0; i < Index.Count; i++)
+        for (int i = 0; i < index.Count; i++)
         {
-            int Temp = Index[i];
-            int RandomIndex = Random.Range(i, Index.Count);
+            int temp = index[i];
+            int randomIndex = Random.Range(i, index.Count);
 
             //入れ替え処理
-            Index[i] = Index[RandomIndex];
-            Index[RandomIndex] = Temp;
+            index[i] = index[randomIndex];
+            index[randomIndex] = temp;
         }
     }
 
@@ -50,24 +54,24 @@ public class GameManager : MonoBehaviour
     private void SpawnPlayers()
     {
         //スポーン地点の数だけインデックスを作成
-        List<int> SpawnIndices = new List<int>();
-        for (int i = 0; i < SpawnPoints.Count; i++)
+        List<int> spawnIndices = new List<int>();
+        for (int i = 0; i < spawnPoints.Count; i++)
         {
-            SpawnIndices.Add(i);
+            spawnIndices.Add(i);
         }
 
         //シャッフルメソッドを呼び出し、シャッフル。
-        ShuffleIndex(SpawnIndices);
+        ShuffleIndex(spawnIndices);
 
         //プレイヤーをスポーン
-        for (int i = 0; i < Players.Count; i++)
+        for (int i = 0; i < players.Count; i++)
         {
-            int SpawnIndex = SpawnIndices[i];
+            int spawnIndex = spawnIndices[i];
 
             //players[i]：現在のプレイヤー
             //spawnPoints[spawnIndex].position：対応するスポーン位置
             //spawnPoints[spawnIndex].rotation：対応するスポーンの向き
-            Instantiate(Players[i], SpawnPoints[SpawnIndex].position, SpawnPoints[SpawnIndex].rotation);
+            Instantiate(players[i], spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation);
         }
     }
 
@@ -81,14 +85,13 @@ public class GameManager : MonoBehaviour
     //プレイヤーをリスポーンさせるコルーチン
     private IEnumerator RespawnPlayer(GameObject player, float delay)
     {
-        //リスポーンカメラをアクティブにする
-        respawnCamera.gameObject.SetActive(true);
-
         yield return new WaitForSeconds(delay);
-        int randomIndex = Random.Range(0, SpawnPoints.Count);                   //ランダムなスポーン地点を選択
-        Transform respawnPoint = SpawnPoints[randomIndex];
+        int randomIndex = Random.Range(0, spawnPoints.Count);                   //ランダムなスポーン地点を選択
+        Transform respawnPoint = spawnPoints[randomIndex];
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
-        respawnCamera.gameObject.SetActive(false);                              //リスポーンカメラを非アクティブにする
+
+        //プレイヤーのRespawnメソッドを呼び出す
+        player.GetComponent<PlayerController>().Respawn();
     }
 }
