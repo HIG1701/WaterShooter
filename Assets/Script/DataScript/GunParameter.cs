@@ -15,6 +15,7 @@ public class GunParameter : ScriptableObject
     [SerializeField] private float attackRange;               //ŽË’ö‹——£
     [SerializeField] private float reloadTime;                //ƒŠƒ[ƒhŽžŠÔ
     [SerializeField] private int maxAmmo;                     //Å‘å’e”
+    [SerializeField] private DrinkDate drinkDate = new DrinkDate();
 
     public string WeaponName => weaponName;
     public float GunPower => gunPower;
