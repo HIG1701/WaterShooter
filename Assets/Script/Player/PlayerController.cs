@@ -52,8 +52,19 @@ public class PlayerController : MonoBehaviour
         PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
     }
+
+    /// <summary>
+    /// デバッグ用なので削除します。
+    /// </summary>
+    /// <returns></returns>
+    public PlayerParameter ReturnValue()
+    {
+        return parameter;
+    }
+
     public void DrinkInInventory(GameObject drinkDate)
     {
+        Debug.Log(drinkDate);
         parameter.playerInventory.drinkType.Add(drinkDate);
     }
 

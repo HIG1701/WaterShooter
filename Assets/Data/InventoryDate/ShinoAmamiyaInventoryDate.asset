@@ -12,4 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8522cd6783e23ed4e902d9fabc13b358, type: 3}
   m_Name: ShinoAmamiyaInventoryDate
   m_EditorClassIdentifier: 
-  drinkType: []
+  drinkType:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
