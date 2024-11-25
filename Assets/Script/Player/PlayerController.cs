@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera deathCamera;
     private GameManager gameManager;
     private Rigidbody rb;
+    private Animator animator;
     private bool isGrounded;
     private int coin;
     private float currentHealth;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
     }
 
@@ -30,7 +32,6 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
-
 
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
@@ -97,6 +98,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        animator.SetFloat("Walk", desiredMoveDirection.magnitude);
     }
 
     private void PlayerSpeedControl()
