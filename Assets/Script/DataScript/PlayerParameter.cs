@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 //このスクリプタブルオブジェクトに、プレイヤーのParameterを書きます
@@ -21,6 +22,9 @@ public class PlayerParameter : ScriptableObject
 
     [Header("重力に関するParameter")]
     [SerializeField] private float gravityMultiplier;         //このオブジェクトのみ、重力の影響を強める
+
+    [Header("飲料インベントリ")]
+    [SerializeField] public PlayerInventory playerInventory; //プレイヤーの飲料用インベントリ.
 
     public int PlayerID => playerID;
     public string PlayerName => playerName;

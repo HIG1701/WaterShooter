@@ -9,11 +9,7 @@ using UnityEngine.EventSystems;
 public class ZihankiSc : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private DrinkDate drinkDate = new DrinkDate();
-
-    void Start()
-    {
-        Debug.Log("aaaa");
-    }
+    [SerializeField] private GameObject playerObject;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -22,11 +18,19 @@ public class ZihankiSc : MonoBehaviour, IPointerClickHandler
         {
             //ここに購入処理を書く
             Debug.Log($"購入{drinkDate.drinkName}");
+            eventData.pointerCurrentRaycast.gameObject.GetComponent<PlayerController>().DrinkInInventory(this.gameObject);
         }
     }
 
     private void OnCollisionStay(Collision collision)
     {
         //カーソルロック解除処理などを描く
+        Debug.Log("解除");
+        if (collision.gameObject == playerObject && Input.GetKey(KeyCode.F))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            return;
+        }
     }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1014,12 +1014,12 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 8.721289
-  m_Center: {x: 0, y: 0, z: 8.221289}
+  m_Radius: 10.928811
+  m_Center: {x: 0, y: 0, z: 10.428811}
 --- !u!1 &461702753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1903,7 +1903,7 @@ GameObject:
   - component: {fileID: 839550030}
   - component: {fileID: 839550033}
   - component: {fileID: 839550034}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: zihanki
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1969,7 +1969,7 @@ Transform:
   m_GameObject: {fileID: 839550027}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.5205, y: 13.1253, z: -21.5}
+  m_LocalPosition: {x: -2.5205, y: 10.7, z: -21.5}
   m_LocalScale: {x: 14.08911, y: 20.509151, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1993,6 +1993,7 @@ MonoBehaviour:
     drinkCapacity: 0
     drinkCost: 0
     gunType: 0
+  playerObject: {fileID: 1189273245}
 --- !u!64 &839550034
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2925,6 +2926,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1043429393}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1189273245 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8012703908941555500, guid: 0f2f1b8c59a0c814aba1603dae1b9507, type: 3}
+  m_PrefabInstance: {fileID: 6312830080525209167}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1190094651
 GameObject:
   m_ObjectHideFlags: 0

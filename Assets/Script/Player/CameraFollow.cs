@@ -24,7 +24,7 @@ public class CameraFollow : MonoBehaviour
 
     private void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
+        Cursor.lockState = CursorLockMode.Locked;                   //カーソルロック
         Cursor.visible = false;                                     //カーソル非表示
     }
 

@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
+
     private void Start()
     {
         currentSpeed = parameter.PlayerSpeed;
@@ -50,6 +51,10 @@ public class PlayerController : MonoBehaviour
         PlayerReload();                                         //リロード
         PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
+    }
+    public void DrinkInInventory(GameObject drinkDate)
+    {
+        parameter.playerInventory.drinkType.Add(drinkDate);
     }
 
     private void PlayerMove()
