@@ -32,7 +32,6 @@ public class PlayerController : MonoBehaviour
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
 
-
         //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         //Physics.gravity：デフォルト：(0, -9.81, 0)
