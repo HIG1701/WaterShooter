@@ -19,6 +19,6 @@ MonoBehaviour:
   playerShield: 200
   playerSpeed: 30
   sprintSpeed: 60
-  downSpeed: 10
   jumpVelocity: 15
-  gravityMultiplier: 2
+  fallvelocity: 0
+  gravityMultiplier: 10

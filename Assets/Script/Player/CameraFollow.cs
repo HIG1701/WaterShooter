@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] Transform Player;
+    [SerializeField] Rigidbody Player;
     [SerializeField] Vector3 Offset;
     [SerializeField] float Sensitivity = 5f;
     [SerializeField] float Distance = 5;
@@ -18,7 +18,7 @@ public class CameraFollow : MonoBehaviour
     private float CurrentX = 0f;
     private float CurrentY = 0f;
 
-    private const float AngleMIN = -5f; //Yé≤ç≈è¨íl
+    private const float AngleMIN = 0f; //Yé≤ç≈è¨íl
     private const float AngleMAX = 80f; //Yé≤ç≈ëÂíl
 
     private void Start()
@@ -50,7 +50,7 @@ public class CameraFollow : MonoBehaviour
 
     private void RotatePlayer()
     {
-        Player.rotation = Quaternion.Euler(0, CurrentX, 0);
+        Player.MoveRotation(Quaternion.Euler(0, CurrentX, 0));
     }
 
     private void CameraMove()

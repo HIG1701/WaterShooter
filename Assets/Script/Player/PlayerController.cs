@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private bool isGrounded;
+    private bool isJumping;
     private int coin;
     private float currentHealth;
 
@@ -33,11 +34,11 @@ public class PlayerController : MonoBehaviour
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
 
-        //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
-        //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
-        //Physics.gravity：デフォルト：(0, -9.81, 0)
-        //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
-        if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
+        ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
+        ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
+        ////Physics.gravity：デフォルト：(0, -9.81, 0)
+        ////GravityMultiplier = 2fに設定後：(0, -19.62, 0)
+        //if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
         deathCamera.gameObject.SetActive(false);
     }
 
@@ -74,30 +75,31 @@ public class PlayerController : MonoBehaviour
         Vector3 rayStart = transform.position;
         Vector3 rayDirection = desiredMoveDirection;
 
-        //移動方向にRayを放射
-        RaycastHit hit;
-        if (!Physics.Raycast(rayStart, rayDirection, out hit, 0.5f))
-        {
-            if (desiredMoveDirection != Vector3.zero)
-            {
-                if (moveVertical != 0) rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
-            }
-        }
-        else
-        {
-            //TODO:ダッシュ壁抜け
-            //ダッシュ中にすり抜ける問題を解決できていない
-            currentSpeed = parameter.DownSpeed;
+        //TODO:壁の設計を考える
+        ////移動方向にRayを放射
+        //RaycastHit hit;
+        //if (!Physics.Raycast(rayStart, rayDirection, out hit, 0.5f))
+        //{
+        //    if (desiredMoveDirection != Vector3.zero)
+        //    {
+        //        if (moveVertical != 0) rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        //    }
+        //}
+        //else
+        //{
+        //    //Rayが壁にヒットしていれば、壁を上る
+        //    if (hit.collider.CompareTag("Wall"))
+        //    {
+        //        float climbSpeed = 5f;
+        //        if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
+        //    }
+        //}
 
-            //TODO:壁のぼり時がたつく
-            //Rayが壁にヒットしていれば、壁を上る
-            if (hit.collider.CompareTag("Wall"))
-            {
-                float climbSpeed = 5f;
-                if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
-            }
-        }
-        rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        Vector3 move = desiredMoveDirection * currentSpeed;
+        move.y = rb.velocity.y;
+        rb.velocity = move;
+
+        if (animator == null) return;
         animator.SetFloat("Walk", desiredMoveDirection.magnitude);
     }
 
@@ -109,10 +111,36 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerJump()
     {
-        //AddForceだと何故かうまくいかなかったので、ベロシティでやってます
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space)) rb.velocity = new Vector3(rb.velocity.x, parameter.JumpVelocity, rb.velocity.z);
-    }
+        // 地面にいる状態でスペースキーが押されたらジャンプを開始
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(Vector3.up * parameter.JumpVelocity, ForceMode.Impulse);
+            isJumping = true;
+        }
 
+        if (isJumping)
+        {
+            // ジャンプ中で最高到達点に近づくにつれてジャンプ力を減少
+            if (rb.velocity.y > 0 && transform.position.y >= parameter.MaxJumpHeight * 0.8f)
+            {
+                float proximity = (parameter.MaxJumpHeight - transform.position.y) / (parameter.MaxJumpHeight * 0.2f);
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * proximity, rb.velocity.z);
+                Debug.Log(1);
+            }
+            // ジャンプの最高点を過ぎたら、重力を増加させて落下を開始
+            else if (rb.velocity.y < 0)
+            {
+                rb.AddForce(Vector3.down * parameter.GravityMultiplier, ForceMode.Impulse);
+                isJumping = false;
+            }
+        }
+
+        // 落下中の速度を設定
+        if (!isJumping && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, -parameter.GravityMultiplier, rb.velocity.z);
+        }
+    }
     private void PlayerShift()
     {
         //TODO:しゃがむ

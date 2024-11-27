@@ -12,11 +12,11 @@ public class PlayerParameter : ScriptableObject
     [Header("プレイヤーのInGameに影響するParameter")]
     [SerializeField] private float playerHP;                  //体力
     [SerializeField] private float playerShield;              //シールド耐久力
+    [SerializeField] private float maxJumpHeight;             //最大ジャンプ高さ    
 
     [Header("速度に関するParameter")]
     [SerializeField] private float playerSpeed;               //通常速度
     [SerializeField] private float sprintSpeed;               //加速
-    [SerializeField] private float downSpeed;                 //壁に当たっている時
     [SerializeField] private float jumpVelocity;              //ジャンプ速度
 
     [Header("重力に関するParameter")]
@@ -27,9 +27,9 @@ public class PlayerParameter : ScriptableObject
     public float PlayerHeight => playerHeight;
     public float PlayerHP => playerHP;
     public float PlayerShield => playerShield;
+    public float MaxJumpHeight => maxJumpHeight;
     public float PlayerSpeed => playerSpeed;
     public float SprintSpeed => sprintSpeed;
-    public float DownSpeed => downSpeed;
     public float JumpVelocity => jumpVelocity;
     public float GravityMultiplier => gravityMultiplier;
 }

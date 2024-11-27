@@ -4,6 +4,8 @@ using UnityEngine;
 /// <summary>
 /// 銃本体に関するクラス
 /// </summary>
+
+//TODO:インパルスを使うとよりいいらしい
 public class GunManager : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;
