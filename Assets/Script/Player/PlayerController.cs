@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private bool isGrounded;
-    private bool isJumping;
     private int coin;
     private float currentHealth;
 
@@ -44,7 +43,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        PlayerJump();                                           //ジャンプ処理
         PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
         PlayerShift();                                          //しゃがむ処理（内容未実装）
@@ -109,42 +107,6 @@ public class PlayerController : MonoBehaviour
         else currentSpeed = parameter.PlayerSpeed;
     }
 
-    //TODO:ジャンプの処理を見直す
-    //最初から落下してるわこれ
-    private void PlayerJump()
-    {
-        //地面にいる状態でスペースキーが押されたらジャンプを開始
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {
-            rb.AddForce(Vector3.up * parameter.JumpVelocity, ForceMode.Impulse);
-            isJumping = true;
-            Debug.Log("Space押された");
-        }
-
-        if (isJumping)
-        {
-            //ジャンプ中で最高到達点に近づくにつれてジャンプ力を減少
-            if (rb.velocity.y > 0 && transform.position.y >= parameter.MaxJumpHeight * 0.8f)
-            {
-                float proximity = (parameter.MaxJumpHeight - transform.position.y) / (parameter.MaxJumpHeight * 0.2f);
-                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * proximity, rb.velocity.z);
-                Debug.Log("到達点目指す");
-            }
-            //ジャンプの最高点を過ぎたら、重力を増加させて落下を開始
-            else if (rb.velocity.y < 0)
-            {
-                rb.AddForce(Vector3.down * parameter.GravityMultiplier, ForceMode.Impulse);
-                isJumping = false;
-                Debug.Log("落下開始");
-            }
-        }
-
-        //落下中の速度を設定
-        if (!isJumping && rb.velocity.y < 0)
-        {
-            rb.velocity = new Vector3(rb.velocity.x, -parameter.GravityMultiplier, rb.velocity.z);
-        }
-    }
     private void PlayerShift()
     {
         //TODO:しゃがむ
@@ -200,7 +162,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
 
         if (collision.gameObject.CompareTag("DamageArea"))
         {
