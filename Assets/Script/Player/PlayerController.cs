@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour
             coin += coinManager.Coin;
             Destroy(collision.gameObject);
         }
-        Debug.Log(coin);
+        //Debug.Log(coin);
     }
 
     private void OnCollisionStay(Collision collision)
