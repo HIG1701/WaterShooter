@@ -6,12 +6,12 @@ using UnityEngine;
 public class PlayerJump : MonoBehaviour
 {
     private Rigidbody rb;
-    private Status playerStatus = Status.GROUND;                         //状態
-    readonly float jumpLowerLimit = 0.03f;                               //ジャンプ時間の下限
-    readonly float initialVelocity = 16.0f;             //初速
-    readonly float gravity = 30.0f;                     //重力加速度
-    private float timer = 0f;                           //経過時間
+    private Status playerStatus = Status.GROUND;        //状態
+    private float timeKeeper = 0f;                      //経過時間計測
     private bool jumpKey = false;                       //ジャンプキー
+    readonly float lowerLimit = 0.03f;                  //ジャンプ時間制限
+    readonly float gravity = 30.0f;
+    [SerializeField] private PlayerParameter playerParameter;
 
     private enum Status
     {
@@ -32,7 +32,16 @@ public class PlayerJump : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 newvec = Vector2.zero;
+        Jump();
+    }
+
+    private void Jump()
+    {
+        //Mathf.Pow：べき乗計算
+        //Mathf.Pow(2, 3) = 2^3 = 8
+
+        //速度ベクトル更新
+        Vector3 newvec = Vector3.zero;
 
         switch (playerStatus)
         {
@@ -40,35 +49,34 @@ public class PlayerJump : MonoBehaviour
                 if (jumpKey) playerStatus = Status.UP;
                 break;
             case Status.UP:
-                timer += Time.deltaTime;
+                timeKeeper += Time.deltaTime;
 
-                if (jumpKey || jumpLowerLimit > timer)
+                if (jumpKey || lowerLimit > timeKeeper)
                 {
-                    newvec.y = initialVelocity;
-                    newvec.y -= (gravity * Mathf.Pow(timer, 2));
+                    newvec.y = playerParameter.InitialVelocity;
+                    newvec.y -= (gravity * Mathf.Pow(timeKeeper, 2));   //時間から減算値算出
                 }
                 else
                 {
-                    timer += Time.deltaTime;
-                    newvec.y = initialVelocity;
-                    newvec.y -= (gravity * Mathf.Pow(timer, 2));
+                    timeKeeper += Time.deltaTime;
+                    newvec.y = playerParameter.InitialVelocity;
+                    newvec.y -= (gravity * Mathf.Pow(timeKeeper, 2));
                 }
                 if (0f > newvec.y)
                 {
                     playerStatus = Status.DOWN;
                     newvec.y = 0f;
-                    timer = 0.1f;
+                    timeKeeper = 0.1f;
                 }
                 break;
             case Status.DOWN:
-                timer += Time.deltaTime;
+                timeKeeper += Time.deltaTime;
                 newvec.y = 0f;
-                newvec.y = -(gravity * timer);
-                break;
-            default:
+                newvec.y = -(gravity * timeKeeper);
                 break;
         }
 
+        //初速更新
         rb.velocity = newvec;
     }
 
@@ -77,7 +85,7 @@ public class PlayerJump : MonoBehaviour
         if (playerStatus == Status.DOWN && collision.gameObject.CompareTag("Ground"))
         {
             playerStatus = Status.GROUND;
-            timer = 0f;
+            timeKeeper = 0f;
         }
     }
 }

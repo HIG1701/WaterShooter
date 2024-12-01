@@ -4358,6 +4358,10 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4427298067290426727, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      propertyPath: playerParameter
+      value: 
+      objectReference: {fileID: 11400000, guid: de694b03a0ed85c4a97c774623a84a31, type: 2}
+    - target: {fileID: 4427298067290426727, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: groundLayers.m_Bits
       value: 1
       objectReference: {fileID: 0}

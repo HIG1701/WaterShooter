@@ -17,8 +17,7 @@ MonoBehaviour:
   playerHeight: 142
   playerHP: 90
   playerShield: 200
-  maxJumpHeight: 15
+  initialVelocity: 16
   playerSpeed: 30
   sprintSpeed: 60
   jumpVelocity: 15
-  gravityMultiplier: 10

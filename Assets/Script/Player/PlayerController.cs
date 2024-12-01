@@ -35,9 +35,6 @@ public class PlayerController : MonoBehaviour
 
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
-        ////Physics.gravity：デフォルト：(0, -9.81, 0)
-        ////GravityMultiplier = 2fに設定後：(0, -19.62, 0)
-        //if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
         deathCamera.gameObject.SetActive(false);
     }
 
