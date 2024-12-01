@@ -1,14 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// プレイヤーのジャンプに関するスクリプト
+/// ジャンプ制御クラス
 /// </summary>
 public class PlayerJump : MonoBehaviour
 {
     private Rigidbody rb;
-    private Status playerStatus = Status.GROUND;        //プレイヤーの状態
-    private float firstSpeed = 16.0f;                   //初速
-    private float gravity = 30.0f;                      //重力加速度
+    private Status playerStatus = Status.GROUND;                         //状態
+    readonly float jumpLowerLimit = 0.03f;                               //ジャンプ時間の下限
+    readonly float initialVelocity = 16.0f;             //初速
+    readonly float gravity = 30.0f;                     //重力加速度
     private float timer = 0f;                           //経過時間
     private bool jumpKey = false;                       //ジャンプキー
 
@@ -35,25 +36,30 @@ public class PlayerJump : MonoBehaviour
 
         switch (playerStatus)
         {
-            //接地時
             case Status.GROUND:
                 if (jumpKey) playerStatus = Status.UP;
                 break;
-            //上昇時
             case Status.UP:
                 timer += Time.deltaTime;
-                if (jumpKey && rb.velocity.y >= 0f)
+
+                if (jumpKey || jumpLowerLimit > timer)
                 {
-                    newvec.y = firstSpeed;
-                    newvec.y -= (gravity * timer);
+                    newvec.y = initialVelocity;
+                    newvec.y -= (gravity * Mathf.Pow(timer, 2));
                 }
                 else
                 {
+                    timer += Time.deltaTime;
+                    newvec.y = initialVelocity;
+                    newvec.y -= (gravity * Mathf.Pow(timer, 2));
+                }
+                if (0f > newvec.y)
+                {
                     playerStatus = Status.DOWN;
-                    timer = 0f;
+                    newvec.y = 0f;
+                    timer = 0.1f;
                 }
                 break;
-            //落下時
             case Status.DOWN:
                 timer += Time.deltaTime;
                 newvec.y = 0f;
