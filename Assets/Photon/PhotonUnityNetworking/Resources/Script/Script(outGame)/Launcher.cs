@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance;
+    [SerializeField] SelectChar selectChar;
 
     [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
     [SerializeField] TMP_Text titleWelcomeText;             //タイトルのメッセージ
@@ -96,6 +97,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         //ルームに参加するとルームUIを設定
         MenuMng.Instance.OpenMenu("room");
+        selectChar.SelectCharInitialize();
         roomName.text = PhotonNetwork.CurrentRoom.Name;
         //プレイヤーリストを更新
         Player[] players = PhotonNetwork.PlayerList;
