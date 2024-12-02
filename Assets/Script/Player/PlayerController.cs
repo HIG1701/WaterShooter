@@ -49,10 +49,18 @@ public class PlayerController : MonoBehaviour
         //マウスScrollで飲料選択。数字でも可
     }
 
-    private void PlayerMove()
+    virtual public void DrinkInInventory(GameObject drinkDate)
+    {
+        Debug.Log(drinkDate);
+        parameter.playerInventory.drinkType.Add(drinkDate);
+    }
+
+    public virtual void PlayerMove()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
+        Debug.Log(moveVertical);
+        Debug.Log(moveHorizontal);
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         forward.y = 0f;                                             //水平面上の前方向のみを制御

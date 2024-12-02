@@ -19,6 +19,9 @@ public class PlayerParameter : ScriptableObject
     [SerializeField] private float sprintSpeed;               //加速
     [SerializeField] private float jumpVelocity;              //ジャンプ速度
 
+    [Header("飲料インベントリ")]
+    [SerializeField] public PlayerInventory playerInventory; //プレイヤーの飲料用インベントリ.
+
     public int PlayerID => playerID;
     public string PlayerName => playerName;
     public float PlayerHeight => playerHeight;
