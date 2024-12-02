@@ -11,16 +11,16 @@ public class Launcher : MonoBehaviourPunCallbacks
     public static Launcher Instance;
 
     [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
-    [SerializeField] TMP_Text titleWelcomeText;             //
-    [SerializeField] TMP_InputField roomNameInput;          //ルームの名前を入れる
-    [SerializeField] Transform roomListContent;
+    [SerializeField] TMP_Text titleWelcomeText;             //タイトルのメッセージ
+    [SerializeField] TMP_InputField roomNameInput;          //作成するルームの名前を入れる
+    [SerializeField] Transform roomListContent;             //ルーム検索画面のルーム表示位置
     [SerializeField] Text roomName;                         //ルームの名前を入れる
-    [SerializeField] GameObject roomListPrefab;
-    [SerializeField] Transform playerListContent;
-    [SerializeField] GameObject playerListPrefab;
-    [SerializeField] GameObject startGameBtn;
-    [SerializeField] GameObject readyBtn;
-    
+    [SerializeField] GameObject roomListPrefab;             //参加可能のルームを表示するPrefab
+    [SerializeField] Transform playerListContent;           //ルーム画面の参加プレイヤーの表示位置
+    [SerializeField] GameObject playerListPrefab;           //参加しているプレイヤーを表示するPrefab
+    [SerializeField] GameObject startGameBtn;               //ゲームマスタが押せるゲーム開始ボタン
+    [SerializeField] GameObject readyBtn;                   //ゲームマスタ以外が押せる準備完了ボタン
+  
 
     private void Awake()
     {
@@ -110,13 +110,31 @@ public class Launcher : MonoBehaviourPunCallbacks
             Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
         //マスタークライアントならゲームスタートボタン有効
-        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+        //マスタークライアントでなければ準備完了ボタン有効
+        RoomBtn();
+        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+
     }
+
+    //ルームのボタン有効処理
+    private void RoomBtn()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            startGameBtn.SetActive(true);
+        }
+        else
+        {
+            readyBtn.SetActive(true);
+        }
+    }
+
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         //マスタークライアントが変えあったとき呼び出し
         //スタートボタンの有無を設定
-        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+        RoomBtn();
+        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
     public void LeaveRoom()
     {
@@ -170,7 +188,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         //ゲーム開始
         //マスタークライアントがゲームを開始
         //全員がゲームシーンへ移動
-        PhotonNetwork.LoadLevel("3_GameScene");
+        //PhotonNetwork.LoadLevel("3_GameScene");
     }
     public void QuitGame()
     {
