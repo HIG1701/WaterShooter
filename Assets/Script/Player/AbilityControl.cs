@@ -1,8 +1,8 @@
 using UnityEngine;
 
-//このスクリプトでは、プレイイヤーのAbilityについて、色々記載していく。
-//プレイヤーのほうでかくと長くなるので、こっちにまとめます。
-
+/// <summary>
+/// アビリティに関するクラス
+/// </summary>
 public class AbilityControl
 {
     public void Ability()

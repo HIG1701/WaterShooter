@@ -17,9 +17,7 @@ MonoBehaviour:
   playerHeight: 142
   playerHP: 90
   playerShield: 200
+  initialVelocity: 16
   playerSpeed: 30
   sprintSpeed: 60
-  downSpeed: 10
   jumpVelocity: 15
-  gravityMultiplier: 2
-  playerInventory: {fileID: 11400000, guid: eab91da6a81315b439106f986c7e244a, type: 2}

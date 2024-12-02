@@ -8,21 +8,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] protected PlayerParameter parameter;
-    [SerializeField] protected Transform cameraTransform;
-    [SerializeField] protected float currentSpeed;                        //現在Speed
-    [SerializeField] protected GunManager gunManager;
-    [SerializeField] protected Camera mainCamera;
-    [SerializeField] protected Camera deathCamera;
-    protected GameManager gameManager;
-    protected Rigidbody rb;
-    protected bool isGrounded;
-    protected int coin;
+    [SerializeField] private PlayerParameter parameter;
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private float currentSpeed;                        //現在Speed
+    [SerializeField] private GunManager gunManager;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Camera deathCamera;
+    private GameManager gameManager;
+    private Rigidbody rb;
+    private Animator animator;
+    private bool isGrounded;
+    private int coin;
     private float currentHealth;
-    
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
     }
 
@@ -31,17 +33,13 @@ public class PlayerController : MonoBehaviour
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
 
-        //このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
-        //参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
-        //Physics.gravity：デフォルト：(0, -9.81, 0)
-        //GravityMultiplier = 2fに設定後：(0, -19.62, 0)
-        if (Physics.gravity.y * parameter.GravityMultiplier > -20) Physics.gravity *= parameter.GravityMultiplier;
+        ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
+        ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         deathCamera.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
     {
-        PlayerJump();                                           //ジャンプ処理
         PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
         PlayerShift();                                          //しゃがむ処理（内容未実装）
@@ -51,26 +49,10 @@ public class PlayerController : MonoBehaviour
         //マウスScrollで飲料選択。数字でも可
     }
 
-    /// <summary>
-    /// デバッグ用なので削除します。
-    /// </summary>
-    /// <returns></returns>
-    virtual public PlayerParameter ReturnValue()
-    {
-        return parameter;
-    }
-
-    virtual public void DrinkInInventory(GameObject drinkDate)
-    {
-        Debug.Log(drinkDate);
-        parameter.playerInventory.drinkType.Add(drinkDate);
-    }
-
-    virtual public void PlayerMove()
+    private void PlayerMove()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Debug.Log(moveVertical);
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         forward.y = 0f;                                             //水平面上の前方向のみを制御
@@ -88,66 +70,59 @@ public class PlayerController : MonoBehaviour
         Vector3 rayStart = transform.position;
         Vector3 rayDirection = desiredMoveDirection;
 
-        //移動方向にRayを放射
-        RaycastHit hit;
-        if (!Physics.Raycast(rayStart, rayDirection, out hit, 0.5f))
-        {
-            if (desiredMoveDirection != Vector3.zero)
-            {
-                if (moveVertical != 0)
-                {
-                    rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
-                }
-            }
-        }
-        else
-        {
-            //TODO:ダッシュ壁抜け
-            //ダッシュ中にすり抜ける問題を解決できていない
-            currentSpeed = parameter.DownSpeed;
+        //TODO:壁の設計を考える
+        ////移動方向にRayを放射
+        //RaycastHit hit;
+        //if (!Physics.Raycast(rayStart, rayDirection, out hit, 0.5f))
+        //{
+        //    if (desiredMoveDirection != Vector3.zero)
+        //    {
+        //        if (moveVertical != 0) rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        //    }
+        //}
+        //else
+        //{
+        //    //Rayが壁にヒットしていれば、壁を上る
+        //    if (hit.collider.CompareTag("Wall"))
+        //    {
+        //        float climbSpeed = 5f;
+        //        if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
+        //    }
+        //}
 
-            //TODO:壁のぼり時がたつく
-            //Rayが壁にヒットしていれば、壁を上る
-            if (hit.collider.CompareTag("Wall"))
-            {
-                float climbSpeed = 5f;
-                if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
-            }
-        }
-        rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        Vector3 move = desiredMoveDirection * currentSpeed;
+        move.y = rb.velocity.y;
+        rb.velocity = move;
+
+        if (animator == null) return;
+        animator.SetFloat("Walk", desiredMoveDirection.magnitude);
     }
 
-    virtual protected void PlayerSpeedControl()
+    private void PlayerSpeedControl()
     {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
         else currentSpeed = parameter.PlayerSpeed;
     }
 
-    virtual protected void PlayerJump()
-    {
-        //AddForceだと何故かうまくいかなかったので、ベロシティでやってます
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space)) rb.velocity = new Vector3(rb.velocity.x, parameter.JumpVelocity, rb.velocity.z);
-    }
-
-    virtual protected void PlayerShift()
+    private void PlayerShift()
     {
         //TODO:しゃがむ
         //シフトでしゃがむ
     }
 
-    virtual protected void Playerfire()
+    private void Playerfire()
     {
         if (Input.GetMouseButton(0)) gunManager.Shoot();
         //TODO:エイム
         //右マウスでエイム
     }
 
-    virtual protected void PlayerReload()
+    private void PlayerReload()
     {
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
-    virtual protected void PlayerAbility()
+    private void PlayerAbility()
     {
     }
 
@@ -179,12 +154,15 @@ public class PlayerController : MonoBehaviour
             coin += coinManager.Coin;
             Destroy(collision.gameObject);
         }
-        Debug.Log(coin);
+        //Debug.Log(coin);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
 
         if (collision.gameObject.CompareTag("DamageArea"))
         {
