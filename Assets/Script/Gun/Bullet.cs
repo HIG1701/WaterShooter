@@ -4,7 +4,6 @@ using UnityEngine;
 /// 弾丸に関するクラス
 /// </summary>
 [RequireComponent(typeof(Rigidbody))] //リジッドボディ必須
-//TODO;リジッドボディの影響か、プレイヤーが前方向に加速する
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;
@@ -20,8 +19,8 @@ public class Bullet : MonoBehaviour
         startPosition = transform.position;
         rb = GetComponent<Rigidbody>();
 
-        //弾丸の初速度を設定
-        rb.velocity = transform.forward * speed;
+        //弾丸に瞬間的な力を加えて発射する
+        rb.AddForce(transform.forward * speed, ForceMode.Impulse);
     }
 
     private void FixedUpdate()
@@ -32,7 +31,6 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //障害物に当たったら弾丸を破壊する
         Destroy(gameObject);
     }
 }
