@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerAIController : MonoBehaviour
+public class PlayerAIController : PlayerController
 {
     [SerializeField] private Transform player; 
     [SerializeField] private LayerMask obstacleLayer;
@@ -29,7 +29,7 @@ public class PlayerAIController : MonoBehaviour
             lastKnownPosition = player.position;
             if (Vector3.Distance(transform.position, player.position) <= shootRange)
             {
-
+                
             }
             else
             {
@@ -54,5 +54,10 @@ public class PlayerAIController : MonoBehaviour
         {
             playerInSight = false;
         }
+    }
+
+    public override void PlayerMove()
+    {
+
     }
 }

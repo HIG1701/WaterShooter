@@ -8,24 +8,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private PlayerParameter parameter;
-    [SerializeField] private Transform cameraTransform;
-    [SerializeField] private float currentSpeed;                        //現在Speed
-    [SerializeField] private GunManager gunManager;
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private Camera deathCamera;
-    private GameManager gameManager;
-    private Rigidbody rb;
-    private bool isGrounded;
-    private int coin;
+    [SerializeField] protected PlayerParameter parameter;
+    [SerializeField] protected Transform cameraTransform;
+    [SerializeField] protected float currentSpeed;                        //現在Speed
+    [SerializeField] protected GunManager gunManager;
+    [SerializeField] protected Camera mainCamera;
+    [SerializeField] protected Camera deathCamera;
+    protected GameManager gameManager;
+    protected Rigidbody rb;
+    protected bool isGrounded;
+    protected int coin;
     private float currentHealth;
-
+    
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
     }
-
 
     private void Start()
     {
@@ -56,21 +55,22 @@ public class PlayerController : MonoBehaviour
     /// デバッグ用なので削除します。
     /// </summary>
     /// <returns></returns>
-    public PlayerParameter ReturnValue()
+    virtual public PlayerParameter ReturnValue()
     {
         return parameter;
     }
 
-    public void DrinkInInventory(GameObject drinkDate)
+    virtual public void DrinkInInventory(GameObject drinkDate)
     {
         Debug.Log(drinkDate);
         parameter.playerInventory.drinkType.Add(drinkDate);
     }
 
-    private void PlayerMove()
+    virtual public void PlayerMove()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
+        Debug.Log(moveVertical);
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         forward.y = 0f;                                             //水平面上の前方向のみを制御
@@ -117,37 +117,37 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
     }
 
-    private void PlayerSpeedControl()
+    virtual protected void PlayerSpeedControl()
     {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
         else currentSpeed = parameter.PlayerSpeed;
     }
 
-    private void PlayerJump()
+    virtual protected void PlayerJump()
     {
         //AddForceだと何故かうまくいかなかったので、ベロシティでやってます
         if (isGrounded && Input.GetKeyDown(KeyCode.Space)) rb.velocity = new Vector3(rb.velocity.x, parameter.JumpVelocity, rb.velocity.z);
     }
 
-    private void PlayerShift()
+    virtual protected void PlayerShift()
     {
         //TODO:しゃがむ
         //シフトでしゃがむ
     }
 
-    private void Playerfire()
+    virtual protected void Playerfire()
     {
         if (Input.GetMouseButton(0)) gunManager.Shoot();
         //TODO:エイム
         //右マウスでエイム
     }
 
-    private void PlayerReload()
+    virtual protected void PlayerReload()
     {
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
-    private void PlayerAbility()
+    virtual protected void PlayerAbility()
     {
     }
 
