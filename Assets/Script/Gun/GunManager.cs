@@ -4,8 +4,6 @@ using UnityEngine;
 /// <summary>
 /// 銃本体に関するクラス
 /// </summary>
-
-//TODO:インパルスを使うとよりいいらしい
 public class GunManager : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;
@@ -13,7 +11,7 @@ public class GunManager : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     private int currentAmmo;
     private bool isReloading;
-    private float nextFireTime;
+    private float fireCooldown;                                     //発射のクールダウン時間
     private float bulletOffset;
 
     private void Start()
@@ -22,25 +20,30 @@ public class GunManager : MonoBehaviour
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
         bulletOffset = 1f;
+        fireCooldown = 0f;                                          //初期化
     }
 
     private bool CanShoot()
     {
-        //リロード中でない　＆　弾が残っている ==> trueを返す
+        //リロード中でない ＆ 弾が残っている ==> trueを返す
         return !isReloading && currentAmmo > 0;
+    }
+
+    private void Update()
+    {
+        //クールダウンを減少させる
+        if (fireCooldown > 0) fireCooldown -= Time.deltaTime;
     }
 
     public void Shoot()
     {
-        if (CanShoot() && Time.time >= nextFireTime)
+        if (CanShoot() && fireCooldown <= 0f)
         {
-            //発射位置の前方にオフセットを追加
             Vector3 spawnPosition = muzzle.position + muzzle.forward * bulletOffset;
-
-            //弾丸を生成し、発射位置に配置
-            //TODO:Time.timeについて考える
             Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);
-            nextFireTime = Time.time + gunParameter.FireRate;
+
+            //クールダウンを挟む
+            fireCooldown = gunParameter.FireRate;
             currentAmmo--;
             Debug.Log(currentAmmo);
         }
@@ -55,14 +58,18 @@ public class GunManager : MonoBehaviour
     {
         isReloading = true;
         Debug.Log("Reloading...");
-        //待機時間
+
+        //リロード時間の待機
         yield return new WaitForSeconds(gunParameter.ReloadTime);
-        //リセット
+
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
         Debug.Log("Reload Complete!");
     }
 
+    /// <summary>
+    /// 噴水エリア用メソッド
+    /// </summary>
     public void WaterReload()
     {
         currentAmmo = gunParameter.MaxAmmo;
