@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Coin
   - DamageArea
+  - WallArea
   layers:
   - Default
   - TransparentFX
