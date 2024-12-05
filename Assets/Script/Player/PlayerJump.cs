@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// ジャンプ制御クラス
 /// </summary>
+//TODO:ジャンプすると走れないバグ
 public class PlayerJump : MonoBehaviour
 {
     private Rigidbody rb;

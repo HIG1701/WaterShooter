@@ -20,4 +20,5 @@ MonoBehaviour:
   initialVelocity: 16
   playerSpeed: 30
   sprintSpeed: 60
+  climbSpeed: 30
   jumpVelocity: 15
