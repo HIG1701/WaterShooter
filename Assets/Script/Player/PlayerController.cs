@@ -114,7 +114,8 @@ public class PlayerController : MonoBehaviour
     }
     private void PlayerShift()
     {
-        //TODO:ƒVƒtƒg‚Å‚µ‚á‚ª‚Þ
+        if (Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift)) animator.SetTrigger("Syagami");
+        else animator.ResetTrigger("Syagami");
     }
     private void Playerfire()
     {
