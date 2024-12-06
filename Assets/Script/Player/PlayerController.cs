@@ -59,8 +59,6 @@ public class PlayerController : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Debug.Log(moveVertical);
-        Debug.Log(moveHorizontal);
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         forward.y = 0f;                                             //…•½–Êã‚Ì‘O•ûŒü‚Ì‚İ‚ğ§Œä
