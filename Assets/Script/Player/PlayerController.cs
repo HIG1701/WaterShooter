@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
         //right * moveHorizontal：カメラ右ベクトルに水平方向を掛け、左右の移動方向を計算
         Vector3 desiredMoveDirection = forward * moveVertical + right * moveHorizontal;
 
-        if (isGrounded)
+        if (!isClimbing)
         {
             Vector3 move = desiredMoveDirection * currentSpeed;
             move.y = rb.velocity.y;
@@ -85,14 +85,13 @@ public class PlayerController : MonoBehaviour
         bool isUpperWall = Physics.Raycast(upperCheckRay, wallCheckDistance);
         Debug.DrawRay(wallCheckRay.origin, wallCheckRay.direction * wallCheckDistance, Color.red);
         Debug.DrawRay(upperCheckRay.origin, upperCheckRay.direction * wallCheckDistance, Color.blue);
-        //壁があるかどうかをログに出力
-        Debug.Log("Forward Wall: " + isForwardWall);
-        Debug.Log("Upper Wall: " + isUpperWall);
 
         if (isForwardWall && !isUpperWall) isClimbing = true;
         else isClimbing = false;
         if (isClimbing)
         {
+            currentSpeed = parameter.ClimbSpeed;
+
             //入力を取得
             float moveHorizontal = Input.GetAxis("Horizontal");
             float moveVertical = Input.GetAxis("Vertical");
@@ -102,6 +101,10 @@ public class PlayerController : MonoBehaviour
 
             //Rigidbodyのvelocityを設定
             rb.velocity = movement * currentSpeed;
+        }
+        else
+        {
+            currentSpeed = parameter.PlayerSpeed;
         }
     }
     private void PlayerSpeedControl()
@@ -156,7 +159,6 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionStay(Collision collision)
     {
-        //TODO:ゲーム開始時、接地Flagが数秒falseになるバグを解決する
         if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
 
         if (collision.gameObject.CompareTag("DamageArea"))

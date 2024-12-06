@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 銃本体に関するクラス
 /// </summary>
+//TODO:プレーヤーが加速するのはなぜ？
 public class GunManager : MonoBehaviour
 {
     [SerializeField] private GunParameter gunParameter;
