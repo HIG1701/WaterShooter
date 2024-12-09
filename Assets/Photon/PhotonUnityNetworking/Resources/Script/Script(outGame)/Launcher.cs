@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance;
-    [SerializeField] SelectChar selectChar;
 
     [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
     [SerializeField] TMP_Text titleWelcomeText;             //タイトルのメッセージ
@@ -20,8 +19,10 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] Transform playerListContent;           //ルーム画面の参加プレイヤーの表示位置
     [SerializeField] GameObject playerListPrefab;           //参加しているプレイヤーを表示するPrefab
     [SerializeField] GameObject startGameBtn;               //ゲームマスタが押せるゲーム開始ボタン
-    [SerializeField] GameObject readyBtn;                   //ゲームマスタ以外が押せる準備完了ボタン
-  
+    [SerializeField] Text errorMsg;                         //エラーメッセージを表示する
+
+
+    //TODO_1　エラーメッセージの表示
 
     private void Awake()
     {
@@ -85,7 +86,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             var roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = 6;             //最大参加可能人数
             PhotonNetwork.CreateRoom(roomNameInput.text, roomOptions, TypedLobby.Default);
-            MenuMng.Instance.OpenMenu("loading");
+            MenuMng.Instance.OpenMenu("loadeing");
             roomNameInput.text = "";
         }
         else
@@ -97,7 +98,6 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         //ルームに参加するとルームUIを設定
         MenuMng.Instance.OpenMenu("room");
-        selectChar.SelectCharInitialize();
         roomName.text = PhotonNetwork.CurrentRoom.Name;
         //プレイヤーリストを更新
         Player[] players = PhotonNetwork.PlayerList;
@@ -112,38 +112,21 @@ public class Launcher : MonoBehaviourPunCallbacks
             Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
         //マスタークライアントならゲームスタートボタン有効
-        //マスタークライアントでなければ準備完了ボタン有効
-        RoomBtn();
-        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
-
-    }
-
-    //ルームのボタン有効処理
-    private void RoomBtn()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            startGameBtn.SetActive(true);
-        }
-        else
-        {
-            readyBtn.SetActive(true);
-        }
+        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         //マスタークライアントが変えあったとき呼び出し
         //スタートボタンの有無を設定
-        RoomBtn();
-        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
-    public void LeaveRoom()
-    {
-        //ルーム退出し、ローディング画面を表示
-        PhotonNetwork.LeaveRoom();
-        MenuMng.Instance.OpenMenu("loadeing");
-    }
+    //public void LeaveRoom()
+    //{
+    //    //ルーム退出し、ローディング画面を表示
+    //    PhotonNetwork.LeaveRoom();
+    //    MenuMng.Instance.OpenMenu("loadeing");
+    //}
     public void JoinRoom(RoomInfo info)
     {
         //指定されたルームに参加
@@ -155,7 +138,12 @@ public class Launcher : MonoBehaviourPunCallbacks
         //Playerがroomを退出したとき
         MenuMng.Instance.OpenMenu("title");
     }
-
+    public void LeaveRoom()
+    {
+        //ルーム退出し、ローディング画面を表示
+        PhotonNetwork.LeaveRoom();
+        MenuMng.Instance.OpenMenu("loadeing");
+    }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         //ロビーのルームリストが更新んされたときに呼び出し
@@ -177,9 +165,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        //TODO (4)_ルーム作成に失敗したとき
-        //errorText.text = "Room Creation Failed: " + message;
-        //MenuManager.Instance.OpenMenu("error");
+        //TODO(4)_ルーム作成に失敗したとき
+        errorMsg.text = "Room Creation Failed: " + message;
+        MenuMng.Instance.OpenMenu("errorMsg");
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
