@@ -24,7 +24,7 @@ public class GunManager : MonoBehaviour
         bulletOffset = 1f;
     }
 
-    private bool CanShoot()
+    public bool CanShoot()
     {
         //リロード中でない　＆　弾が残っている ==> trueを返す
         return !isReloading && currentAmmo > 0;

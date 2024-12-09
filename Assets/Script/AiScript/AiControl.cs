@@ -14,8 +14,10 @@ public class PlayerAIController : MonoBehaviour
     [Header(""), SerializeField] private GunManager gunManager;
     private NavMeshAgent agent;
     private Vector3 lastKnownPosition;
+    private int coin;
     private bool playerInSight = false;
     private bool isHide = false;
+    private bool isWalkingSimulator = false;
     private Rigidbody rb;
 
     private void Start()
@@ -27,6 +29,7 @@ public class PlayerAIController : MonoBehaviour
 
     private void Update()
     {
+        WalkingSimulator();
         CheckPlayerInSight();
         OnPlayerInSight();
         CharacterLifeCycle();
@@ -51,7 +54,11 @@ public class PlayerAIController : MonoBehaviour
                 agent.Move(sideStep * Time.deltaTime);
 
                 //à»â∫èeåÇèàóù
-
+                if (!gunManager.CanShoot())
+                {
+                    Debug.Log("a");
+                    gunManager.StartReload();
+                }
                 gunManager.Shoot();
             }
             else
@@ -80,7 +87,19 @@ public class PlayerAIController : MonoBehaviour
         }
     }
 
-
+    private void WalkingSimulator()
+    {
+        if(!agent.hasPath)
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * sightRange;
+            randomDirection += transform.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
+            {
+                agent.SetDestination(hit.position);
+            }
+        }
+    }
 
     //Ç†Ç∆Ç≈Ç¬Ç¬Ç¨ÇÇ‚ÇÈÅBHPí·â∫ÇÃâÒîèàóù
     private void CharacterHide()
@@ -100,6 +119,15 @@ public class PlayerAIController : MonoBehaviour
         else
         {
             isHide = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
+        {
+            coin += coinManager.Coin;
+            Destroy(collision.gameObject);
         }
     }
 }
