@@ -5,6 +5,7 @@ using UnityEngine;
 /// </summary>
 //TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
 //TODO:Animation実装
+//TODO:走っている途中にシフトキー入力でアニメーターが終わらないバグ
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerParameter parameter;
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private bool isGrounded;
     private bool isClimbing;
+    private bool isCrouch;                                              //しゃがみ状態
     private int coin;
     private float currentHealth;
 
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
+        isGrounded = true;
+        isCrouch = false;
 
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
@@ -41,13 +45,19 @@ public class PlayerController : MonoBehaviour
         PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
         //PlayerClimbing();                                       //壁登り処理（内容未実装）
-        PlayerShift();                                          //しゃがむ処理（内容未実装）
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
         PlayerReload();                                         //リロード
         PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
         Debug.Log("接地" + isGrounded);
         Debug.Log("登る" + isClimbing);
+        Debug.Log("しゃがみ" + isCrouch);
+        Debug.Log("Speed" + currentSpeed);
+    }
+
+    private void Update()
+    {
+        PlayerShift();                                          //しゃがむ処理
     }
     private void PlayerMove()
     {
@@ -69,7 +79,11 @@ public class PlayerController : MonoBehaviour
             Vector3 move = desiredMoveDirection * currentSpeed;
             move.y = rb.velocity.y;
             rb.velocity = move;
-            if (animator != null) animator.SetFloat("Walk", desiredMoveDirection.magnitude);
+            if (animator != null)
+            {
+                if (!isCrouch) animator.SetFloat("Walk", desiredMoveDirection.magnitude);
+                else if (isCrouch) animator.SetFloat("SyagamiMove", desiredMoveDirection.magnitude);
+            }
         }
     }
 
@@ -110,12 +124,24 @@ public class PlayerController : MonoBehaviour
     private void PlayerSpeedControl()
     {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
+        else if (isCrouch) currentSpeed = parameter.CrouchSpeed;
         else currentSpeed = parameter.PlayerSpeed;
     }
     private void PlayerShift()
     {
-        if (Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift)) animator.SetTrigger("Syagami");
-        else animator.ResetTrigger("Syagami");
+        if (Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (!isCrouch)
+            {
+                animator.SetBool("Syagami", true);
+                isCrouch = true;
+            }
+            else if (isCrouch)
+            {
+                animator.SetBool("Syagami", false);
+                isCrouch = false;
+            }
+        }
     }
     private void Playerfire()
     {

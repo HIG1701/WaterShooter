@@ -21,4 +21,5 @@ MonoBehaviour:
   playerSpeed: 30
   sprintSpeed: 60
   climbSpeed: 10
+  crouchSpeed: 15
   jumpVelocity: 15

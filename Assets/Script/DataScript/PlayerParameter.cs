@@ -18,6 +18,7 @@ public class PlayerParameter : ScriptableObject
     [SerializeField] private float playerSpeed;               //通常速度
     [SerializeField] private float sprintSpeed;               //加速
     [SerializeField] private float climbSpeed;                //壁を上る速度
+    [SerializeField] private float crouchSpeed;               //しゃがみ速度  
     [SerializeField] private float jumpVelocity;              //ジャンプ速度
 
     public int PlayerID => playerID;
@@ -29,5 +30,6 @@ public class PlayerParameter : ScriptableObject
     public float PlayerSpeed => playerSpeed;
     public float SprintSpeed => sprintSpeed;
     public float ClimbSpeed => climbSpeed;
+    public float CrouchSpeed => crouchSpeed;
     public float JumpVelocity => jumpVelocity;
 }
