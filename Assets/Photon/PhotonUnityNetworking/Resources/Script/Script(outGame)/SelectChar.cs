@@ -1,20 +1,35 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectChar : MonoBehaviourPunCallbacks
 {
-    [SerializeField] Text msgText;
+    [SerializeField] private Text msgText;
 
-    [SerializeField] Button confirmButton;
-    [SerializeField] Button backButton;
-    [SerializeField] Button startGameButton;
-    [SerializeField] Button exitBtn;
+    [SerializeField] private Button confirmButton;      //準備完了ボタン
+    [SerializeField] private Button backButton;         //選択解除ボタン
+    [SerializeField] private Button startGameButton;    //ゲーム開始ボタン
+    [SerializeField] private Button exitBtn;            //退出ボタン
 
-    [SerializeField] Button[] charBtn;        //キャラ選択ボタン
-    private bool[] isCharSelect;      //キャラが選択されているか
+    [SerializeField] private Button[] charBtn;          //キャラ選択ボタン
+    [SerializeField] private bool[] isCharSelect;       //キャラが選択されているか
 
+    private bool initialize = false;
+
+    private void Awake()
+    {
+        if (isCharSelect == null || isCharSelect.Length == 0)
+        {
+            Debug.LogError("isCharSelectが初期化されていません。");
+        }
+
+        if (charBtn == null || charBtn.Length == 0)
+        {
+            Debug.LogError("charBtnが初期化されていません。");
+        }
+    }
     private void Start()
     {
         Debug.Log("初期化処理");
@@ -44,6 +59,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             //既存のキャラクター選択状態を同期
             //UpdateCharSelectFromProperties();
         }
+        initialize = true;
     }
 
     public void SelectCharInitialize()
@@ -112,12 +128,14 @@ public class SelectChar : MonoBehaviourPunCallbacks
     [PunRPC]
     public void CharSelect(int idx, int playerID)
     {
-        if (isCharSelect == null || charBtn == null)
+        if (!initialize)
         {
+            Debug.LogWarning("初期化が完了していないため、RPCをスキップします");
             return;
         }
-        if (idx < 0 || idx >= isCharSelect.Length)
+        if (isCharSelect == null || charBtn == null || idx < 0 || idx >= isCharSelect.Length)
         {
+            Debug.LogError($"不正なデータまたはインデックス: {idx}");
             return;
         }
         if (!isCharSelect[idx])
@@ -143,9 +161,9 @@ public class SelectChar : MonoBehaviourPunCallbacks
             int selectedIdx = GetSelectedCharIndex(PhotonNetwork.LocalPlayer);
             if (selectedIdx >= 0 && selectedIdx < isCharSelect.Length)
             {
-                // キャラクターの選択状態を解除
+                //キャラクターの選択状態を解除
                 isCharSelect[selectedIdx] = false;
-                // ボタンを有効化
+                //ボタンを有効化
                 charBtn[selectedIdx].interactable = true; 
             }
         }
@@ -155,11 +173,16 @@ public class SelectChar : MonoBehaviourPunCallbacks
     [PunRPC]
     public void UpdateCharSelectState(int idx, PhotonMessageInfo info)
     {
-        Debug.Log($"Player {info.Sender.NickName} has updated their selection.");
+        if (isCharSelect == null || charBtn == null)
+        {
+            Debug.LogError("isCharSelect または charBtn が初期化されていません");
+            return;
+        }
         if (idx >= 0 && idx < isCharSelect.Length)
         {
             isCharSelect[idx] = true;
             charBtn[idx].interactable = false;
+            Debug.Log($"Player {info.Sender.NickName} selected character {idx}");
         }
         else if (idx == -1)
         {
@@ -176,6 +199,10 @@ public class SelectChar : MonoBehaviourPunCallbacks
                 }
             }
         }
+        else
+        {
+            Debug.LogError($"無効なインデックス: {idx}");
+        }
     }
     //選択完了ボタンを押下後に呼び出し
     public void OnConfirmSelection()
@@ -186,7 +213,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         //戻るボタン表示
         confirmButton.interactable = false;
         backButton.gameObject.SetActive(true);
-        // ゲーム開始ボタンが有効かどうかのチェック
+        //ゲーム開始ボタンが有効かどうかのチェック
         if (PhotonNetwork.IsMasterClient && AllPlayerSelect())
         {
             EnableStartGameButton();
@@ -239,7 +266,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
         else
         { 
-            // キャラクターが選択されていない場合のデフォルト値
+            //キャラクターが選択されていない場合のデフォルト値
             return -1; 
         }
     }
@@ -262,7 +289,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
         return true;
     }
-    // ゲーム開始ボタンを有効化
+    //ゲーム開始ボタンを有効化
     private void EnableStartGameButton()
     {
         //ボタンクリック可能にする
@@ -270,7 +297,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         startGameButton.interactable = true;
         startGameButton.onClick.AddListener(StartGame);
     }
-    // ゲームシーンへ移行
+    //ゲームシーンへ移行
     public void StartGame() 
     {
         Debug.Log("ゲーム画面へ移行");
@@ -280,6 +307,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     {
         if (charBtn == null || isCharSelect == null)
         {
+            Debug.LogError("isCharSelect または charBtn が初期化されていません");
             return;
         }
         if (PhotonNetwork.PlayerList == null || PhotonNetwork.PlayerList.Length == 0)
@@ -287,11 +315,9 @@ public class SelectChar : MonoBehaviourPunCallbacks
             return;
         }
         //初期化
-        for (int i = 0; i < isCharSelect.Length; i++)
+        foreach (Button btn in charBtn)
         {
-            isCharSelect[i] = false;
-            //一度すべてのボタンを有効化
-            charBtn[i].interactable = true;
+            btn.interactable = true;
         }
         //各プレイヤーの選択状態を確認し、選択済みのキャラクターのボタンを無効化
         foreach (var player in PhotonNetwork.PlayerList)
@@ -320,17 +346,45 @@ public class SelectChar : MonoBehaviourPunCallbacks
     //プレイヤーが部屋に入ったタイミングで、初期化されているか確認
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        ExitGames.Client.Photon.Hashtable properties = new ExitGames.Client.Photon.Hashtable();
-        if (!newPlayer.CustomProperties.ContainsKey("CharSelect"))
+        Debug.Log($"新しいプレイヤーが参加しました: {newPlayer.NickName}");
+        if (PhotonNetwork.IsMasterClient)
         {
-            //未選択状態を示す
-            properties["CharSelect"] = -1; 
-            newPlayer.SetCustomProperties(properties);
+            //新しいプレイヤーに既存のキャラ選択状態を同期
+            StartCoroutine(SyncWithNewPlayer(newPlayer));
         }
+    }
+    private IEnumerator SyncWithNewPlayer(Player newPlayer)
+    {
+        yield return new WaitForSeconds(0.2f); //少し遅延を設ける
+        photonView.RPC("SyncCharSelectState", newPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
     }
     //プレイヤーが参加してきた時に呼び出し
     public override void OnJoinedRoom()
     {
+        Debug.Log("部屋に参加しました");
+        StartCoroutine(DelayedSync());
+    }
+    //レイヤーが新規に部屋に参加したときに、既存プレイヤーが選択したキャラクターの状態を新しいプレイヤーに同期
+    [PunRPC]
+    public void SyncCharSelectState(int requestingPlayerID)
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.CustomProperties.TryGetValue("CharSelect", out object charIdxObj))
+            {
+                int charIdx = (int)charIdxObj;
+                if (charIdx >= 0 && charIdx < isCharSelect.Length)
+                {
+                    // 全プレイヤーにキャラ選択情報をブロードキャスト
+                    photonView.RPC("UpdateCharSelectState", RpcTarget.AllBuffered, charIdx);
+                }
+            }
+        }
+    }
+    //RPC 呼び出しのタイミングを遅らせる
+    private IEnumerator DelayedSync()
+    {
+        yield return new WaitForSeconds(0.2f); //短い遅延を設ける
         UpdateCharSelectFromProperties();
     }
 }

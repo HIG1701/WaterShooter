@@ -5314,6 +5314,7 @@ MonoBehaviour:
   - {fileID: 874273557}
   - {fileID: 1708708805}
   - {fileID: 838376667}
+  isCharSelect: 000000000000
 --- !u!114 &1376416518
 MonoBehaviour:
   m_ObjectHideFlags: 0
