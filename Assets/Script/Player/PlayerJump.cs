@@ -5,6 +5,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerJump : MonoBehaviour
 {
+    [SerializeField] private PlayerParameter playerParameter;
     private Rigidbody rb;
     private Status playerStatus = Status.GROUND;        //状態
     private float timeKeeper = 0f;                      //経過時間計測
@@ -12,7 +13,6 @@ public class PlayerJump : MonoBehaviour
     private Animator animator;
     readonly float lowerLimit = 0.03f;                  //ジャンプ時間制限
     readonly float gravity = 30.0f;
-    [SerializeField] private PlayerParameter playerParameter;
 
     private enum Status
     {
