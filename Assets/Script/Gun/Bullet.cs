@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     private float range;                                           //Ë’ö‹——£
     private Vector3 startPosition;
     private Rigidbody rb;
+    private HitScan hitScan = new HitScan();
 
     private void Start()
     {
@@ -24,6 +25,8 @@ public class Bullet : MonoBehaviour
         rb.velocity = transform.forward * speed;
     }
 
+
+
     private void FixedUpdate()
     {
         //Ë’ö‹——£‚É’B‚µ‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
@@ -33,6 +36,15 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //áŠQ•¨‚É“–‚½‚Á‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
+        Debug.Log(collision.gameObject);
+        if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
+        {
+            hitScan.HitToCharacter(playerController, gunParameter);
+        }
+        else if (collision.gameObject.TryGetComponent<PlayerAIController>(out PlayerAIController playerAiController))
+        {
+            hitScan.HitToCharacter(playerAiController, gunParameter);
+        }
         Destroy(gameObject);
     }
 }

@@ -1,3 +1,4 @@
+using System.Data.Common;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,6 +21,8 @@ public class PlayerAIController : MonoBehaviour
     private bool isWalkingSimulator = false;
     private Rigidbody rb;
 
+    public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
+
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
@@ -35,8 +38,6 @@ public class PlayerAIController : MonoBehaviour
         CharacterLifeCycle();
         CharacterHide();
     }
-
-
 
     private void OnPlayerInSight()
     {

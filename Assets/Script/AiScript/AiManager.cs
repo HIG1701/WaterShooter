@@ -1,118 +1,121 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
-public class MapGenerator : MonoBehaviour
+public class HitScan
 {
-    [SerializeField] private GameObject moveRangeIndicatorPrefab;
-    [SerializeField] private MapDateBase mapDate;
-    [SerializeField] private MapManager mapManager;
+    private Bullet bullet;
+    private PlayerDate playerDate;
+    private static List<PlayerDate> parameters = new List<PlayerDate>();
 
-    private void Awake()
+    public void ParametersReset()
     {
-        mapManager = FindObjectOfType<MapManager>();
+        parameters.Clear();
     }
 
-    public List<GameObject> moveRangeIndicators = new List<GameObject>();
-
-    public void MovementRangeRender(Vector2Int characterPosition, CharactersDates moveRange, Character characterSystem)
+    /// <summary>
+    /// 可変のパラメータとしてコビー。
+    /// </summary>
+    /// <param name="playerParameter">受け取ったマスターデータをリストに格納</param>
+    public void AddPlayerParameter(PlayerParameter playerParameter)
     {
-        int i = 0;
-        int j = 0;
-        int k = 3;
-        ClearMovementRangeIndicators();
-        characterSystem.rangeTileList.Clear();
-        characterSystem.tileIntNumber.Clear();
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        Dictionary<Vector2Int, int> distances = new Dictionary<Vector2Int, int>();
+        playerDate = new PlayerDate();
+        playerDate.date.playerID = playerParameter.PlayerID;
+        playerDate.date.playerName = playerParameter.PlayerName;
+        playerDate.date.playerHeight = playerParameter.PlayerHeight;
+        playerDate.date.playerHP = playerParameter.PlayerHP;
+        playerDate.date.playerShield = playerParameter.PlayerShield;
+        playerDate.date.initialVelocity = playerParameter.InitialVelocity;
+        playerDate.date.playerSpeed = playerParameter.PlayerSpeed;
+        playerDate.date.sprintSpeed = playerParameter.SprintSpeed;
+        playerDate.date.jumpVelocity = playerParameter.JumpVelocity;
+        playerDate.date.playerInventory = playerParameter.playerInventory;
+        parameters.Add(playerDate);
+    }
 
-        queue.Enqueue(characterPosition);
-        distances[characterPosition] = 0;
+    public void Test()
+    {
+        Debug.Log(parameters[0].date.playerID);
+        Debug.Log(parameters[1].date.playerID);
+    }
 
-        while (queue.Count > 0)
+    /// <summary>
+    /// 銃くらったときの処理
+    /// </summary>
+    /// <param name="playerController">この中に入ってるパラメータがほしい</param>
+    /// <param name="gunParameter">銃のパラメータももらいます</param>
+    public void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
+    {
+        //例外をあとでいれる
+        PlayerParameter thisParameter = playerController.SendPlayerParameter;
+        for (int i = 0; i < parameters.Count; i++)
         {
-            Vector2Int current = queue.Dequeue();
-            int currentDistance = distances[current];
-
-            foreach (Vector2Int neighbor in GetNeighbors(current))
+            if (thisParameter.PlayerID == parameters[i].date.playerID)
             {
-                if (distances.ContainsKey(neighbor))
-                    continue;
-
-                if (Mathf.Abs(neighbor.x - characterPosition.x) + Mathf.Abs(neighbor.y - characterPosition.y) <= moveRange.date.movementRange
-                    && mapDate.tileList.Contains(neighbor))
-                {
-                    int newDistance = currentDistance + 1;
-                    if (newDistance <= moveRange.date.movementRange)
-                    {
-
-
-                        queue.Enqueue(neighbor);
-                        distances[neighbor] = newDistance;
-                        Vector3 worldPosition = new Vector3(neighbor.x, neighbor.y, 0);
-                        GameObject indicator = Instantiate(moveRangeIndicatorPrefab, worldPosition, Quaternion.identity);
-                        moveRangeIndicators.Add(indicator);
-
-                        if (characterSystem.rangeTileList.Count < moveRangeIndicators.Count)
-                            if (j < k)
-                            {
-
-                                characterSystem.tileIntNumber.Add(i);
-                                j++;
-                            }
-                            else if (j == k)
-                            {
-                                characterSystem.tileIntNumber.Add(i);
-                                i++;
-                                k += 4;
-                                j = 0;
-                            }
-                        {
-                            characterSystem.rangeTileList.Add(neighbor);
-                        }
-                    }
-                }
-                else
-                {
-                    if (characterSystem.rangeTileList.Count < moveRangeIndicators.Count)
-                        if (j < k)
-                        {
-
-                            characterSystem.tileIntNumber.Add(-1);
-                            j++;
-                        }
-                        else if (j == k)
-                        {
-                            characterSystem.tileIntNumber.Add(-1);
-                            i++;
-                            k += 4;
-                            j = 0;
-                        }
-                }
+                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
+                parameters[i].date.playerHP = parameters[i].date.playerHP - gunParameter.GunPower;
+                Debug.Log(parameters[i].date.playerHP);
+                break;
             }
         }
+        
     }
 
-    private List<Vector2Int> GetNeighbors(Vector2Int position)
+    /// <summary>
+    /// 上の処理のオーバーロード
+    /// </summary>
+    /// <param name="playerAiController"></param>
+    /// <param name="gunParameter"></param>
+    public void HitToCharacter(PlayerAIController playerAiController, GunParameter gunParameter)
     {
-        List<Vector2Int> neighbors = new List<Vector2Int>
+        //例外をあとでいれる
+        PlayerParameter thisParameter = playerAiController.SendPlayerParameter;
+        for (int i = 0; i < parameters.Count; i++)
         {
-            new Vector2Int(position.x + 1, position.y),
-            new Vector2Int(position.x - 1, position.y),
-            new Vector2Int(position.x, position.y + 1),
-            new Vector2Int(position.x, position.y - 1)
-        };
-
-        return neighbors;
-    }
-
-    public void ClearMovementRangeIndicators()
-    {
-        foreach (var indicator in moveRangeIndicators)
-        {
-            Destroy(indicator);
+            if (thisParameter.PlayerID == parameters[i].date.playerID)
+            {
+                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
+                parameters[i].date.playerHP = parameters[i].date.playerHP - gunParameter.GunPower;
+                Debug.Log(parameters[i].date.playerHP);
+                break;
+            }
         }
-        moveRangeIndicators.Clear();
+
     }
+}
+
+/// <summary>
+/// 中身は、自由にいじれるようになったPlayerParameter.
+/// </summary>
+public class PlayerDate
+{
+    public PlayerDateStruct date;
+
+    public PlayerDate()
+    {
+        date = new PlayerDateStruct();
+    }
+
+    public PlayerDate(PlayerDate playerDate)
+    {
+        this.date = playerDate.date;
+    }
+}
+
+public struct PlayerDateStruct
+{
+    public int playerID;                    //プレイヤーID
+    public string playerName;               //プレイヤー名
+    public float playerHeight;              //プレイヤー身長
+
+    public float playerHP;                  //体力
+    public float playerShield;              //シールド耐久力
+    public float initialVelocity;           //ジャンプ力
+
+    public float playerSpeed;               //通常速度
+    public float sprintSpeed;               //加速
+    public float jumpVelocity;              //ジャンプ速度
+
+    public PlayerInventory playerInventory;
 }

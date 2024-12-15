@@ -49,7 +49,9 @@ public class PlayerController : MonoBehaviour
         //マウスScrollで飲料選択。数字でも可
     }
 
-    virtual public void DrinkInInventory(GameObject drinkDate)
+    public PlayerParameter SendPlayerParameter { get { return parameter; } }
+
+    public void DrinkInInventory(GameObject drinkDate)
     {
         Debug.Log(drinkDate);
         parameter.playerInventory.drinkType.Add(drinkDate);
