@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// やってることほぼゲームマネージャ
+/// </summary>
 public class HitScan
 {
-    private Bullet bullet;
     private PlayerDate playerDate;
     private static List<PlayerDate> parameters = new List<PlayerDate>();
 
@@ -31,6 +33,9 @@ public class HitScan
         playerDate.date.sprintSpeed = playerParameter.SprintSpeed;
         playerDate.date.jumpVelocity = playerParameter.JumpVelocity;
         playerDate.date.playerInventory = playerParameter.playerInventory;
+        playerDate.date.killCount = 0;
+        playerDate.date.damageCount = 0;
+        playerDate.date.deathCount = 0;
         parameters.Add(playerDate);
     }
 
@@ -63,7 +68,7 @@ public class HitScan
     }
 
     /// <summary>
-    /// 上の処理のオーバーロード
+    /// 上の処理のBOT用オーバーロード
     /// </summary>
     /// <param name="playerAiController"></param>
     /// <param name="gunParameter"></param>
@@ -83,10 +88,48 @@ public class HitScan
         }
 
     }
+    
+    /// <summary>
+    /// キル、デスを返す
+    /// </summary>
+    /// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
+    /// <param name="deathPlayerDate">デスしたプレイヤーのデータ</param>
+    /// <returns>名前やらIDが帰ってくる</returns>
+    public SendKillDeathLog AddKill(PlayerDate killPlayerDate, PlayerDate deathPlayerDate)
+    {
+        killPlayerDate.date.killCount++;
+        deathPlayerDate.date.deathCount++;
+        return new SendKillDeathLog
+        (
+             killPlayerDate.date.playerName,
+             killPlayerDate.date.playerID,
+             deathPlayerDate.date.playerName,
+             deathPlayerDate.date.playerID
+        );
+    }
 }
 
 /// <summary>
-/// 中身は、自由にいじれるようになったPlayerParameter.
+/// AddKill用の戻り値
+/// </summary>
+public class SendKillDeathLog
+{
+    public string KillPlayerName { get; }
+    public int KillPlayerID { get; }
+    public string DeathPlayerName { get; }
+    public int DeathPlayerID { get; }
+
+    public SendKillDeathLog(string killPlayerName, int killPlayerID, string deathPlayerName, int deathPlayerID)
+    {
+        KillPlayerName = killPlayerName;
+        KillPlayerID = killPlayerID;
+        DeathPlayerName = deathPlayerName;
+        DeathPlayerID = deathPlayerID;
+    }
+}
+
+/// <summary>
+/// 中身が自由にいじれるようになったPlayerParameter.
 /// </summary>
 public class PlayerDate
 {
@@ -116,6 +159,10 @@ public struct PlayerDateStruct
     public float playerSpeed;               //通常速度
     public float sprintSpeed;               //加速
     public float jumpVelocity;              //ジャンプ速度
+    
+    public int killCount;
+    public int damageCount;
+    public int deathCount;
 
     public PlayerInventory playerInventory;
 }

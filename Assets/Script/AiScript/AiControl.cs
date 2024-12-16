@@ -9,17 +9,16 @@ public class PlayerAIController : MonoBehaviour
     [Header(""), SerializeField] private float sightRange = 20f;
     [Header(""), SerializeField] private float shootRange = 15f;
     [Header(""), SerializeField] private float healthFight = 30f;
-    private Animator animator;
     private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
+    private Transform coinTarget;
     private NavMeshAgent agent;
     private Vector3 lastKnownPosition;
     private int coin;
     private bool playerInSight = false;
+    private bool coinInSight;
     private bool isHide = false;
-    private bool isWalkingSimulator = false;
-    private Rigidbody rb;
 
     public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
 
@@ -27,11 +26,12 @@ public class PlayerAIController : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
-        rb = this.gameObject.GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
+        Debug.Log(coinInSight);
+        Debug.Log(playerInSight);
         WalkingSimulator();
         CheckPlayerInSight();
         OnPlayerInSight();
@@ -72,19 +72,47 @@ public class PlayerAIController : MonoBehaviour
         {
             agent.SetDestination(lastKnownPosition);
         }
+
+        if (coinInSight)
+        {
+            agent.SetDestination(coinTarget.position);
+            coinInSight = false;
+        }
     }
 
     private void CheckPlayerInSight()
     {
+        GameObject thisCoinTarget = null;
+        Collider[] targetsView = Physics.OverlapSphere(transform.position, sightRange);
+        foreach (Collider target in targetsView)
+        {
+            if (target.CompareTag("Coin"))
+            {
+                Debug.Log("coin");
+                thisCoinTarget = target.gameObject;
+                coinTarget = thisCoinTarget.transform;
+            }
+        }
+
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if (distanceToPlayer <= sightRange && !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
         {
+            coinInSight = false;
             playerInSight = true;
+        }
+        else if (distanceToPlayer > sightRange || Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
+        {
+            playerInSight = false;
         }
         else
         {
+        }
+        if (thisCoinTarget)
+        {
+            Debug.Log("‚±‚¢‚ñ‚¨‚¢‚©‚¯‚é");
             playerInSight = false;
+            coinInSight = true;
         }
     }
 

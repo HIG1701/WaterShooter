@@ -5,7 +5,7 @@ using UnityEngine;
 public class TestManeger : MonoBehaviour
 {
     [SerializeField] private PlayerController controller;
-    [SerializeField] private PlayerController controller2;
+    [SerializeField] private PlayerAIController controller2;
     private HitScan hitScan = new HitScan();
     void Start()
     {
