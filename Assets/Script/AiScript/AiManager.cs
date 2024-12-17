@@ -33,6 +33,7 @@ public class HitScan
         playerDate.date.sprintSpeed = playerParameter.SprintSpeed;
         playerDate.date.jumpVelocity = playerParameter.JumpVelocity;
         playerDate.date.playerInventory = playerParameter.playerInventory;
+        playerDate.date.lastPlayerToDamage = null;
         playerDate.date.killCount = 0;
         playerDate.date.damageCount = 0;
         playerDate.date.deathCount = 0;
@@ -163,6 +164,8 @@ public struct PlayerDateStruct
     public int killCount;
     public int damageCount;
     public int deathCount;
+
+    public PlayerDate lastPlayerToDamage;
 
     public PlayerInventory playerInventory;
 }

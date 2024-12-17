@@ -1,53 +1,72 @@
 using UnityEngine;
 
-public class HeadAimController : MonoBehaviour
+public class BotAim : MonoBehaviour
 {
-    public Transform head;           // 頭部（head）ボーン
-    public float sensitivityX = 2.0f; // 横の感度
-    public float sensitivityY = 2.0f; // 縦の感度
-    public float minPitch = -45f;     // 上下の角度制限
-    public float maxPitch = 45f;      // 上下の角度制限
-    public float smoothSpeed = 10f;   // 補間スピード
+    [Header("ターゲットの設定")]
+    public Transform target; // BOTがエイムするターゲット（プレイヤーなど）
 
-    private float currentPitch = 0f;  // 現在の上下角度
-    private float currentYaw = 0f;    // 現在の左右角度
-    private Quaternion initialRotation; // 初期の頭部回転
-    private Vector3 initialEulerAngles; // 初期の頭部のオイラー角
-    private Vector3 currentEulerAngles; // 現在のオイラー角
+    [Header("エイムの速度と精度")]
+    public float rotationSpeed = 5f; // エイムの回転速度
+    public float aimAccuracy = 0.95f; // エイムの精度 (0 ~ 1) 1なら完璧に追尾
 
-    void Start()
+    [Header("可視化の設定")]
+    public LineRenderer aimLine; // 赤い線を描画するLineRenderer
+    public float lineLength = 10f; // 赤い線の長さ
+
+    private void Start()
     {
-        // headボーンが指定されていない場合はエラーを表示
-        if (head == null)
+        if (aimLine == null)
         {
-            Debug.LogError("Head Transform is not assigned!");
-            return;
+            // LineRendererがアタッチされていなかったら自動生成
+            aimLine = gameObject.AddComponent<LineRenderer>();
+            aimLine.startWidth = 0.05f;
+            aimLine.endWidth = 0.05f;
+            aimLine.material = new Material(Shader.Find("Sprites/Default"));
+            aimLine.startColor = Color.red;
+            aimLine.endColor = Color.red;
         }
-
-        // 初期の回転を保存
-        initialRotation = head.localRotation;
-        initialEulerAngles = head.localEulerAngles;
     }
 
-    void Update()
+    private void Update()
     {
-        // マウス入力の取得
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        AimAtTarget();
+        DrawAimLine();
+    }
 
-        // 回転角度を計算
-        currentPitch = Mathf.Clamp(currentPitch - mouseY * sensitivityY, minPitch, maxPitch);
-        currentYaw = currentYaw + mouseX * sensitivityX;
+    /// <summary>
+    /// ターゲットの方向を向く
+    /// </summary>
+    private void AimAtTarget()
+    {
+        if (target == null) return;
 
-        // 現在のオイラー角を計算
-        currentEulerAngles = initialEulerAngles;
-        currentEulerAngles.x = currentPitch; // 上下
-        currentEulerAngles.y = currentYaw;   // 左右
+        // ターゲットの方向を計算
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
 
-        // スムーズに補間
-        Vector3 smoothedEulerAngles = Vector3.Lerp(head.localEulerAngles, currentEulerAngles, Time.deltaTime * smoothSpeed);
+        // 現在のBOTの向きを取得
+        Quaternion currentRotation = transform.rotation;
 
-        // 新しい回転を設定
-        head.localRotation = Quaternion.Euler(smoothedEulerAngles);
+        // ターゲットの方向を向くための回転を計算
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+
+        // 回転をスムーズに補間
+        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotationSpeed * aimAccuracy);
+    }
+
+    /// <summary>
+    /// エイムの方向を赤い線で表示する
+    /// </summary>
+    private void DrawAimLine()
+    {
+        if (aimLine == null) return;
+
+        // BOTの前方（forward）の方向を計算
+        Vector3 lineStart = transform.position + Vector3.up * 1.5f; // BOTの少し上から線を描画
+        Vector3 lineEnd = lineStart + transform.forward * lineLength;
+
+        // LineRendererで線を描画
+        aimLine.positionCount = 2;
+        aimLine.SetPosition(0, lineStart);
+        aimLine.SetPosition(1, lineEnd);
     }
 }

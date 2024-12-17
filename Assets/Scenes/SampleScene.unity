@@ -1071,6 +1071,23 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &458525639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458525627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b918009d555bf042a501b9bd75628b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1860431872}
+  rotationSpeed: 50
+  aimAccuracy: 0.95
+  aimLine: {fileID: 0}
+  lineLength: 10
 --- !u!1 &461702753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1583,6 +1600,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 216756162097034993, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1078709346524508334, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: m_Name
       value: AmamiyaBox (1)
@@ -1594,6 +1615,14 @@ PrefabInstance:
     - target: {fileID: 1700025265582737932, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.518
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630167935842336593, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -27.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630167935842336593, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 26.49
       objectReference: {fileID: 0}
     - target: {fileID: 3533961510735680690, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: m_Drag
@@ -1729,6 +1758,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3444105145945777643, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 458525636}
+    - targetCorrespondingSourceObject: {fileID: 3444105145945777643, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 458525639}
   m_SourcePrefab: {fileID: 100100000, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
 --- !u!1 &705507993
 GameObject:
@@ -4694,6 +4726,10 @@ PrefabInstance:
     - target: {fileID: 1700025265582737932, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 3533961510735680690, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
+      propertyPath: m_Drag
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4427298067290426727, guid: 98a75751daca4a346b55750ca0d6cb2e, type: 3}
       propertyPath: rigidBody

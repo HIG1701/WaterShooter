@@ -15,4 +15,9 @@ public class TestManeger : MonoBehaviour
         hitScan.Test();
     }
 
+    private void FixedUpdate()
+    {
+        
+    }
+
 }

@@ -41,6 +41,12 @@ public class PlayerAIController : MonoBehaviour
 
     private void OnPlayerInSight()
     {
+        if (coinInSight && !playerInSight && coinTarget != null)
+        {
+            Debug.Log("cointuisewki");
+            agent.SetDestination(coinTarget.position);
+        }
+
         if (playerInSight)
         {
             lastKnownPosition = player.position;
@@ -68,15 +74,9 @@ public class PlayerAIController : MonoBehaviour
                 agent.SetDestination(player.position);
             }
         }
-        else if (lastKnownPosition != Vector3.zero)
+        else if (lastKnownPosition != Vector3.zero && !coinInSight && lastKnownPosition == this.transform.position)
         {
             agent.SetDestination(lastKnownPosition);
-        }
-
-        if (coinInSight)
-        {
-            agent.SetDestination(coinTarget.position);
-            coinInSight = false;
         }
     }
 
@@ -107,13 +107,15 @@ public class PlayerAIController : MonoBehaviour
         }
         else
         {
+            Debug.Log("aaa");
+            agent.enabled = false;
         }
-        if (thisCoinTarget)
+        if (thisCoinTarget != null)
         {
             Debug.Log("‚±‚¢‚ñ‚¨‚¢‚©‚¯‚é");
-            playerInSight = false;
             coinInSight = true;
         }
+
     }
 
     private void WalkingSimulator()
@@ -156,6 +158,7 @@ public class PlayerAIController : MonoBehaviour
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
             coin += coinManager.Coin;
+            coinTarget = null;
             Destroy(collision.gameObject);
         }
     }
