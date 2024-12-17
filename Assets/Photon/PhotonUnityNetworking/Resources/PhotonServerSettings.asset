@@ -43,6 +43,7 @@ MonoBehaviour:
   - ResetCharSelect
   - UpdateCharSelectState
   - SyncCharSelectState
+  - CheckGameStartAvailability
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -62,17 +62,6 @@ public class SelectChar : MonoBehaviourPunCallbacks
         initialize = true;
     }
 
-    public void SelectCharInitialize()
-    {
-        //初期化
-        confirmButton.interactable = false;
-        backButton.gameObject.SetActive(false);
-        foreach (Button btn in charBtn)
-        {
-            btn.interactable = true;
-        }
-    }
-
     //キャラクタ選択時に呼び出し
     public void OnCharSelect(int idx)
     {
@@ -120,6 +109,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             photonView.RPC("CharSelect", RpcTarget.AllBuffered, idx, PhotonNetwork.LocalPlayer.ActorNumber);
             photonView.RPC("UpdateCharSelectState", RpcTarget.AllBuffered, idx);
         }
+        photonView.RPC("CheckGameStartAvailability", RpcTarget.AllBuffered);
     }
     //RPCメソッド：キャラクタが選択されたことを全プレイヤーに通知
     //Photonネットワークを通じてリモートで呼び出し
@@ -186,6 +176,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
         else if (idx == -1)
         {
+            //全プレイヤー状態を再チェック
             foreach (var player in PhotonNetwork.PlayerList)
             {
                 if (player.CustomProperties.TryGetValue("CharSelect", out object charIdxObj))
@@ -193,8 +184,8 @@ public class SelectChar : MonoBehaviourPunCallbacks
                     int charIdx = (int)charIdxObj;
                     if (charIdx >= 0 && charIdx < isCharSelect.Length)
                     {
-                        isCharSelect[charIdx] = false;
-                        charBtn[charIdx].interactable = true;
+                        isCharSelect[charIdx] = true;
+                        charBtn[charIdx].interactable = false;
                     }
                 }
             }
@@ -203,6 +194,21 @@ public class SelectChar : MonoBehaviourPunCallbacks
         {
             Debug.LogError($"無効なインデックス: {idx}");
         }
+    }
+    [PunRPC]
+    public bool CheckGameStartAvailability()
+    {
+        //すべてのプレイヤーがキャラクターを選択しているか確認
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (!player.CustomProperties.ContainsKey("CharSelect") || (int)player.CustomProperties["CharSelect"] == -1)
+            {
+                //未選択のプレイヤーがいる
+                return false; 
+            }
+        }
+        //すべてのプレイヤーが選択済み
+        return true;
     }
     //選択完了ボタンを押下後に呼び出し
     public void OnConfirmSelection()
@@ -250,11 +256,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             //メッセージ更新
             msgText.text = "キャラを選択してください";
         }
-        //マスタークライアントの場合、全プレイヤーが選択しているか確認
-        if (PhotonNetwork.IsMasterClient && !AllPlayerSelect())
-        {
-            startGameButton.interactable = false;
-        }
+        photonView.RPC("CheckGameStartAvailability", RpcTarget.AllBuffered);
     }
 
     //カスタムプロパティからプレイヤーが選んだキャラクターのインデックスを取得する
@@ -270,6 +272,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             return -1; 
         }
     }
+
     //全プレーヤーがキャラクタを選択したかどうか
     private bool AllPlayerSelect()
     {
@@ -294,13 +297,16 @@ public class SelectChar : MonoBehaviourPunCallbacks
     {
         //ボタンクリック可能にする
         //onClick.AddListenerメソッドを使うことで特定の処理を実行
-        startGameButton.interactable = true;
-        startGameButton.onClick.AddListener(StartGame);
-    }
-    //ゲームシーンへ移行
-    public void StartGame() 
-    {
-        Debug.Log("ゲーム画面へ移行");
+        if (CheckGameStartAvailability())
+        {
+            startGameButton.onClick.RemoveAllListeners();
+            startGameButton.onClick.AddListener(StartGame);
+            startGameButton.interactable = true;
+        }
+        else
+        {
+            startGameButton.interactable = false;
+        }
     }
     //カスタムプロパティからキャラクター選択状態を更新するメソッド
     private void UpdateCharSelectFromProperties()
@@ -343,10 +349,24 @@ public class SelectChar : MonoBehaviourPunCallbacks
             charBtn[myCharIdx].interactable = true; //再選択を許可
         }
     }
+    //プレイヤーが参加してきた時に呼び出し
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("部屋に参加しました");
+        StartCoroutine(DelayedSync());
+    }
+    //RPC 呼び出しのタイミングを遅らせる
+    private IEnumerator DelayedSync()
+    {
+        yield return new WaitForSeconds(0.2f); //短い遅延を設ける
+        UpdateCharSelectFromProperties();
+    }
     //プレイヤーが部屋に入ったタイミングで、初期化されているか確認
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log($"新しいプレイヤーが参加しました: {newPlayer.NickName}");
+        EnableStartGameButton();
+        CheckGameStartAvailability();
         if (PhotonNetwork.IsMasterClient)
         {
             //新しいプレイヤーに既存のキャラ選択状態を同期
@@ -357,12 +377,6 @@ public class SelectChar : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(0.2f); //少し遅延を設ける
         photonView.RPC("SyncCharSelectState", newPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
-    }
-    //プレイヤーが参加してきた時に呼び出し
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("部屋に参加しました");
-        StartCoroutine(DelayedSync());
     }
     //レイヤーが新規に部屋に参加したときに、既存プレイヤーが選択したキャラクターの状態を新しいプレイヤーに同期
     [PunRPC]
@@ -381,10 +395,28 @@ public class SelectChar : MonoBehaviourPunCallbacks
             }
         }
     }
-    //RPC 呼び出しのタイミングを遅らせる
-    private IEnumerator DelayedSync()
+    //プレイヤー退出時に呼び出し
+    public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        yield return new WaitForSeconds(0.2f); //短い遅延を設ける
-        UpdateCharSelectFromProperties();
+        EnableStartGameButton();
+        CheckGameStartAvailability();
+        int selectedIdx = GetSelectedCharIndex(otherPlayer);
+        if (selectedIdx >= 0 && selectedIdx < isCharSelect.Length)
+        {
+            // 選択状態をリセット
+            isCharSelect[selectedIdx] = false;
+            charBtn[selectedIdx].interactable = true;
+
+            // 全プレイヤーに更新を通知
+            photonView.RPC("UpdateCharSelectState", RpcTarget.AllBuffered, -1);
+        }
     }
+
+    //ゲームシーンへ移行
+    public void StartGame()
+    {
+        Debug.Log("ゲーム画面へ移行");
+        PhotonNetwork.LoadLevel("3_GameScene");
+    }
+
 }

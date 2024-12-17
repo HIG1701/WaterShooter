@@ -5,13 +5,77 @@ using System.Collections;
 
 public class GameStart : MonoBehaviour
 {
-    [SerializeField] CharBoxList charBoxList;
-    [SerializeField] private Camera respawnCamera;                  //リスポーン中に使用するカメラ
+    [SerializeField] private GameObject cmr;
+    [SerializeField] private CharBoxList charBoxList;   //キャラとスポーン位置格納リスt    
+    [SerializeField] private Camera respawnCamera;      //リスポーン中に使用するカメラ
 
     private void Start()
     {
-        SpawnPlayers();
+        RetrievePlayerChar();
+        if (cmr != null)
+        {
+            Destroy(cmr);
+        }
     }
+    //プレイヤーを探す
+    private void RetrievePlayerChar()
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.CustomProperties.TryGetValue("CharSelect", out object charIndexObj))
+            {
+                int charIdx = (int)charIndexObj;
+                ApplyCharToGame(charIdx);
+            }
+            else
+            {
+                Debug.LogWarning("キャラクタが選択されていません");
+            }
+        }
+    }
+    //選んだキャラを設定していく
+    private void ApplyCharToGame(int charIdx)
+    {
+        //スポーン地点の数だけインデックスを作成
+        List<int> SpawnIndices = new List<int>();
+        for (int i = 0; i < charBoxList.posBox.Count; i++)
+        {
+            SpawnIndices.Add(i);
+        }
+
+        //シャッフルメソッドを呼び出し、シャッフル。
+        ShuffleIndex(SpawnIndices);
+        
+        int SpawnIndex = SpawnIndices[charIdx];
+
+        //プレイヤーのスポーン
+        GameObject selectChar = PhotonNetwork.Instantiate(charBoxList.charBox[charIdx].name,
+            charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+        bool isMine = selectChar.GetComponent<PhotonView>().IsMine;
+        SetChar(selectChar, isMine);
+    }
+    //キャラの固有情報をセット
+    private static void SetChar(GameObject selectChar, bool isMine)
+    {
+        //カメラを設定
+        Transform childTransform = selectChar.transform.Find("PlayerCamera");
+        GameObject selectCharChil = childTransform.gameObject;
+        if (selectCharChil != null)
+        {
+            CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
+            if (cameraFollow != null)
+            {
+                cameraFollow.enabled = isMine;
+            }
+        }
+        //プレイヤー操作スクリプトを設定
+        PlayerController playerController = selectChar.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.enabled = isMine;
+        }
+    }
+
     //リストの内容をシャッフルする
     //フィッシャーイェーツのシャッフルアルゴリズムについて、以下リンクが参考。
     //参考リンク：https://qiita.com/nkojima/items/c734f786b61a366de831
@@ -25,53 +89,6 @@ public class GameStart : MonoBehaviour
             //入れ替え処理
             Index[i] = Index[RandomIndex];
             Index[RandomIndex] = Temp;
-        }
-    }
-    //プレイヤーをスポーンさせるメソッド
-    private void SpawnPlayers()
-    {
-        //スポーン地点の数だけインデックスを作成
-        List<int> SpawnIndices = new List<int>();
-        for (int i = 0; i < charBoxList.posBox.Count; i++)
-        {
-            SpawnIndices.Add(i);
-        }
-
-        //シャッフルメソッドを呼び出し、シャッフル。
-        ShuffleIndex(SpawnIndices);
-
-        //プレイヤーをスポーン
-        for (int i = 0; i < charBoxList.charBox.Count; i++)
-        {
-            int SpawnIndex = SpawnIndices[i];
-            //charBoxList.charBox[i]：現在のプレイヤー
-            //charBoxList.posBox[spawnIndex].position：対応するスポーン位置
-            //charBoxList.posBox[spawnIndex].rotation：対応するスポーンの向き
-            //Instantiate(charBoxList.charBox[i], charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-            if (charBoxList.charBox[i].charPrefab.tag == "Player")
-            {
-                GameObject myChar = PhotonNetwork.Instantiate(charBoxList.charBox[i].charName,
-                    charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-                //自分のみ操作可能にする
-                PlayerController playerController = myChar.GetComponent<PlayerController>();
-                playerController.enabled = true;
-                Transform childTransform = myChar.transform.Find("PlayerCamera");
-                GameObject myCharChil = childTransform.gameObject;
-                CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
-                cameraFollow.enabled = true;
-                //GameObject myCharChil = gameObject.transform.Find("PlayerCamera")?.gameObject;
-                if (myCharChil == null)
-                {
-                    Debug.LogError("PlayerCamera not found or is inactive.");
-                }
-
-                //CameraFollow cameraFollow = myCharChil.GetComponent<CameraFollow>();
-                //cameraFollow.enabled = true;
-            }
-            else if (charBoxList.charBox[i].charPrefab.tag == "NPC")
-            {
-                Instantiate(charBoxList.charBox[i].charPrefab, charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-            }
         }
     }
 

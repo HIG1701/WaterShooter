@@ -112,7 +112,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
         //マスタークライアントならゲームスタートボタン有効
-        startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -131,7 +131,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         //指定されたルームに参加
         PhotonNetwork.JoinRoom(info.Name);
-        MenuMng.Instance.OpenMenu("title");
+        MenuMng.Instance.OpenMenu("loading");
     }
     public override void OnLeftRoom()
     {
