@@ -14,7 +14,7 @@ public class GameStart : MonoBehaviour
         RetrievePlayerChar();
         if (cmr != null)
         {
-            Destroy(cmr);
+            //Destroy(cmr);
         }
     }
     //プレイヤーを探す
@@ -26,6 +26,7 @@ public class GameStart : MonoBehaviour
             {
                 int charIdx = (int)charIndexObj;
                 ApplyCharToGame(charIdx);
+                Debug.Log("charIdx : " + charIdx);
             }
             else
             {
@@ -57,17 +58,32 @@ public class GameStart : MonoBehaviour
     //キャラの固有情報をセット
     private static void SetChar(GameObject selectChar, bool isMine)
     {
-        //カメラを設定
-        Transform childTransform = selectChar.transform.Find("PlayerCamera");
-        GameObject selectCharChil = childTransform.gameObject;
-        if (selectCharChil != null)
+        //キャラの選択状況確認
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("CharSelection", out object charSelectionObj))
         {
-            CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
-            if (cameraFollow != null)
+            Dictionary<string, int> charSelection = (Dictionary<string, int>)charSelectionObj;
+
+            foreach (var entry in charSelection)
             {
-                cameraFollow.enabled = isMine;
+                Debug.Log($"{entry.Key} がキャラ{entry.Value} を選択しました。");
             }
         }
+        //カメラを設定
+        Transform childTransform = selectChar.transform.Find("PlayerCamera");
+        GameObject selectCharChil = childTransform != null ? childTransform.gameObject : null;
+        //if (isMine)
+        //{
+        //    Camera cameraComponent = selectCharChil.AddComponent<Camera>();
+        //}
+        //if (selectCharChil != null)
+        //{
+        //    CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
+        //    if (cameraFollow != null)
+        //    {
+        //        cameraFollow.enabled = isMine;
+        //    }
+        //}
+
         //プレイヤー操作スクリプトを設定
         PlayerController playerController = selectChar.GetComponent<PlayerController>();
         if (playerController != null)

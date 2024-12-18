@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -224,6 +225,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         {
             EnableStartGameButton();
         }
+        DisplaySelectedCharacters();
     }
     //戻るボタン押下後に呼び出し
     public void OnBack()
@@ -349,6 +351,74 @@ public class SelectChar : MonoBehaviourPunCallbacks
             charBtn[myCharIdx].interactable = true; //再選択を許可
         }
     }
+    //プレイヤー名と選択キャラクターのマッピングを取得する
+    public void DisplaySelectedCharacters()
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            //TryGetValue("CharSelect", out object charIdxObj) は、指定したキー "CharSelect" が存在するかどうかを確認
+            //ある場合はその値を charIdxObj に格納
+            if (player.CustomProperties.TryGetValue("CharSelect", out object charIdxObj))
+            {
+                int charIdx = (int)charIdxObj;
+                Debug.Log($"{player.NickName} がキャラクター {charIdx} を選択しました。");
+                UpdateRoomCharacterSelection(charIdx, player.NickName);
+            }
+            else
+            {
+                Debug.Log($"{player.NickName} はまだキャラクターを選択していません。");
+            }
+        }
+    }
+    //キャラクターが選択された際に、部屋のカスタムプロパティに状態を保存
+    private void UpdateRoomCharacterSelection(int idx, string playerName)
+    {
+        //ExitGames.Client.Photon.Hashtable
+        //      Photonのルームやプレイヤーごとのカスタムプロパティを格納するためのデータ構造
+        ExitGames.Client.Photon.Hashtable roomProperties = new ExitGames.Client.Photon.Hashtable();
+
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("CharSelection", out object charSelectionObj))
+        {
+            //既存の状態を取得
+            //Dictionary<string, int> の構造
+            //  キー (string)： プレイヤーの名前（NickName とか）を表す
+            //  値(int)      ： 選択されたキャラクターのインデックスを表す
+            //(Dictionary<string, int>)charSelectionObj
+            //  charSelectionObj をキャストして Dictionary<string, int> 型として扱えるようにする
+            Dictionary<string, int> charSelection = (Dictionary<string, int>)charSelectionObj;
+            //プレイヤーの選択を更新
+            charSelection[playerName] = idx; 
+            roomProperties["CharSelection"] = charSelection;
+        }
+        else
+        {
+            //初めての選択
+            Dictionary<string, int> charSelection = new Dictionary<string, int>
+            {
+                { playerName, idx }
+            };
+            roomProperties["CharSelection"] = charSelection;
+        }
+        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
+    }
+    //部屋全体の選択状態を確認
+    private void DisplayRoomCharacterSelections()
+    {
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("CharSelection", out object charSelectionObj))
+        {
+            Dictionary<string, int> charSelection = (Dictionary<string, int>)charSelectionObj;
+
+            foreach (var entry in charSelection)
+            {
+                Debug.Log($"{entry.Key} がキャラ{entry.Value} を選択しました。");
+            }
+        }
+        else
+        {
+            Debug.Log("まだキャラクター選択状態はありません。");
+        }
+    }
+
     //プレイヤーが参加してきた時に呼び出し
     public override void OnJoinedRoom()
     {
@@ -416,7 +486,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     public void StartGame()
     {
         Debug.Log("ゲーム画面へ移行");
+        DisplayRoomCharacterSelections();
         PhotonNetwork.LoadLevel("3_GameScene");
     }
-
 }
