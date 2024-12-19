@@ -1,3 +1,4 @@
+using Photon.Realtime;
 using UnityEngine;
 
 public class BotAim : MonoBehaviour
@@ -37,12 +38,20 @@ public class BotAim : MonoBehaviour
     /// </summary>
     private void AimAtTarget()
     {
-        target = transform.parent.GetComponent<PlayerAIController>().SendInSightPlayerObject;
-        Debug.Log(transform.parent.GetComponent<PlayerAIController>().SendPlayerInSightCheck());
-        if (target == null || !transform.parent.gameObject.GetComponent<PlayerAIController>().SendPlayerInSightCheck())
+        target = transform.parent.GetComponent<AIControl>().SendInSightPlayerObject;
+        Debug.Log(transform.parent.GetComponent<AIControl>().SendPlayerInSightCheck());
+        if (target == null || !transform.parent.gameObject.GetComponent<AIControl>().SendPlayerInSightCheck())
         {
             this.transform.rotation = this.transform.parent.transform.rotation;
             return;
+        }
+
+        Vector3 characterAimArea = (target.transform.position - transform.position).normalized;
+        float viewAngleTarget = Vector3.Angle(transform.forward, transform.parent.forward);
+        if (viewAngleTarget < this.transform.parent.GetComponent<AIControl>().SendViewAngle() / 2
+            )
+        {
+            Debug.Log(viewAngleTarget);
         }
 
         Vector3 targetPosition = target.GetComponent<Collider>().bounds.center;

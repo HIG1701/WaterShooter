@@ -41,7 +41,7 @@ public class Bullet : MonoBehaviour
         {
             hitScan.HitToCharacter(playerController, gunParameter);
         }
-        else if (collision.gameObject.TryGetComponent<PlayerAIController>(out PlayerAIController playerAiController))
+        else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
             hitScan.HitToCharacter(playerAiController, gunParameter);
         }

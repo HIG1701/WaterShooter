@@ -1,8 +1,7 @@
-using System.Data.Common;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerAIController : MonoBehaviour
+public class AIControl : MonoBehaviour
 {
     [Header(""), SerializeField] private Transform player; 
     [Header(""), SerializeField] private LayerMask obstacleLayer;
@@ -27,6 +26,9 @@ public class PlayerAIController : MonoBehaviour
 
     public bool SendPlayerInSightCheck() { return playerInSight; }
 
+    public float SendViewAngle() { return viewAngle; }
+
+
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
@@ -35,6 +37,7 @@ public class PlayerAIController : MonoBehaviour
 
     private void Update()
     {
+        //CharacterMoveCheck();
         Debug.Log(coinInSight);
         Debug.Log(playerInSight);
         WalkingSimulator();
@@ -43,6 +46,16 @@ public class PlayerAIController : MonoBehaviour
         CharacterLifeCycle();
         CharacterHide();
     }
+
+    //bot‚ÌˆÚ“®ŠÄ‹À‘•‚·‚é‰Â”\«‚ ‚èBŒ»İ‚Í‚È‚µ‚ÅÀ‘•’†
+    //private void CharacterMoveCheck()
+    //{
+    //    Vector3 move = this.transform.position;
+    //    Vector3 lastMove = move;
+
+    //    if (lastMove.y)
+
+    //}
 
     private void OnPlayerInSight()
     {

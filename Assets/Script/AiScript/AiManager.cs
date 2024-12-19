@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,7 +71,7 @@ public class HitScan
     /// </summary>
     /// <param name="playerAiController"></param>
     /// <param name="gunParameter"></param>
-    public void HitToCharacter(PlayerAIController playerAiController, GunParameter gunParameter)
+    public void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
     {
         //—áŠO‚ð‚ ‚Æ‚Å‚¢‚ê‚é
         PlayerParameter thisParameter = playerAiController.SendPlayerParameter;
