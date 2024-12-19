@@ -12,6 +12,7 @@ public class PlayerAIController : MonoBehaviour
     private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
+    [Header(""), SerializeField] private float viewAngle;
     private Transform coinTarget;
     private NavMeshAgent agent;
     private Vector3 lastKnownPosition;
@@ -21,6 +22,10 @@ public class PlayerAIController : MonoBehaviour
     private bool isHide = false;
 
     public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
+
+    public Transform SendInSightPlayerObject { get { return player; } }
+
+    public bool SendPlayerInSightCheck() { return playerInSight; }
 
     private void Start()
     {
@@ -83,8 +88,8 @@ public class PlayerAIController : MonoBehaviour
     private void CheckPlayerInSight()
     {
         GameObject thisCoinTarget = null;
-        Collider[] targetsView = Physics.OverlapSphere(transform.position, sightRange);
-        foreach (Collider target in targetsView)
+        Collider[] targetsViewCoins = Physics.OverlapSphere(transform.position, sightRange);
+        foreach (Collider target in targetsViewCoins)
         {
             if (target.CompareTag("Coin"))
             {
@@ -94,22 +99,55 @@ public class PlayerAIController : MonoBehaviour
             }
         }
 
-        Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer <= sightRange && !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
+        GameObject thisTargetPlayerObject = null;
+        Collider[] targetsViewPlayer = Physics.OverlapSphere(transform.position, sightRange);
+        foreach (Collider target in targetsViewPlayer)
         {
-            coinInSight = false;
-            playerInSight = true;
+            if (target.CompareTag("Player"))
+            {
+                Debug.Log("Player");
+                thisTargetPlayerObject = target.gameObject;
+                coinTarget = thisTargetPlayerObject.transform;
+            }
         }
-        else if (distanceToPlayer > sightRange || Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
+        if (thisTargetPlayerObject != null)
         {
-            playerInSight = false;
+            Vector3 directionToTarget = (thisTargetPlayerObject.transform.position - transform.position).normalized;
+
+            float viewAngleTarget = Vector3.Angle(transform.forward, directionToTarget);
+            if (viewAngleTarget < viewAngle / 2)
+            {
+                player = thisTargetPlayerObject.transform;
+            }
         }
-        else
+
+        if (player != null)
         {
-            Debug.Log("aaa");
-            agent.enabled = false;
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            var targetPlayer = Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer);
+
+
+            if (
+                distanceToPlayer <= sightRange
+                && !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer)
+                && player != null
+                )
+            {
+                coinInSight = false;
+                playerInSight = true;
+            }
+            else if (distanceToPlayer > sightRange || Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
+            {
+                playerInSight = false;
+            }
+            else
+            {
+                Debug.Log("aaa");
+                agent.enabled = false;
+            }
         }
+
         if (thisCoinTarget != null)
         {
             Debug.Log("‚±‚¢‚ñ‚¨‚¢‚©‚¯‚é");

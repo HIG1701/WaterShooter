@@ -3,21 +3,20 @@ using UnityEngine;
 public class BotAim : MonoBehaviour
 {
     [Header("ターゲットの設定")]
-    public Transform target; // BOTがエイムするターゲット（プレイヤーなど）
+    public Transform target;
 
     [Header("エイムの速度と精度")]
-    public float rotationSpeed = 5f; // エイムの回転速度
-    public float aimAccuracy = 0.95f; // エイムの精度 (0 ~ 1) 1なら完璧に追尾
+    public float adsSpeed = 5f;
+    public float aimLevel = 0.95f;
 
     [Header("可視化の設定")]
-    public LineRenderer aimLine; // 赤い線を描画するLineRenderer
-    public float lineLength = 10f; // 赤い線の長さ
+    public LineRenderer aimLine;
+    public float lineLength = 10f;
 
     private void Start()
     {
         if (aimLine == null)
         {
-            // LineRendererがアタッチされていなかったら自動生成
             aimLine = gameObject.AddComponent<LineRenderer>();
             aimLine.startWidth = 0.05f;
             aimLine.endWidth = 0.05f;
@@ -38,19 +37,21 @@ public class BotAim : MonoBehaviour
     /// </summary>
     private void AimAtTarget()
     {
-        if (target == null) return;
+        target = transform.parent.GetComponent<PlayerAIController>().SendInSightPlayerObject;
+        Debug.Log(transform.parent.GetComponent<PlayerAIController>().SendPlayerInSightCheck());
+        if (target == null || !transform.parent.gameObject.GetComponent<PlayerAIController>().SendPlayerInSightCheck())
+        {
+            this.transform.rotation = this.transform.parent.transform.rotation;
+            return;
+        }
 
-        // ターゲットの方向を計算
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Vector3 targetPosition = target.GetComponent<Collider>().bounds.center;
+        Vector3 targetObject = (targetPosition - transform.position).normalized;
 
-        // 現在のBOTの向きを取得
         Quaternion currentRotation = transform.rotation;
+        Quaternion targetRotation = Quaternion.LookRotation(targetObject);
 
-        // ターゲットの方向を向くための回転を計算
-        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-        // 回転をスムーズに補間
-        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotationSpeed * aimAccuracy);
+        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * adsSpeed * aimLevel);
     }
 
     /// <summary>
@@ -60,11 +61,9 @@ public class BotAim : MonoBehaviour
     {
         if (aimLine == null) return;
 
-        // BOTの前方（forward）の方向を計算
-        Vector3 lineStart = transform.position + Vector3.up * 1.5f; // BOTの少し上から線を描画
+        Vector3 lineStart = transform.position + Vector3.up * 1.5f;
         Vector3 lineEnd = lineStart + transform.forward * lineLength;
 
-        // LineRendererで線を描画
         aimLine.positionCount = 2;
         aimLine.SetPosition(0, lineStart);
         aimLine.SetPosition(1, lineEnd);
