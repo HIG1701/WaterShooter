@@ -2,93 +2,116 @@ using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using Photon.Realtime;
 
 public class GameStart : MonoBehaviour
 {
-    [SerializeField] private GameObject cmr;
     [SerializeField] private CharBoxList charBoxList;   //キャラとスポーン位置格納リスt    
     [SerializeField] private Camera respawnCamera;      //リスポーン中に使用するカメラ
 
+    private PhotonView photonView;
+
     private void Start()
     {
+        photonView = GetComponent<PhotonView>();
         RetrievePlayerChar();
-        if (cmr != null)
-        {
-            //Destroy(cmr);
-        }
     }
     //プレイヤーを探す
     private void RetrievePlayerChar()
     {
-        foreach (var player in PhotonNetwork.PlayerList)
+        //自分のキャラクタのみ選択：LocalPlayer
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CharSelect", out object charIndexObj))
         {
-            if (player.CustomProperties.TryGetValue("CharSelect", out object charIndexObj))
-            {
-                int charIdx = (int)charIndexObj;
-                ApplyCharToGame(charIdx);
-                Debug.Log("charIdx : " + charIdx);
-            }
-            else
-            {
-                Debug.LogWarning("キャラクタが選択されていません");
-            }
+            int charIdx = (int)charIndexObj;
+            ApplyCharToGame(charIdx);
         }
+        else　{ Debug.LogWarning("キャラクタが選択されていません"); }
     }
     //選んだキャラを設定していく
     private void ApplyCharToGame(int charIdx)
     {
         //スポーン地点の数だけインデックスを作成
         List<int> SpawnIndices = new List<int>();
-        for (int i = 0; i < charBoxList.posBox.Count; i++)
-        {
-            SpawnIndices.Add(i);
-        }
+        for (int i = 0; i < charBoxList.posBox.Count; i++)　{ SpawnIndices.Add(i); }
 
         //シャッフルメソッドを呼び出し、シャッフル。
         ShuffleIndex(SpawnIndices);
         
         int SpawnIndex = SpawnIndices[charIdx];
 
-        //プレイヤーのスポーン
-        GameObject selectChar = PhotonNetwork.Instantiate(charBoxList.charBox[charIdx].name,
-            charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-        bool isMine = selectChar.GetComponent<PhotonView>().IsMine;
-        SetChar(selectChar, isMine);
-    }
-    //キャラの固有情報をセット
-    private static void SetChar(GameObject selectChar, bool isMine)
-    {
         //キャラの選択状況確認
+        //PhotonNetwork.CurrentRoom.CustomProperties.:現在の部屋に関連付けられているカスタムプロパティを取得
+        //TryGetValue("CharSelection", out object charSelectionObj):部屋のカスタムプロパティに "CharSelection" というキーが存在するかを確認
+        //      あったら true 無かったら false
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("CharSelection", out object charSelectionObj))
         {
+            Debug.Log("部屋のカスタムプロパティを確認中...");
+            //キー: プレイヤーのニックネーム（string）
+            //値  : プレイヤーが選択したキャラクターのインデックス（int）
             Dictionary<string, int> charSelection = (Dictionary<string, int>)charSelectionObj;
 
-            foreach (var entry in charSelection)
+            //自分が選択したキャラクターの情報を探す
+            if (charSelection.TryGetValue(PhotonNetwork.NickName, out int selectedCharIdx))
             {
-                Debug.Log($"{entry.Key} がキャラ{entry.Value} を選択しました。");
+                Debug.Log($"{PhotonNetwork.NickName} が選んだキャラ: {selectedCharIdx}");
+                //プレイヤーのスポーン
+                GameObject selectChar = PhotonNetwork.Instantiate(charBoxList.charBox[selectedCharIdx].name,
+                    charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
+
+                Transform childTransform = selectChar.transform.Find("PlayerCamera");
+                GameObject selectCharChil = childTransform != null ? childTransform.gameObject : null;
+
+                //カメラを設定
+                if (selectCharChil != null)
+                {
+                    Camera camera = selectCharChil.GetComponent<Camera>();
+                    CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
+                    if (camera != null && cameraFollow != null)
+                    {
+                        camera.enabled = photonView.IsMine;
+                        cameraFollow.enabled = photonView.IsMine;
+                    }
+                }
+                //プレイヤー操作スクリプトを設定
+                PlayerController playerController = selectChar.GetComponent<PlayerController>();
+                if (playerController != null)
+                {
+                    playerController.enabled = photonView.IsMine;
+                }
             }
         }
-        //カメラを設定
-        Transform childTransform = selectChar.transform.Find("PlayerCamera");
-        GameObject selectCharChil = childTransform != null ? childTransform.gameObject : null;
-        //if (isMine)
-        //{
-        //    Camera cameraComponent = selectCharChil.AddComponent<Camera>();
-        //}
-        //if (selectCharChil != null)
-        //{
-        //    CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
-        //    if (cameraFollow != null)
-        //    {
-        //        cameraFollow.enabled = isMine;
-        //    }
-        //}
+        else　{ Debug.LogWarning("CharSelectionのカスタムプロパティが見つかりませんでした"); }
+    }
 
-        //プレイヤー操作スクリプトを設定
-        PlayerController playerController = selectChar.GetComponent<PlayerController>();
-        if (playerController != null)
+    //プレイヤーのプロパティ更新時のイベント
+    public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey("CharSelect"))
         {
-            playerController.enabled = isMine;
+            int charIdx = (int)changedProps["CharSelect"];
+            Debug.Log($"{targetPlayer.NickName} がキャラクター {charIdx} を選択しました。");
+            ApplyCharToGame(charIdx);
+        }
+    }
+
+    //部屋のプロパティ更新時のイベント
+    public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged.ContainsKey("CharSelection"))
+        {
+            Debug.Log("部屋のキャラクター選択状況を更新中...");
+            ApplyUpdatedCharSelection(propertiesThatChanged["CharSelection"]);
+        }
+    }
+    private void ApplyUpdatedCharSelection(object charSelectionObj)
+    {
+        // キャラクター選択情報の更新を処理
+        Dictionary<string, int> charSelection = (Dictionary<string, int>)charSelectionObj;
+
+        if (charSelection.TryGetValue(PhotonNetwork.NickName, out int selectedCharIdx))
+        {
+            Debug.Log($"{PhotonNetwork.NickName} が選んだキャラ: {selectedCharIdx}");
+            ApplyCharToGame(selectedCharIdx);
         }
     }
 
