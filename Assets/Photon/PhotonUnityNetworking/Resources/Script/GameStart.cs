@@ -22,6 +22,7 @@ public class GameStart : MonoBehaviour
         //自分のキャラクタのみ選択：LocalPlayer
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CharSelect", out object charIndexObj))
         {
+            Debug.Log("確認 charIdx：" + (int)charIndexObj);
             int charIdx = (int)charIndexObj;
             ApplyCharToGame(charIdx);
         }
@@ -68,15 +69,15 @@ public class GameStart : MonoBehaviour
                     CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
                     if (camera != null && cameraFollow != null)
                     {
-                        camera.enabled = photonView.IsMine;
-                        cameraFollow.enabled = photonView.IsMine;
+                        camera.enabled = true;
+                        cameraFollow.enabled = true;
                     }
                 }
                 //プレイヤー操作スクリプトを設定
                 PlayerController playerController = selectChar.GetComponent<PlayerController>();
                 if (playerController != null)
                 {
-                    playerController.enabled = photonView.IsMine;
+                    playerController.enabled = true;
                 }
             }
         }
