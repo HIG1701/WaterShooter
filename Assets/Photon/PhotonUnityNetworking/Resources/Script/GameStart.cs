@@ -9,11 +9,8 @@ public class GameStart : MonoBehaviour
     [SerializeField] private CharBoxList charBoxList;   //キャラとスポーン位置格納リスt    
     [SerializeField] private Camera respawnCamera;      //リスポーン中に使用するカメラ
 
-    private PhotonView photonView;
-
     private void Start()
     {
-        photonView = GetComponent<PhotonView>();
         RetrievePlayerChar();
     }
     //プレイヤーを探す
@@ -37,7 +34,6 @@ public class GameStart : MonoBehaviour
 
         //シャッフルメソッドを呼び出し、シャッフル。
         ShuffleIndex(SpawnIndices);
-        
         int SpawnIndex = SpawnIndices[charIdx];
 
         //キャラの選択状況確認
@@ -58,7 +54,7 @@ public class GameStart : MonoBehaviour
                 //プレイヤーのスポーン
                 GameObject selectChar = PhotonNetwork.Instantiate(charBoxList.charBox[selectedCharIdx].name,
                     charBoxList.posBox[SpawnIndex].position, charBoxList.posBox[SpawnIndex].rotation);
-
+                //プレイヤーの子オブジェクト「カメラ」を探す
                 Transform childTransform = selectChar.transform.Find("PlayerCamera");
                 GameObject selectCharChil = childTransform != null ? childTransform.gameObject : null;
 
@@ -69,6 +65,7 @@ public class GameStart : MonoBehaviour
                     CameraFollow cameraFollow = selectCharChil.GetComponent<CameraFollow>();
                     if (camera != null && cameraFollow != null)
                     {
+                        //カメラを追従するスクリプトを有効化
                         camera.enabled = true;
                         cameraFollow.enabled = true;
                     }
@@ -77,6 +74,7 @@ public class GameStart : MonoBehaviour
                 PlayerController playerController = selectChar.GetComponent<PlayerController>();
                 if (playerController != null)
                 {
+                    //プレイヤーの移動処理のスクリプトを有効化
                     playerController.enabled = true;
                 }
             }

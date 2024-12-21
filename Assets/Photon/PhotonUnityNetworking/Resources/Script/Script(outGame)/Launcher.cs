@@ -121,12 +121,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         //スタートボタンの有無を設定
         startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
     }
-    //public void LeaveRoom()
-    //{
-    //    //ルーム退出し、ローディング画面を表示
-    //    PhotonNetwork.LeaveRoom();
-    //    MenuMng.Instance.OpenMenu("loadeing");
-    //}
     public void JoinRoom(RoomInfo info)
     {
         //指定されたルームに参加
@@ -161,24 +155,15 @@ public class Launcher : MonoBehaviourPunCallbacks
             }
             Instantiate(roomListPrefab, roomListContent).GetComponent<RoomList>().SetUp(roomList[i]);
         }
-        //TODO (3)_キャラ生成
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        //TODO(4)_ルーム作成に失敗したとき
         errorMsg.text = "Room Creation Failed: " + message;
         MenuMng.Instance.OpenMenu("errorMsg");
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(newPlayer); 
-    }
-    public void StartGame()
-    {
-        //ゲーム開始
-        //マスタークライアントがゲームを開始
-        //全員がゲームシーンへ移動
-        //PhotonNetwork.LoadLevel("3_GameScene");
     }
     public void QuitGame()
     {
