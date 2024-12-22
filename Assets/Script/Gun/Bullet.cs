@@ -12,7 +12,6 @@ public class Bullet : MonoBehaviour
     private float range;                                           //ŽË’ö‹——£
     private Vector3 startPosition;
     private Rigidbody rb;
-    private HitScan hitScan = new HitScan();
 
     private void Start()
     {
@@ -39,11 +38,11 @@ public class Bullet : MonoBehaviour
         Debug.Log(collision.gameObject);
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
         {
-            hitScan.HitToCharacter(playerController, gunParameter);
+            //hitScan.HitToCharacter(playerController, gunParameter);
         }
         else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
-            hitScan.HitToCharacter(playerAiController, gunParameter);
+            //.HitToCharacter(playerAiController, gunParameter);
         }
         Destroy(gameObject);
     }

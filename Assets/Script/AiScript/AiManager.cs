@@ -1,69 +1,58 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
 /// やってることほぼゲームマネージャ
 /// </summary>
-public class HitScan
+public static class PlayerManager
 {
-    private PlayerDate playerDate;
-    private static List<PlayerDate> parameters = new List<PlayerDate>();
+    public static List<PlayerDate> parameters = new List<PlayerDate>();
 
-    public void ParametersReset()
+    public static void ParametersReset()
     {
         parameters.Clear();
     }
 
-    /// <summary>
-    /// 可変のパラメータとしてコビー。
-    /// </summary>
-    /// <param name="playerParameter">受け取ったマスターデータをリストに格納</param>
-    public void AddPlayerParameter(PlayerParameter playerParameter)
+    public static void SetPlayerDate(PlayerController playerController)
     {
-        playerDate = new PlayerDate();
-        playerDate.date.playerID = playerParameter.PlayerID;
-        playerDate.date.playerName = playerParameter.PlayerName;
-        playerDate.date.playerHeight = playerParameter.PlayerHeight;
-        playerDate.date.playerHP = playerParameter.PlayerHP;
-        playerDate.date.playerShield = playerParameter.PlayerShield;
-        playerDate.date.initialVelocity = playerParameter.InitialVelocity;
-        playerDate.date.playerSpeed = playerParameter.PlayerSpeed;
-        playerDate.date.sprintSpeed = playerParameter.SprintSpeed;
-        playerDate.date.jumpVelocity = playerParameter.JumpVelocity;
-        playerDate.date.playerInventory = playerParameter.playerInventory;
-        playerDate.date.lastPlayerToDamage = null;
-        playerDate.date.killCount = 0;
-        playerDate.date.damageCount = 0;
-        playerDate.date.deathCount = 0;
+        PlayerParameter player = playerController.gameObject.GetComponent<PlayerController>().SendPlayerParameter;
+        PlayerDate playerDate = new PlayerDate();
+        playerDate.playerParameter = player;
         parameters.Add(playerDate);
     }
 
-    public void Test()
+    public static void SetPlayerDate(AIControl aiControl)
     {
-        Debug.Log(parameters[0].date.playerID);
-        Debug.Log(parameters[1].date.playerID);
+        PlayerParameter player = aiControl.gameObject.GetComponent<AIControl>().SendPlayerParameter;
+        PlayerDate playerDate = new PlayerDate();
+        playerDate.playerParameter = player;
+        parameters.Add(playerDate);
     }
+}
 
+public static class DamageManager
+{
     /// <summary>
     /// 銃くらったときの処理
     /// </summary>
     /// <param name="playerController">この中に入ってるパラメータがほしい</param>
     /// <param name="gunParameter">銃のパラメータももらいます</param>
-    public void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
+    public static void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
     {
         //例外をあとでいれる
         PlayerParameter thisParameter = playerController.SendPlayerParameter;
-        for (int i = 0; i < parameters.Count; i++)
+        for (int i = 0; i < PlayerManager.parameters.Count; i++)
         {
-            if (thisParameter.PlayerID == parameters[i].date.playerID)
+            if (thisParameter.PlayerID == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
-                parameters[i].date.playerHP = parameters[i].date.playerHP - gunParameter.GunPower;
-                Debug.Log(parameters[i].date.playerHP);
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }
-        
+
     }
 
     /// <summary>
@@ -71,41 +60,41 @@ public class HitScan
     /// </summary>
     /// <param name="playerAiController"></param>
     /// <param name="gunParameter"></param>
-    public void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
+    public static void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
     {
         //例外をあとでいれる
         PlayerParameter thisParameter = playerAiController.SendPlayerParameter;
-        for (int i = 0; i < parameters.Count; i++)
+        for (int i = 0; i < PlayerManager.parameters.Count; i++)
         {
-            if (thisParameter.PlayerID == parameters[i].date.playerID)
+            if (thisParameter.PlayerID == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
-                parameters[i].date.playerHP = parameters[i].date.playerHP - gunParameter.GunPower;
-                Debug.Log(parameters[i].date.playerHP);
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }
 
     }
-    
-    /// <summary>
-    /// キル、デスを返す
-    /// </summary>
-    /// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
-    /// <param name="deathPlayerDate">デスしたプレイヤーのデータ</param>
-    /// <returns>名前やらIDが帰ってくる</returns>
-    public SendKillDeathLog AddKill(PlayerDate killPlayerDate, PlayerDate deathPlayerDate)
-    {
-        killPlayerDate.date.killCount++;
-        deathPlayerDate.date.deathCount++;
-        return new SendKillDeathLog
-        (
-             killPlayerDate.date.playerName,
-             killPlayerDate.date.playerID,
-             deathPlayerDate.date.playerName,
-             deathPlayerDate.date.playerID
-        );
-    }
+
+    ///// <summary>
+    ///// キル、デスを返す
+    ///// </summary>
+    ///// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
+    ///// <param name="deathPlayerDate">デスしたプレイヤーのデータ</param>
+    ///// <returns>名前やらIDが帰ってくる</returns>
+    //public static SendKillDeathLog AddKill(PlayerRuntimeDate killPlayerDate, PlayerRuntimeDate deathPlayerDate)
+    //{
+    //    killPlayerDate.date.killCount++;
+    //    deathPlayerDate.date.deathCount++;
+    //    return new SendKillDeathLog
+    //    (
+    //         killPlayerDate.date.playerName,
+    //         killPlayerDate.date.playerID,
+    //         deathPlayerDate.date.playerName,
+    //         deathPlayerDate.date.playerID
+    //    );
+    //}
 }
 
 /// <summary>
@@ -127,29 +116,34 @@ public class SendKillDeathLog
     }
 }
 
+public class PlayerDate
+{
+    public PlayerParameter playerParameter = new();
+    public PlayerRuntimeDate playerRuntimeDate = new();
+    public PlayerManagementDate playerManagementDate = new();
+}
+
 /// <summary>
 /// 中身が自由にいじれるようになったPlayerParameter.
 /// </summary>
-public class PlayerDate
+public class PlayerRuntimeDate
 {
-    public PlayerDateStruct date;
+    public PlayerRuntimeDateStruct date;
 
-    public PlayerDate()
+    public PlayerRuntimeDate()
     {
-        date = new PlayerDateStruct();
+        date = new PlayerRuntimeDateStruct();
     }
 
-    public PlayerDate(PlayerDate playerDate)
+    public PlayerRuntimeDate(PlayerRuntimeDate playerDate)
     {
         this.date = playerDate.date;
     }
 }
-
-public struct PlayerDateStruct
+public struct PlayerRuntimeDateStruct
 {
     public int playerID;                    //プレイヤーID
     public string playerName;               //プレイヤー名
-    public float playerHeight;              //プレイヤー身長
 
     public float playerHP;                  //体力
     public float playerShield;              //シールド耐久力
@@ -158,12 +152,32 @@ public struct PlayerDateStruct
     public float playerSpeed;               //通常速度
     public float sprintSpeed;               //加速
     public float jumpVelocity;              //ジャンプ速度
-    
+}
+
+/// <summary>
+/// 一時的なゲーム進行をささえるデータ.
+/// </summary>
+public class PlayerManagementDate
+{
+    public PlayerManagementDateStruct date;
+
+    public PlayerManagementDate()
+    {
+        date = new PlayerManagementDateStruct();
+    }
+
+    public PlayerManagementDate(PlayerManagementDate playerDate)
+    {
+        this.date = playerDate.date;
+    }
+}
+public struct PlayerManagementDateStruct
+{
     public int killCount;
     public int damageCount;
     public int deathCount;
 
-    public PlayerDate lastPlayerToDamage;
+    public PlayerRuntimeDate lastPlayerToDamage;
 
     public PlayerInventory playerInventory;
 }

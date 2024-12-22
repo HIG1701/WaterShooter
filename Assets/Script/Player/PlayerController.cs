@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
     public void DrinkInInventory(GameObject drinkDate)
     {
         Debug.Log(drinkDate);
-        parameter.playerInventory.drinkType.Add(drinkDate);
+        //parameter.playerInventory.drinkType.Add(drinkDate);
     }
 
     public virtual void PlayerMove()
