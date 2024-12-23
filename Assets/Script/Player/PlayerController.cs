@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     {
         PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        //PlayerClimbing();                                       //壁登り処理（内容未実装）
+        //PlayerClimbing();                                       //壁登り処理
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
         PlayerReload();                                         //リロード
         PlayerAbility();                                        //アビリティ（内容未実装）

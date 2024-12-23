@@ -1,27 +1,27 @@
 using UnityEngine;
 
-// このスクリプタブルオブジェクトに、プレイヤーのParameterを書きます
+//このスクリプタブルオブジェクトに、プレイヤーのParameterを書きます
 [CreateAssetMenu(menuName = "ScriptableObject/PlayerParameter")]
 public class PlayerParameter : ScriptableObject
 {
     [Header("プレイヤーの設定に関するParameter")]
-    [SerializeField] private int playerID;                    // プレイヤーID
-    [SerializeField] private string playerName;               // プレイヤー名
-    [SerializeField] private float playerHeight;              // プレイヤー身長
+    [SerializeField] private int playerID;                    //プレイヤーID
+    [SerializeField] private string playerName;               //プレイヤー名
+    [SerializeField] private float playerHeight;              //プレイヤー身長
 
     [Header("プレイヤーのInGameに影響するParameter")]
-    [SerializeField] private float playerHP = 100f;           // 体力
-    [SerializeField] private float playerShield = 50f;        // シールド耐久力
-    [SerializeField] private float initialVelocity = 5f;      // ジャンプ力
+    [SerializeField] private float playerHP = 100f;           //体力
+    [SerializeField] private float playerShield = 50f;        //シールド耐久力
+    [SerializeField] private float initialVelocity = 5f;      //ジャンプ力
 
     [Header("速度に関するParameter")]
-    [SerializeField] private float playerSpeed = 5f;          // 通常速度
-    [SerializeField] private float sprintSpeed = 10f;         // 加速
-    [SerializeField] private float climbSpeed = 3f;           // 壁を上る速度
-    [SerializeField] private float crouchSpeed = 2f;          // しゃがみ速度  
-    [SerializeField] private float jumpVelocity = 7f;         // ジャンプ速度
+    [SerializeField] private float playerSpeed = 5f;          //通常速度
+    [SerializeField] private float sprintSpeed = 10f;         //加速
+    [SerializeField] private float climbSpeed = 3f;           //壁を上る速度
+    [SerializeField] private float crouchSpeed = 2f;          //しゃがみ速度  
+    [SerializeField] private float jumpVelocity = 7f;         //ジャンプ速度
 
-    // プロパティのバリデーション
+    //プロパティのバリデーション
     private void OnValidate()
     {
         playerHP = Mathf.Max(0, playerHP);
@@ -34,7 +34,7 @@ public class PlayerParameter : ScriptableObject
         jumpVelocity = Mathf.Max(0, jumpVelocity);
     }
 
-    // プロパティの公開
+    //プロパティの公開
     public int PlayerID => playerID;
     public string PlayerName => playerName;
     public float PlayerHeight => playerHeight;
