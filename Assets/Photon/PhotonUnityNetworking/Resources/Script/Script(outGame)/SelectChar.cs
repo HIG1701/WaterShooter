@@ -143,30 +143,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             //選択されたキャラクターのボタンを無効化
             isCharSelect[idx] = true;
             charBtn[idx].interactable = false;
-            //ホストかつ全プレイヤーがキャラを選択しているかどうか確認
-            //もし選択していたらゲーム開始ボタンを有効化
-            if (PhotonNetwork.IsMasterClient && AllPlayerSelect())
-            {
-                EnableStartGameButton();
-            }
-        }
-    }
-
-    //ほかのプレイヤーからの選択解除情報を受け散るRPCメソッド
-    [PunRPC]
-    public void ResetCharSelect(int playerID)
-    {
-        //指定されたプレイヤーの選択解除のみ処理
-        if(PhotonNetwork.LocalPlayer.ActorNumber == playerID)
-        {
-            int selectedIdx = GetSelectedCharIndex(PhotonNetwork.LocalPlayer);
-            if (selectedIdx >= 0 && selectedIdx < isCharSelect.Length)
-            {
-                //キャラクターの選択状態を解除
-                isCharSelect[selectedIdx] = false;
-                //ボタンを有効化
-                charBtn[selectedIdx].interactable = true; 
-            }
+            EnableStartGameButton();
         }
     }
 
@@ -207,21 +184,23 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
     }
 
-    //すべてのプレイヤーがキャラクターを選択しているか確認
+    //選択解除後に選択されていたキャラを再度有効化
     [PunRPC]
-    public bool CheckGameStartAvailability()
+    public void ResetCharSelectionForAll(int idx)
     {
-        foreach (var player in PhotonNetwork.PlayerList)
+        if (idx >= 0 && idx < isCharSelect.Length)
         {
-            if (!player.CustomProperties.ContainsKey("CharSelect") || (int)player.CustomProperties["CharSelect"] == -1)
-            {
-                //未選択のプレイヤーがいる
-                return false; 
-            }
+            //選択状態を解除
+            isCharSelect[idx] = false;
+            //対応するボタンを再有効化
+            charBtn[idx].interactable = confirmButton.interactable ? true : false;
         }
-        //すべてのプレイヤーが選択済み
-        return true;
+        else
+        {
+            //エラー処理
+        }
     }
+
 
     //選択完了ボタンを押下後に呼び出し
     public void OnConfirmSelection()
@@ -233,10 +212,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
         confirmButton.interactable = false;
         backButton.gameObject.SetActive(true);
         //ゲーム開始ボタンが有効かどうかのチェック
-        if (PhotonNetwork.IsMasterClient && AllPlayerSelect())
-        {
-            EnableStartGameButton();
-        }
+        EnableStartGameButton();
         DisplaySelectedCharacters();
     }
 
@@ -257,6 +233,9 @@ public class SelectChar : MonoBehaviourPunCallbacks
             ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable { ["CharSelect"] = -1 };
             PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
 
+            //他のプレイヤーと同期
+            photonView.RPC("ResetCharSelectionForAll", RpcTarget.AllBuffered, selectedIdx);
+            
             //UIをリセット
             confirmButton.interactable = false;
             backButton.gameObject.SetActive(false);
@@ -272,6 +251,22 @@ public class SelectChar : MonoBehaviourPunCallbacks
             msgText.text = "キャラを選択してください";
         }
         photonView.RPC("CheckGameStartAvailability", RpcTarget.AllBuffered);
+        EnableStartGameButton();
+    }
+    //すべてのプレイヤーがキャラクターを選択しているか確認
+    [PunRPC]
+    public bool CheckGameStartAvailability()
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (!player.CustomProperties.ContainsKey("CharSelect") || (int)player.CustomProperties["CharSelect"] == -1)
+            {
+                //未選択のプレイヤーがいる
+                return false;
+            }
+        }
+        //すべてのプレイヤーが選択済み
+        return true;
     }
 
     //カスタムプロパティからプレイヤーが選んだキャラクターのインデックスを取得する
@@ -311,9 +306,10 @@ public class SelectChar : MonoBehaviourPunCallbacks
     //ゲーム開始ボタンを有効化
     private void EnableStartGameButton()
     {
+        if (!PhotonNetwork.IsMasterClient)  return;
         //ボタンクリック可能にする
         //onClick.AddListenerメソッドを使うことで特定の処理を実行
-        if (CheckGameStartAvailability())
+        if (CheckGameStartAvailability() && PhotonNetwork.CurrentRoom.PlayerCount != 1)
         {
             startGameButton.onClick.RemoveAllListeners();
             startGameButton.onClick.AddListener(StartGame);
@@ -453,10 +449,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log($"新しいプレイヤーが参加しました: {newPlayer.NickName}");
-        if (PhotonNetwork.IsMasterClient)
-        {
-            EnableStartGameButton();
-        }
+        EnableStartGameButton();
         CheckGameStartAvailability();
         if (PhotonNetwork.IsMasterClient)
         {
@@ -491,10 +484,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     //プレイヤー退出時に呼び出し
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            EnableStartGameButton();
-        }
+        EnableStartGameButton();
         CheckGameStartAvailability();
         int selectedIdx = GetSelectedCharIndex(otherPlayer);
         if (selectedIdx >= 0 && selectedIdx < isCharSelect.Length)
