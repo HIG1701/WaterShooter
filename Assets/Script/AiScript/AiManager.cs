@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
-/// やってることほぼゲームマネージャ
+/// InGameのプレイヤ、キャラデータベースの更新など.
 /// </summary>
 public static class PlayerManager
 {
@@ -29,6 +29,7 @@ public static class PlayerManager
         playerDate.playerParameter = player;
         parameters.Add(playerDate);
     }
+
 }
 
 public static class DamageManager

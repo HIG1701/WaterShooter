@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +10,7 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private float sightRange = 20f;
     [Header(""), SerializeField] private float shootRange = 15f;
     [Header(""), SerializeField] private float healthFight = 30f;
+    [Header(""), SerializeField] private float viewHideObjectRange = 20f;
     private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
@@ -40,6 +43,7 @@ public class AIControl : MonoBehaviour
         //CharacterMoveCheck();
         Debug.Log(coinInSight);
         Debug.Log(playerInSight);
+        StartCoroutine(CharacterHide());
         WalkingSimulator();
         CheckPlayerInSight();
         OnPlayerInSight();
@@ -52,9 +56,7 @@ public class AIControl : MonoBehaviour
     //{
     //    Vector3 move = this.transform.position;
     //    Vector3 lastMove = move;
-
     //    if (lastMove.y)
-
     //}
 
     private void OnPlayerInSight()
@@ -65,7 +67,7 @@ public class AIControl : MonoBehaviour
             agent.SetDestination(coinTarget.position);
         }
 
-        if (playerInSight)
+        if (playerInSight && isHide)
         {
             lastKnownPosition = player.position;
             if (Vector3.Distance(transform.position, player.position) <= shootRange)
@@ -173,28 +175,81 @@ public class AIControl : MonoBehaviour
     {
         if(!agent.hasPath)
         {
-            Vector3 randomDirection = Random.insideUnitSphere * sightRange;
-            randomDirection += transform.position;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
+            //Vector3 randomDirection = Random.insideUnitSphere * sightRange;
+            //randomDirection += transform.position;
+            //NavMeshHit hit;
+            //if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
+            //{
+            //    agent.SetDestination(hit.position);
+            //}
+        }
+    }
+
+
+    public LayerMask coverLayer; // 遮蔽物のレイヤー
+    public float checkRadius = 30f; // 遮蔽物を探す範囲
+    Transform bestCover = null;
+    //あとでつつぎをやる。HP低下の回避処理
+    private IEnumerator CharacterHide()
+    {
+        Debug.Log("a");
+        if (!isHide && bestCover == null)
+        {
+            Collider[] coverPoints = Physics.OverlapSphere(transform.position, checkRadius, coverLayer);
+            bestCover = null;
+            float bestScore = float.MaxValue;
+
+            foreach (Collider cover in coverPoints)
             {
-                agent.SetDestination(hit.position);
+                Vector3 coverPosition = cover.transform.position;
+                Debug.Log("ss");
+                // プレイヤーから遮蔽物への射線チェック
+                if (Physics.Linecast(player.position, coverPosition, out RaycastHit hit))
+                {
+                    if (hit.collider == cover)
+                    {
+                        // 距離をスコアとして採用
+                        float score = Vector3.Distance(transform.position, coverPosition);
+
+                        // 最良の遮蔽物を更新
+                        if (score < bestScore)
+                        {
+                            bestScore = score;
+                            bestCover = cover.transform;
+
+                            agent.SetDestination(bestCover.position); // 遮蔽物に移動
+                            Debug.Log("aaa");
+                        }
+                    }
+                }
             }
         }
-    }
 
-    //あとでつつぎをやる。HP低下の回避処理
-    private void CharacterHide()
-    {
-        if (isHide)
+        while (true) //ある程度の誤差を許容するためのループ
         {
+            Ray ray = new Ray(transform.position, transform.forward);
+            RaycastHit hit;
 
+            if (Physics.Raycast(ray, out hit, 5f, coverLayer)) //ここの5fを変数にあとでかえる
+            {
+                agent.SetDestination(transform.position);
+                bestCover = null;
+                break;
+            }
+            Debug.DrawRay(transform.position, transform.forward * 5f, Color.red);//あとでけす
+            yield return null;
         }
+
+
+
+        yield break;
     }
+
+    
 
     private void CharacterLifeCycle()
     {
-        if (playerParameter.PlayerHP >= 0)
+        if (playerParameter.PlayerHP >= 30)
         {
             isHide = true;
         }

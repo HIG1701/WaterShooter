@@ -1,4 +1,5 @@
 using Photon.Realtime;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BotAim : MonoBehaviour
@@ -38,6 +39,7 @@ public class BotAim : MonoBehaviour
     /// </summary>
     private void AimAtTarget()
     {
+        bool isAimStop = false;
         target = transform.parent.GetComponent<AIControl>().SendInSightPlayerObject;
         Debug.Log(transform.parent.GetComponent<AIControl>().SendPlayerInSightCheck());
         if (target == null || !transform.parent.gameObject.GetComponent<AIControl>().SendPlayerInSightCheck())
@@ -48,11 +50,6 @@ public class BotAim : MonoBehaviour
 
         Vector3 characterAimArea = (target.transform.position - transform.position).normalized;
         float viewAngleTarget = Vector3.Angle(transform.forward, transform.parent.forward);
-        if (viewAngleTarget < this.transform.parent.GetComponent<AIControl>().SendViewAngle() / 2
-            )
-        {
-            Debug.Log(viewAngleTarget);
-        }
 
         Vector3 targetPosition = target.GetComponent<Collider>().bounds.center;
         Vector3 targetObject = (targetPosition - transform.position).normalized;
@@ -60,6 +57,17 @@ public class BotAim : MonoBehaviour
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.LookRotation(targetObject);
 
+        //‚±‚±‚Ìif‚ÅŽ‹–ìŠp‚±‚¦‚½‚çã‚Ìreturn.‘‚«’¼‚µ—\’è
+        if (viewAngleTarget > this.transform.parent.GetComponent<AIControl>().SendViewAngle() / 2 && !isAimStop)
+        {
+            Debug.Log(viewAngleTarget);
+            isAimStop = true;
+            return;
+        }
+        else if (isAimStop)
+        {
+            isAimStop = false;
+        }
         transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * adsSpeed * aimLevel);
     }
 
