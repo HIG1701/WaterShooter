@@ -1658,7 +1658,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -2040,9 +2040,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1940055470}
-        m_TargetAssemblyTypeName: Launcher, Assembly-CSharp
-        m_MethodName: SetName
+      - m_Target: {fileID: 1659596294}
+        m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
+        m_MethodName: OnJoinedRoomPlayer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1659596295}
+        m_TargetAssemblyTypeName: SetOlayerName, Assembly-CSharp
+        m_MethodName: PlayerName
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3051,7 +3063,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnConfirmSelection
         m_Mode: 1
@@ -3206,7 +3218,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnBack
         m_Mode: 1
@@ -3339,7 +3351,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -3705,7 +3717,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -4112,7 +4124,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -4176,7 +4188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b91210752ce89d34ab84dd3cd43ecb35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuName: title
+  menuName: home
   open: 0
 --- !u!1 &1159723581
 GameObject:
@@ -5227,9 +5239,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1376416515}
   - component: {fileID: 1376416516}
-  - component: {fileID: 1376416517}
-  - component: {fileID: 1376416519}
-  - component: {fileID: 1376416518}
   m_Layer: 5
   m_Name: Room
   m_TagString: Untagged
@@ -5244,7 +5253,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1376416514}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5257,7 +5266,7 @@ RectTransform:
   - {fileID: 742126838}
   - {fileID: 1281068527}
   - {fileID: 2049640251}
-  m_Father: {fileID: 1940055468}
+  m_Father: {fileID: 1659596292}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5278,70 +5287,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuName: room
   open: 0
---- !u!114 &1376416517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376416514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c2e4a2dbf0aca1449155ff00a4d4f0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  msgText: {fileID: 1378466584}
-  confirmButton: {fileID: 729852741}
-  backButton: {fileID: 742126835}
-  startGameButton: {fileID: 675004490}
-  exitBtn: {fileID: 1281068528}
-  charBtn:
-  - {fileID: 1125954507}
-  - {fileID: 361670328}
-  - {fileID: 1821214809}
-  - {fileID: 874273557}
-  - {fileID: 1708708805}
-  - {fileID: 838376667}
-  isCharSelect: 000000000000
---- !u!114 &1376416518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376416514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
---- !u!114 &1376416519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376416514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: 1376416518}
-  sceneViewId: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &1378466582
 GameObject:
   m_ObjectHideFlags: 0
@@ -6527,6 +6472,105 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647415732}
   m_CullTransparentMesh: 1
+--- !u!1 &1659596291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1659596292}
+  - component: {fileID: 1659596295}
+  - component: {fileID: 1659596294}
+  - component: {fileID: 1659596293}
+  m_Layer: 0
+  m_Name: Name&Room
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1659596292
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659596291}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1946944332}
+  - {fileID: 1376416515}
+  m_Father: {fileID: 1940055468}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659596293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659596291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1659596294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659596291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2e4a2dbf0aca1449155ff00a4d4f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  msgText: {fileID: 1378466584}
+  confirmButton: {fileID: 729852741}
+  backButton: {fileID: 742126835}
+  startGameButton: {fileID: 675004490}
+  exitBtn: {fileID: 1281068528}
+  charBtn:
+  - {fileID: 1125954507}
+  - {fileID: 361670328}
+  - {fileID: 1821214809}
+  - {fileID: 874273557}
+  - {fileID: 1708708805}
+  - {fileID: 838376667}
+  isCharSelect: 000000000000
+--- !u!114 &1659596295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659596291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9a5b3ceb1afccb40ab4a7046fceab8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNameInput: {fileID: 863303722}
+  roomName: {fileID: 2049640252}
+  playerListContent: {fileID: 207078894}
+  playerListPrefab: {fileID: 7187379297307577937, guid: 21e964fb5c5c1de40888c6d7c970d129, type: 3}
 --- !u!1 &1663929363
 GameObject:
   m_ObjectHideFlags: 0
@@ -6821,7 +6865,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -7007,7 +7051,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1376416517}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectChar, Assembly-CSharp
         m_MethodName: OnCharSelect
         m_Mode: 3
@@ -7240,11 +7284,10 @@ RectTransform:
   m_Children:
   - {fileID: 217164948}
   - {fileID: 1447918338}
-  - {fileID: 1946944332}
   - {fileID: 1141662970}
   - {fileID: 1810646040}
   - {fileID: 1382514692}
-  - {fileID: 1376416515}
+  - {fileID: 1659596292}
   - {fileID: 451623818}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7267,10 +7310,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menus:
   - {fileID: 1447918339}
-  - {fileID: 1946944333}
   - {fileID: 1141662971}
   - {fileID: 1810646041}
   - {fileID: 1382514691}
+  - {fileID: 1946944333}
   - {fileID: 1376416516}
   - {fileID: 451623817}
 --- !u!114 &1940055470
@@ -7452,7 +7495,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1946944331}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7460,7 +7503,7 @@ RectTransform:
   - {fileID: 863303721}
   - {fileID: 450043723}
   - {fileID: 1372558221}
-  m_Father: {fileID: 1940055468}
+  m_Father: {fileID: 1659596292}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

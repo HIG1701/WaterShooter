@@ -150,4 +150,9 @@ public class GameStart : MonoBehaviour
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
         respawnCamera.gameObject.SetActive(false);                              //リスポーンカメラを非アクティブにする
     }
+    public void QuitGame()
+    {
+        //ゲーム終了
+        Application.Quit();
+    }
 }

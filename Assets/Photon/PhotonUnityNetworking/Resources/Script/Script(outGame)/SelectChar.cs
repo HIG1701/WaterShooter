@@ -201,7 +201,6 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
     }
 
-
     //選択完了ボタンを押下後に呼び出し
     public void OnConfirmSelection()
     {
@@ -433,10 +432,13 @@ public class SelectChar : MonoBehaviourPunCallbacks
     }
 
     //プレイヤーが参加してきた時に呼び出し
-    public override void OnJoinedRoom()
+    public void OnJoinedRoomPlayer()
     {
-        Debug.Log("部屋に参加しました");
         StartCoroutine(DelayedSync());
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            OnPlayerEnteredRoomCheck(player);
+        }
     }
     //RPC 呼び出しのタイミングを遅らせる
     private IEnumerator DelayedSync()
@@ -446,7 +448,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     }
 
     //プレイヤーが部屋に入ったタイミングで、初期化されているか確認
-    public override void OnPlayerEnteredRoom(Player newPlayer)
+    public void OnPlayerEnteredRoomCheck(Player newPlayer)
     {
         Debug.Log($"新しいプレイヤーが参加しました: {newPlayer.NickName}");
         EnableStartGameButton();

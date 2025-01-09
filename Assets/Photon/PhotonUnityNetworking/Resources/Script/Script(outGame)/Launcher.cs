@@ -10,19 +10,13 @@ public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance;
 
-    [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
     [SerializeField] TMP_Text titleWelcomeText;             //タイトルのメッセージ
     [SerializeField] TMP_InputField roomNameInput;          //作成するルームの名前を入れる
     [SerializeField] Transform roomListContent;             //ルーム検索画面のルーム表示位置
     [SerializeField] Text roomName;                         //ルームの名前を入れる
     [SerializeField] GameObject roomListPrefab;             //参加可能のルームを表示するPrefab
-    [SerializeField] Transform playerListContent;           //ルーム画面の参加プレイヤーの表示位置
-    [SerializeField] GameObject playerListPrefab;           //参加しているプレイヤーを表示するPrefab
     [SerializeField] GameObject startGameBtn;               //ゲームマスタが押せるゲーム開始ボタン
     [SerializeField] Text errorMsg;                         //エラーメッセージを表示する
-
-
-    //TODO_1　エラーメッセージの表示
 
     private void Awake()
     {
@@ -45,38 +39,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedLobby()
     {
-        //ロビー参加後に呼び出し
-        if (PhotonNetwork.NickName == "")
-        {
-            //ニックネームがない場合ランダムなニックネームを設定
-            //名前入力メニューを開く
-            PhotonNetwork.NickName = "Player " + Random.Range(0, 1000).ToString();
-            MenuMng.Instance.OpenMenu("name");
-        }
-        else
-        {
-            MenuMng.Instance.OpenMenu("title");
-        }
+        MenuMng.Instance.OpenMenu("home");
         Debug.Log("ロビーに参加しました");
-    }
-    public void SetName()
-    {
-        //Playerのニックネーム設定
-        string name = playerNameInput.text;
-        //nameがからかどうか
-        if (!string.IsNullOrEmpty(name))
-        {
-            PhotonNetwork.NickName = name;
-            titleWelcomeText.text = $"Welcome, {name}!";
-            //タイトル画面を開く
-            MenuMng.Instance.OpenMenu("title");
-            //入力フィールドをクリア
-            playerNameInput.text = "";
-        }
-        else
-        {
-            Debug.Log("名前がないです");
-        }
     }
     public void CreatRoom()
     {
@@ -97,24 +61,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         //ルームに参加するとルームUIを設定
-        MenuMng.Instance.OpenMenu("room");
-        roomName.text = PhotonNetwork.CurrentRoom.Name;
-        //プレイヤーリストを更新
-        Player[] players = PhotonNetwork.PlayerList;
-        //既存のプレイヤーリストをクリア
-        foreach (Transform trans in playerListContent)
-        {
-            Destroy(trans.gameObject);
-        }
-        //新しいプレイヤーリストを作成
-        for (int i = 0; i < players.Count(); i++)
-        {
-            Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
-        }
-        //マスタークライアントならゲームスタートボタン有効
-        //startGameBtn.SetActive(PhotonNetwork.IsMasterClient);
+        MenuMng.Instance.OpenMenu("name");
     }
-
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         //マスタークライアントが変えあったとき呼び出し
@@ -130,7 +78,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         //Playerがroomを退出したとき
-        MenuMng.Instance.OpenMenu("title");
+        MenuMng.Instance.OpenMenu("home");
     }
     public void LeaveRoom()
     {
@@ -150,7 +98,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         {
             if (roomList[i].RemovedFromList)
             {
-                // Don't instantiate stale rooms
                 continue;
             }
             Instantiate(roomListPrefab, roomListContent).GetComponent<RoomList>().SetUp(roomList[i]);
@@ -160,10 +107,6 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         errorMsg.text = "Room Creation Failed: " + message;
         MenuMng.Instance.OpenMenu("errorMsg");
-    }
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(newPlayer); 
     }
     public void QuitGame()
     {
