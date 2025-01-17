@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public class AIControl : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private float viewAngle;
     private Transform coinTarget;
     private NavMeshAgent agent;
+    private CharacterMove characterMove;
     private Vector3 lastKnownPosition;
     private int coin;
     private bool playerInSight = false;
@@ -31,11 +33,12 @@ public class AIControl : MonoBehaviour
 
     public float SendViewAngle() { return viewAngle; }
 
-
+    private Vector3 moveDirection;
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
+        characterMove = GetComponent<CharacterMove>();
     }
 
     private void Update()
@@ -49,6 +52,24 @@ public class AIControl : MonoBehaviour
         OnPlayerInSight();
         CharacterLifeCycle();
         CharacterHide();
+        if (1==1)
+        {
+            // プレイヤーの正面方向
+            Vector3 forward = transform.forward;
+
+            // 正面方向と移動方向の内積を計算
+            float dotProduct = Vector3.Dot(forward, moveDirection);
+
+            // 正面に移動しているかどうかを判定
+            if (dotProduct > 0.5f) // 0.7は閾値で、1に近いほど完全に正面
+            {
+                Debug.Log("正面に移動中");
+            }
+            else
+            {
+                Debug.Log("正面以外に移動中");
+            }
+        }
     }
 
     //botの移動監視実装する可能性あり。現在はなしで実装中
@@ -64,7 +85,8 @@ public class AIControl : MonoBehaviour
         if (coinInSight && !playerInSight && coinTarget != null)
         {
             Debug.Log("cointuisewki");
-            agent.SetDestination(coinTarget.position);
+            //agent.SetDestination(coinTarget.position);
+            characterMove.CalculatePath(coinTarget.position);
         }
 
         if (playerInSight && isHide)
@@ -91,12 +113,14 @@ public class AIControl : MonoBehaviour
             else
             {
                 agent.isStopped = false;
-                agent.SetDestination(player.position);
+                //agent.SetDestination(player.position);
+                characterMove.CalculatePath(player.position);
             }
         }
         else if (lastKnownPosition != Vector3.zero && !coinInSight && lastKnownPosition == this.transform.position)
         {
-            agent.SetDestination(lastKnownPosition);
+            //agent.SetDestination(lastKnownPosition);
+            characterMove.CalculatePath(lastKnownPosition);
         }
     }
 
@@ -180,7 +204,8 @@ public class AIControl : MonoBehaviour
             //NavMeshHit hit;
             //if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
             //{
-            //    agent.SetDestination(hit.position);
+            ////    agent.SetDestination(hit.position);
+            //    characterMove.CalculatePath(hit.position);
             //}
         }
     }
@@ -192,13 +217,12 @@ public class AIControl : MonoBehaviour
     //あとでつつぎをやる。HP低下の回避処理
     private IEnumerator CharacterHide()
     {
-        Debug.Log("a");
         if (!isHide && bestCover == null)
         {
             Collider[] coverPoints = Physics.OverlapSphere(transform.position, checkRadius, coverLayer);
             bestCover = null;
             float bestScore = float.MaxValue;
-
+            int bestCoverPointIndex = 0;
             foreach (Collider cover in coverPoints)
             {
                 Vector3 coverPosition = cover.transform.position;
@@ -210,18 +234,21 @@ public class AIControl : MonoBehaviour
                     {
                         // 距離をスコアとして採用
                         float score = Vector3.Distance(transform.position, coverPosition);
-
+                        Debug.Log(coverPoints.Length);
                         // 最良の遮蔽物を更新
                         if (score < bestScore)
                         {
                             bestScore = score;
                             bestCover = cover.transform;
-
-                            agent.SetDestination(bestCover.position); // 遮蔽物に移動
-                            Debug.Log("aaa");
+                            Debug.Log(bestCover.gameObject.transform.localScale);
+                            //agent.SetDestination(bestCover.position); // 遮蔽物に移動
+                            characterMove.CalculatePath(bestCover.position);
+                            break;
                         }
                     }
                 }
+                Debug.Log(bestCoverPointIndex);
+                bestCoverPointIndex++;
             }
         }
 
@@ -232,7 +259,9 @@ public class AIControl : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 5f, coverLayer)) //ここの5fを変数にあとでかえる
             {
-                agent.SetDestination(transform.position);
+                Debug.Log("誤差調整");
+                //agent.SetDestination(transform.position);
+                characterMove.CalculatePath(transform.position);
                 bestCover = null;
                 break;
             }
