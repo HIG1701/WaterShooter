@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera deathCamera;
     private GameManager gameManager;
     private Rigidbody rb;
-    private Animator animator;
     private bool isGrounded;
     private int coin;
     private float currentHealth;
@@ -24,7 +23,6 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
     }
 
@@ -97,13 +95,9 @@ public class PlayerController : MonoBehaviour
         //        if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
         //    }
         //}
-
         Vector3 move = desiredMoveDirection * currentSpeed;
         move.y = rb.velocity.y;
         rb.velocity = move;
-
-        if (animator == null) return;
-        animator.SetFloat("Walk", desiredMoveDirection.magnitude);
     }
 
     private void PlayerSpeedControl()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -25,6 +26,12 @@ public class AIControl : MonoBehaviour
     private bool coinInSight;
     private bool isHide = false;
 
+    public float stoppingDistance = 0.5f; // 停止距離
+
+    private NavMeshPath path; // 経路
+    private int currentPathIndex; // 現在の経路インデックス
+    private bool pathCalculated; // 経路計算済みフラグ
+
     public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
 
     public Transform SendInSightPlayerObject { get { return player; } }
@@ -39,6 +46,8 @@ public class AIControl : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
         characterMove = GetComponent<CharacterMove>();
+        path = new NavMeshPath();
+        ForwardMove();
     }
 
     private void Update()
@@ -86,7 +95,7 @@ public class AIControl : MonoBehaviour
         {
             Debug.Log("cointuisewki");
             //agent.SetDestination(coinTarget.position);
-            characterMove.CalculatePath(coinTarget.position);
+            CalculatePath(coinTarget.position);
         }
 
         if (playerInSight && isHide)
@@ -114,13 +123,13 @@ public class AIControl : MonoBehaviour
             {
                 agent.isStopped = false;
                 //agent.SetDestination(player.position);
-                characterMove.CalculatePath(player.position);
+                CalculatePath(player.position);
             }
         }
         else if (lastKnownPosition != Vector3.zero && !coinInSight && lastKnownPosition == this.transform.position)
         {
             //agent.SetDestination(lastKnownPosition);
-            characterMove.CalculatePath(lastKnownPosition);
+            CalculatePath(lastKnownPosition);
         }
     }
 
@@ -242,7 +251,7 @@ public class AIControl : MonoBehaviour
                             bestCover = cover.transform;
                             Debug.Log(bestCover.gameObject.transform.localScale);
                             //agent.SetDestination(bestCover.position); // 遮蔽物に移動
-                            characterMove.CalculatePath(bestCover.position);
+                            CalculatePath(bestCover.position);
                             break;
                         }
                     }
@@ -261,7 +270,7 @@ public class AIControl : MonoBehaviour
             {
                 Debug.Log("誤差調整");
                 //agent.SetDestination(transform.position);
-                characterMove.CalculatePath(transform.position);
+                CalculatePath(transform.position);
                 bestCover = null;
                 break;
             }
@@ -295,6 +304,74 @@ public class AIControl : MonoBehaviour
             coin += coinManager.Coin;
             coinTarget = null;
             Destroy(collision.gameObject);
+        }
+    }
+
+    private void CalculatePath(Vector3 target)
+    {
+        Debug.Log(target);
+        Debug.Log("StartPathCheck");
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(target, out hit, 10.0f, NavMesh.AllAreas))
+        {
+            target = hit.position;
+        }
+        else
+        {
+            Debug.Log("CheckReturn");
+            return;
+        }
+
+        // NavMeshAgentを使って経路を計算
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        agent.CalculatePath(target, path);
+        Debug.Log(path.status);
+        Debug.Log(NavMeshPathStatus.PathComplete);
+
+
+
+        // 経路が成功した場合のみフラグを設定
+        if (path.status == NavMeshPathStatus.PathComplete || path.status == NavMeshPathStatus.PathPartial)
+        {
+            Debug.Log("経路発見");
+            pathCalculated = true;
+            currentPathIndex = 0;
+        }
+    }
+
+    private void ForwardMove()
+    {
+        if (currentPathIndex < path.corners.Length)
+        {
+            Debug.Log("移動中");
+            // 現在の経路ポイントを取得
+            Vector3 targetPosition = path.corners[currentPathIndex];
+
+            // 現在の回転を取得
+            Quaternion currentRotation = transform.rotation;
+
+            // ターゲットの方向を向くための回転
+            Vector3 aim = targetPosition - transform.position;
+            if (aim != Vector3.zero) // ゼロ除算防止
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(aim);
+
+                // スムーズに回転する (補間率は rotationSpeed * Time.deltaTime)
+                transform.rotation = Quaternion.Slerp(currentRotation, lookRotation, 2f * Time.deltaTime);
+            }
+
+            characterMove.ISMove(0f, 1f);
+
+            if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
+            {
+                currentPathIndex++;
+            }
+
+            // 最後のポイントまで到達したら計算をリセット
+            if (currentPathIndex >= path.corners.Length)
+            {
+                pathCalculated = false;
+            }
         }
     }
 }
