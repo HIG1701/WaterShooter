@@ -14,6 +14,21 @@ public static class PlayerManager
         parameters.Clear();
     }
 
+    public static void CopyMasterDateToRuntimeDate()
+    {
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            parameters[i].playerRuntimeDate.date.playerID = parameters[i].playerParameter.PlayerID;
+            parameters[i].playerRuntimeDate.date.playerName = parameters[i].playerParameter.PlayerName;
+            parameters[i].playerRuntimeDate.date.playerHP = parameters[i].playerParameter.PlayerHP;
+            parameters[i].playerRuntimeDate.date.playerShield = parameters[i].playerParameter.PlayerShield;
+            parameters[i].playerRuntimeDate.date.initialVelocity = parameters[i].playerParameter.InitialVelocity;
+            parameters[i].playerRuntimeDate.date.playerSpeed = parameters[i].playerParameter.PlayerSpeed;
+            parameters[i].playerRuntimeDate.date.sprintSpeed = parameters[i].playerParameter.SprintSpeed;
+            parameters[i].playerRuntimeDate.date.jumpVelocity = parameters[i].playerParameter.JumpVelocity;
+        }
+    }
+
     public static void SetPlayerDate(PlayerController playerController)
     {
         PlayerParameter player = playerController.gameObject.GetComponent<PlayerController>().SendPlayerParameter;

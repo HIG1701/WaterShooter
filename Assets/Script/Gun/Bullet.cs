@@ -38,11 +38,13 @@ public class Bullet : MonoBehaviour
         Debug.Log(collision.gameObject);
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
         {
-            //hitScan.HitToCharacter(playerController, gunParameter);
+            //プレイヤーに対してダメ加算.
+            DamageManager.HitToCharacter(playerController, gunParameter);
         }
         else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
-            //.HitToCharacter(playerAiController, gunParameter);
+            //BOTに対してダメ加算.
+            DamageManager.HitToCharacter(playerAiController, gunParameter);
         }
         Destroy(gameObject);
     }

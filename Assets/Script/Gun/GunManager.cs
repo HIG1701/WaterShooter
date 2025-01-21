@@ -46,7 +46,6 @@ public class GunManager : MonoBehaviour
             //クールダウンを挟む
             fireCooldown = gunParameter.FireRate;
             currentAmmo--;
-            Debug.Log(currentAmmo);
         }
     }
 

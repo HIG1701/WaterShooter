@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BotAim : MonoBehaviour
 {
-    [Header("ターゲットの設定")]
-    public Transform target;
+    //[Header("ターゲットの設定")]
+    //public Transform target;
 
     [Header("エイムの速度と精度")]
     public float adsSpeed = 5f;
@@ -28,21 +28,15 @@ public class BotAim : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        AimAtTarget();
-        DrawAimLine();
-    }
-
     /// <summary>
     /// ターゲットの方向を向く
     /// </summary>
-    private void AimAtTarget()
+    public void AimAtTarget(Transform target)
     {
         bool isAimStop = false;
-        target = transform.parent.GetComponent<AIControl>().SendInSightPlayerObject;
-        Debug.Log(transform.parent.GetComponent<AIControl>().SendPlayerInSightCheck());
-        if (target == null || !transform.parent.gameObject.GetComponent<AIControl>().SendPlayerInSightCheck())
+        target = transform.GetComponent<AIControl>().SendInSightPlayerObject;
+        Debug.Log(transform.GetComponent<AIControl>().SendPlayerInSightCheck());
+        if (target == null || !transform.gameObject.GetComponent<AIControl>().SendPlayerInSightCheck())
         {
             this.transform.rotation = this.transform.parent.transform.rotation;
             return;
@@ -58,9 +52,8 @@ public class BotAim : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(targetObject);
 
         //ここのifで視野角こえたら上のreturn.書き直し予定
-        if (viewAngleTarget > this.transform.parent.GetComponent<AIControl>().SendViewAngle() / 2 && !isAimStop)
+        if (viewAngleTarget > this.transform.GetComponent<AIControl>().SendViewAngle() / 2 && !isAimStop)
         {
-            Debug.Log(viewAngleTarget);
             isAimStop = true;
             return;
         }

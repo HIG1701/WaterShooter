@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b61dee17ec01d14f9016b348e00a995, type: 3}
   m_Name: BOTPara
   m_EditorClassIdentifier: 
-  playerID: 0
+  playerID: 1
   playerName: 
   playerHeight: 0
-  playerHP: 0
+  playerHP: 90
   playerShield: 0
   initialVelocity: 0
   playerSpeed: 0
   sprintSpeed: 0
+  climbSpeed: 3
+  crouchSpeed: 2
   jumpVelocity: 0
-  playerInventory: {fileID: 0}

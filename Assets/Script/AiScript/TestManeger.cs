@@ -10,6 +10,10 @@ public class TestManeger : MonoBehaviour
     {
         PlayerManager.ParametersReset();
         PlayerManager.SetPlayerDate(controller);
+        PlayerManager.SetPlayerDate(controller2);
+        PlayerManager.CopyMasterDateToRuntimeDate();
+        Debug.LogWarning(PlayerManager.parameters[0].playerRuntimeDate.date.playerHP);
+        Debug.LogWarning(PlayerManager.parameters[1].playerRuntimeDate.date.playerHP);
     }
 
     private void FixedUpdate()
