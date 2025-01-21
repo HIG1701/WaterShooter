@@ -26,7 +26,6 @@ public class BotAnimation : MonoBehaviour
 
     public void CharaAnimation(float moveHorizontal, float moveVertical)
     {
-        Debug.Log(moveVertical);
         animator.SetFloat("forward", (float)moveVertical);
         animator.SetFloat("right", (float)moveHorizontal);
         //forward‚ğ1,back‚ğ-1;‰E‚ğ1,¶‚ğ-1.

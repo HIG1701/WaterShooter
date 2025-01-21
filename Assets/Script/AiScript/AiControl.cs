@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using Random = UnityEngine.Random;
 
 public class AIControl : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class AIControl : MonoBehaviour
     private NavMeshPath path; // 経路
     private int currentPathIndex; // 現在の経路インデックス
     private bool pathCalculated; // 経路計算済みフラグ
+    private Vector3 targetPosition;
 
     public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
 
@@ -54,31 +56,13 @@ public class AIControl : MonoBehaviour
         //CharacterMoveCheck();
         Debug.Log(coinInSight);
         Debug.Log(playerInSight);
-        StartCoroutine(CharacterHide());
+        //artCoroutine(CharacterHide());
         WalkingSimulator();
         CheckPlayerInSight();
         OnPlayerInSight();
         CharacterLifeCycle();
-        CharacterHide();
+        //aracterHide();
         ForwardMove();
-        if (1==1)
-        {
-            // プレイヤーの正面方向
-            Vector3 forward = transform.forward;
-
-            // 正面方向と移動方向の内積を計算
-            float dotProduct = Vector3.Dot(forward, moveDirection);
-
-            // 正面に移動しているかどうかを判定
-            if (dotProduct > 0.5f) // 0.7は閾値で、1に近いほど完全に正面
-            {
-                Debug.Log("正面に移動中");
-            }
-            else
-            {
-                Debug.Log("正面以外に移動中");
-            }
-        }
     }
 
     //botの移動監視実装する可能性あり。現在はなしで実装中
@@ -98,7 +82,7 @@ public class AIControl : MonoBehaviour
             CalculatePath(coinTarget.position);
         }
 
-        if (playerInSight && isHide)
+        if (playerInSight)
         {
             lastKnownPosition = player.position;
             if (Vector3.Distance(transform.position, player.position) <= shootRange)
@@ -107,7 +91,7 @@ public class AIControl : MonoBehaviour
                 Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
                 Debug.Log("Check");
-                agent.isStopped = true;
+                pathCalculated = false; //BOTの移動停止.
                 Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
                 agent.Move(sideStep * Time.deltaTime);
 
@@ -121,7 +105,7 @@ public class AIControl : MonoBehaviour
             }
             else
             {
-                agent.isStopped = false;
+                pathCalculated = false; //BOTの移動停止.
                 //agent.SetDestination(player.position);
                 CalculatePath(player.position);
             }
@@ -206,16 +190,16 @@ public class AIControl : MonoBehaviour
 
     private void WalkingSimulator()
     {
-        if(!agent.hasPath)
+        if(!pathCalculated)
         {
-            //Vector3 randomDirection = Random.insideUnitSphere * sightRange;
-            //randomDirection += transform.position;
-            //NavMeshHit hit;
-            //if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
-            //{
-            ////    agent.SetDestination(hit.position);
-            //    characterMove.CalculatePath(hit.position);
-            //}
+            Vector3 randomDirection = Random.insideUnitSphere * sightRange;
+            randomDirection += transform.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
+            {
+                //    agent.SetDestination(hit.position);
+                CalculatePath(hit.position);
+            }
         }
     }
 
@@ -224,64 +208,64 @@ public class AIControl : MonoBehaviour
     public float checkRadius = 30f; // 遮蔽物を探す範囲
     Transform bestCover = null;
     //あとでつつぎをやる。HP低下の回避処理
-    private IEnumerator CharacterHide()
-    {
-        if (!isHide && bestCover == null)
-        {
-            Collider[] coverPoints = Physics.OverlapSphere(transform.position, checkRadius, coverLayer);
-            bestCover = null;
-            float bestScore = float.MaxValue;
-            int bestCoverPointIndex = 0;
-            foreach (Collider cover in coverPoints)
-            {
-                Vector3 coverPosition = cover.transform.position;
-                Debug.Log("ss");
-                // プレイヤーから遮蔽物への射線チェック
-                if (Physics.Linecast(player.position, coverPosition, out RaycastHit hit))
-                {
-                    if (hit.collider == cover)
-                    {
-                        // 距離をスコアとして採用
-                        float score = Vector3.Distance(transform.position, coverPosition);
-                        Debug.Log(coverPoints.Length);
-                        // 最良の遮蔽物を更新
-                        if (score < bestScore)
-                        {
-                            bestScore = score;
-                            bestCover = cover.transform;
-                            Debug.Log(bestCover.gameObject.transform.localScale);
-                            //agent.SetDestination(bestCover.position); // 遮蔽物に移動
-                            CalculatePath(bestCover.position);
-                            break;
-                        }
-                    }
-                }
-                Debug.Log(bestCoverPointIndex);
-                bestCoverPointIndex++;
-            }
-        }
+    //private IEnumerator CharacterHide()
+    //{
+    //    if (!isHide && bestCover == null)
+    //    {
+    //        Collider[] coverPoints = Physics.OverlapSphere(transform.position, checkRadius, coverLayer);
+    //        bestCover = null;
+    //        float bestScore = float.MaxValue;
+    //        int bestCoverPointIndex = 0;
+    //        foreach (Collider cover in coverPoints)
+    //        {
+    //            Vector3 coverPosition = cover.transform.position;
+    //            Debug.Log("ss");
+    //            // プレイヤーから遮蔽物への射線チェック
+    //            if (Physics.Linecast(player.position, coverPosition, out RaycastHit hit))
+    //            {
+    //                if (hit.collider == cover)
+    //                {
+    //                    // 距離をスコアとして採用
+    //                    float score = Vector3.Distance(transform.position, coverPosition);
+    //                    Debug.Log(coverPoints.Length);
+    //                    // 最良の遮蔽物を更新
+    //                    if (score < bestScore)
+    //                    {
+    //                        bestScore = score;
+    //                        bestCover = cover.transform;
+    //                        Debug.Log(bestCover.gameObject.transform.localScale);
+    //                        //agent.SetDestination(bestCover.position); // 遮蔽物に移動
+    //                        CalculatePath(bestCover.position);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //            Debug.Log(bestCoverPointIndex);
+    //            bestCoverPointIndex++;
+    //        }
+    //    }
 
-        while (true) //ある程度の誤差を許容するためのループ
-        {
-            Ray ray = new Ray(transform.position, transform.forward);
-            RaycastHit hit;
-            Debug.Log("誤差check");
-            if (Physics.Raycast(ray, out hit, 5f, coverLayer)) //ここの5fを変数にあとでかえる
-            {
-                Debug.Log("誤差調整");
-                //agent.SetDestination(transform.position);
-                CalculatePath(transform.position);
-                bestCover = null;
-                break;
-            }
-            Debug.DrawRay(transform.position, transform.forward * 5f, Color.red);//あとでけす
-            yield return null;
-        }
+    //    while (true) //ある程度の誤差を許容するためのループ
+    //    {
+    //        Ray ray = new Ray(transform.position, transform.forward);
+    //        RaycastHit hit;
+    //        Debug.Log("誤差check");
+    //        if (Physics.Raycast(ray, out hit, 5f, coverLayer)) //ここの5fを変数にあとでかえる
+    //        {
+    //            Debug.Log("誤差調整");
+    //            //agent.SetDestination(transform.position);
+    //            CalculatePath(transform.position);
+    //            bestCover = null;
+    //            break;
+    //        }
+    //        Debug.DrawRay(transform.position, transform.forward * 5f, Color.red);//あとでけす
+    //        yield return null;
+    //    }
 
 
 
-        yield break;
-    }
+    //    yield break;
+    //}
 
     
 
@@ -309,10 +293,9 @@ public class AIControl : MonoBehaviour
 
     private void CalculatePath(Vector3 target)
     {
-        Debug.Log(target);
         Debug.Log("StartPathCheck");
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(target, out hit, 20.0f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(target, out hit, 5.0f, NavMesh.AllAreas))
         {
             target = hit.position;
         }
@@ -341,26 +324,29 @@ public class AIControl : MonoBehaviour
 
     private void ForwardMove()
     {
-        if (currentPathIndex < path.corners.Length)
+        if (currentPathIndex < path.corners.Length && pathCalculated)
         {
             Debug.Log("移動中");
-            // 現在の経路ポイントを取得
-            Vector3 targetPosition = path.corners[currentPathIndex];
+            targetPosition = path.corners[currentPathIndex];
 
-            // 現在の回転を取得
             Quaternion currentRotation = transform.rotation;
 
             // ターゲットの方向を向くための回転
             Vector3 aim = targetPosition - transform.position;
-            if (aim != Vector3.zero) // ゼロ除算防止
+            if (aim != Vector3.zero)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(aim);
 
-                // スムーズに回転する (補間率は rotationSpeed * Time.deltaTime)
-                transform.rotation = Quaternion.Slerp(currentRotation, lookRotation, 2f * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(currentRotation, lookRotation, 4f * Time.deltaTime);
             }
 
-            characterMove.ISMove(0f, 1f);
+            float angle = Vector3.Angle(transform.forward, aim.normalized);
+
+            if (angle < 10f) //あとでフィールドにつくる.
+            {
+                characterMove.ISMove(0f, 1f);
+            }
+
 
             if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
             {
@@ -372,6 +358,7 @@ public class AIControl : MonoBehaviour
             {
                 Debug.Log("Leave");
                 pathCalculated = false;
+                characterMove.ISMove(0f, 0f);
             }
         }
     }
