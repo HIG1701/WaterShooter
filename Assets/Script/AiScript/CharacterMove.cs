@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public class CharacterMove : MonoBehaviour
 {
@@ -60,17 +61,36 @@ public class CharacterMove : MonoBehaviour
             Vector3 targetPosition = path.corners[currentPathIndex];
 
             // プレイヤーをターゲット位置に向ける
+            //Vector3 direction = (targetPosition - transform.position).normalized;
+
+
+            //Quaternion currentRotation = transform.rotation;
+            ////Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
+            ////transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime *  * 1);
+
+            //var aim = targetPosition - this.transform.position;
+            //var look = Quaternion.LookRotation(aim);
+            //transform.rotation = Quaternion.Slerp(currentRotation, look, Time.deltaTime);
+
+            //transform.position += direction * moveSpeed * Time.deltaTime;
+
+            // ターゲットまでの方向ベクトルを計算
             Vector3 direction = (targetPosition - transform.position).normalized;
 
-
+            // 現在の回転を取得
             Quaternion currentRotation = transform.rotation;
-            //Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
-            //transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime *  * 1);
 
-            var aim = targetPosition - this.transform.position;
-            var look = Quaternion.LookRotation(aim);
-            transform.rotation = Quaternion.Slerp(currentRotation, look, Time.deltaTime);
+            // ターゲットの方向を向くための回転
+            Vector3 aim = targetPosition - transform.position;
+            if (aim != Vector3.zero) // ゼロ除算防止
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(aim);
 
+                // スムーズに回転する (補間率は rotationSpeed * Time.deltaTime)
+                transform.rotation = Quaternion.Slerp(currentRotation, lookRotation, 2f * Time.deltaTime);
+            }
+
+            // キャラクターの移動 (前方方向へ)
             transform.position += direction * moveSpeed * Time.deltaTime;
 
             // ターゲット位置に到達したら次のポイントに移動

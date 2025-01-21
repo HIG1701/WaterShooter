@@ -4,6 +4,7 @@ using UnityEngine;
 public class BotAnimation : MonoBehaviour
 {
     private Animator animator;
+    private Vector3 previousPosition;
 
     private void Start()
     {
@@ -20,6 +21,43 @@ public class BotAnimation : MonoBehaviour
         Jump,
         Squat,
         FaceDown,
+    }
+
+    private void Update()
+    {
+        CharaAnimation();
+    }
+
+    public void CharaAnimation()
+    {
+        //forwardを1,backを-1;右を1,左を-1.
+        Vector3 moveDirection = (transform.position - previousPosition).normalized;
+
+        Vector3 charaForward = transform.forward;
+        Vector3 charaRight = transform.right;
+
+        float forwardDot = Vector3.Dot(charaForward, moveDirection);
+        float rightDot = Vector3.Dot(charaRight, moveDirection);
+
+        previousPosition = transform.position;
+
+        if (forwardDot > 0.1f)
+        {
+            Debug.Log("前進中" + forwardDot);
+        }
+        else if (forwardDot < -0.1f)
+        {
+            Debug.Log("後退中" + forwardDot);
+        }
+
+        if (rightDot > 0.1f)
+        {
+            Debug.Log("右へ移動中" + rightDot);
+        }
+        else if (rightDot < -0.1f)
+        {
+            Debug.Log("左へ移動中" + rightDot);
+        }
     }
 
     //public void KeyRef(KeyCode kesySend)
