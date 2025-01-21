@@ -24,18 +24,11 @@ public class BotAnimation : MonoBehaviour
         FaceDown,
     }
 
-    private void Update()
+    public void CharaAnimation(float moveHorizontal, float moveVertical)
     {
-        CharaAnimation();
-    }
-
-    public void CharaAnimation()
-    {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-        Debug.Log(moveHorizontal);
         Debug.Log(moveVertical);
-
+        animator.SetFloat("forward", (float)moveVertical);
+        animator.SetFloat("right", (float)moveHorizontal);
         //forwardÇ1,backÇ-1;âEÇ1,ç∂Ç-1.
         //Vector3 moveDirection = (transform.position - previousPosition).normalized;
 

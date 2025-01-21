@@ -9,7 +9,13 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] private PlayerParameter parameter;
     [SerializeField] private float currentSpeed;
     private Rigidbody rb;
+    private BotAnimation animationControl;
 
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        animationControl = GetComponent<BotAnimation>();
+    }
 
     public void ISMove(float moveHorizontal, float moveVertical)
     {
@@ -28,5 +34,9 @@ public class CharacterMove : MonoBehaviour
         move.y = rb.velocity.y;
         rb.velocity = move;
         Debug.Log("abc");
+        if (animationControl != null )
+        {
+            animationControl.CharaAnimation(moveHorizontal, moveVertical);
+        }
     }
 }

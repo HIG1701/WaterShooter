@@ -47,7 +47,6 @@ public class AIControl : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         characterMove = GetComponent<CharacterMove>();
         path = new NavMeshPath();
-        ForwardMove();
     }
 
     private void Update()
@@ -61,6 +60,7 @@ public class AIControl : MonoBehaviour
         OnPlayerInSight();
         CharacterLifeCycle();
         CharacterHide();
+        ForwardMove();
         if (1==1)
         {
             // プレイヤーの正面方向
@@ -265,7 +265,7 @@ public class AIControl : MonoBehaviour
         {
             Ray ray = new Ray(transform.position, transform.forward);
             RaycastHit hit;
-
+            Debug.Log("誤差check");
             if (Physics.Raycast(ray, out hit, 5f, coverLayer)) //ここの5fを変数にあとでかえる
             {
                 Debug.Log("誤差調整");
@@ -312,7 +312,7 @@ public class AIControl : MonoBehaviour
         Debug.Log(target);
         Debug.Log("StartPathCheck");
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(target, out hit, 10.0f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(target, out hit, 20.0f, NavMesh.AllAreas))
         {
             target = hit.position;
         }
@@ -370,6 +370,7 @@ public class AIControl : MonoBehaviour
             // 最後のポイントまで到達したら計算をリセット
             if (currentPathIndex >= path.corners.Length)
             {
+                Debug.Log("Leave");
                 pathCalculated = false;
             }
         }
