@@ -5,13 +5,14 @@ using UnityEngine;
 /// </summary>
 public class PlayerJump : MonoBehaviour
 {
+    [SerializeField] private PlayerParameter playerParameter;
     private Rigidbody rb;
     private Status playerStatus = Status.GROUND;        //状態
     private float timeKeeper = 0f;                      //経過時間計測
     private bool jumpKey = false;                       //ジャンプキー
+    private Animator animator;
     readonly float lowerLimit = 0.03f;                  //ジャンプ時間制限
     readonly float gravity = 30.0f;
-    [SerializeField] private PlayerParameter playerParameter;
 
     private enum Status
     {
@@ -23,6 +24,7 @@ public class PlayerJump : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -46,7 +48,12 @@ public class PlayerJump : MonoBehaviour
         switch (playerStatus)
         {
             case Status.GROUND:
-                if (jumpKey) playerStatus = Status.UP;
+                if (jumpKey)
+                {
+                    playerStatus = Status.UP;
+                    animator.SetTrigger("Jump");
+                    animator.SetBool("isGround", false);
+                }
                 break;
             case Status.UP:
                 timeKeeper += Time.deltaTime;
@@ -86,6 +93,8 @@ public class PlayerJump : MonoBehaviour
         {
             playerStatus = Status.GROUND;
             timeKeeper = 0f;
+            animator.ResetTrigger("Jump");
+            animator.SetBool("isGround", true);
         }
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// ƒJƒƒ‰‚ÉŠÖ‚·‚éƒNƒ‰ƒX
 /// </summary>
-
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] Rigidbody Player;
