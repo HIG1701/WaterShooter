@@ -754,7 +754,7 @@ PrefabInstance:
     - target: {fileID: 613533035063561512, guid: 28bb034afbdd2b14c97d585c3dc67133, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7575f53a498634646b4badddbf0731cb, type: 2}
+      objectReference: {fileID: 2100000, guid: bdd68c9d8040a9543babcedd628a37b6, type: 2}
     - target: {fileID: 919132149155446097, guid: 28bb034afbdd2b14c97d585c3dc67133, type: 3}
       propertyPath: m_Name
       value: 'amamiya_low '
@@ -766,7 +766,7 @@ PrefabInstance:
     - target: {fileID: 5732878336233618917, guid: 28bb034afbdd2b14c97d585c3dc67133, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: baf95e4f1544c1a4c8ddebad384f6774, type: 2}
+      objectReference: {fileID: 2100000, guid: 7ca3eb6094354e64f8b2749b03dbc386, type: 2}
     - target: {fileID: 8054798688297099323, guid: 28bb034afbdd2b14c97d585c3dc67133, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
