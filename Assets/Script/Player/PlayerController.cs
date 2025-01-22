@@ -3,9 +3,9 @@ using UnityEngine;
 /// <summary>
 /// プレイヤーに関するクラス
 /// </summary>
+
 //TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
-//TODO:Animation実装
-//TODO:走っている途中にシフトキー入力でアニメーターが終わらないバグ
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerParameter parameter;
@@ -16,50 +16,49 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera deathCamera;
     private GameManager gameManager;
     private Rigidbody rb;
-    private Animator animator;
     private bool isGrounded;
-    private bool isClimbing;
-    private bool isCrouch;                                              //しゃがみ状態
     private int coin;
     private float currentHealth;
+    private BotAnimation characterAnimation;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
+        characterAnimation = GetComponent<BotAnimation>();
+
     }
+
     private void Start()
     {
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
-        isGrounded = true;
-        isCrouch = false;
 
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         deathCamera.gameObject.SetActive(false);
     }
+
     private void FixedUpdate()
     {
         PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        //PlayerClimbing();                                       //壁登り処理
+        PlayerShift();                                          //しゃがむ処理（内容未実装）
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
         PlayerReload();                                         //リロード
         PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
-        Debug.Log("接地" + isGrounded);
-        Debug.Log("登る" + isClimbing);
-        Debug.Log("しゃがみ" + isCrouch);
-        Debug.Log("Speed" + currentSpeed);
     }
 
-    private void Update()
+    public PlayerParameter SendPlayerParameter { get { return parameter; } }
+
+    public void DrinkInInventory(GameObject drinkDate)
     {
-        PlayerShift();                                          //しゃがむ処理
+        Debug.Log(drinkDate);
+        //parameter.playerInventory.drinkType.Add(drinkDate);
     }
-    private void PlayerMove()
+
+    public virtual void PlayerMove()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -74,87 +73,65 @@ public class PlayerController : MonoBehaviour
         //right * moveHorizontal：カメラ右ベクトルに水平方向を掛け、左右の移動方向を計算
         Vector3 desiredMoveDirection = forward * moveVertical + right * moveHorizontal;
 
-        if (!isClimbing)
-        {
-            Vector3 move = desiredMoveDirection * currentSpeed;
-            move.y = rb.velocity.y;
-            rb.velocity = move;
-            if (animator != null)
-            {
-                if (!isCrouch) animator.SetFloat("Walk", desiredMoveDirection.magnitude);
-                else if (isCrouch) animator.SetFloat("SyagamiMove", desiredMoveDirection.magnitude);
-            }
-        }
+        //Rayを使用し、壁抜け対策する
+        //参考リンク：https://note.com/ryuryu_game/n/ncf259eb5f044
+        //Rayの開始位置とRayの方向を設定
+        Vector3 rayStart = transform.position;
+        Vector3 rayDirection = desiredMoveDirection;
+
+        //TODO:壁の設計を考える
+        ////移動方向にRayを放射
+        //RaycastHit hit;
+        //if (!Physics.Raycast(rayStart, rayDirection, out hit, 0.5f))
+        //{
+        //    if (desiredMoveDirection != Vector3.zero)
+        //    {
+        //        if (moveVertical != 0) rb.MovePosition(transform.position + desiredMoveDirection * currentSpeed * Time.fixedDeltaTime);
+        //    }
+        //}
+        //else
+        //{
+        //    //Rayが壁にヒットしていれば、壁を上る
+        //    if (hit.collider.CompareTag("Wall"))
+        //    {
+        //        float climbSpeed = 5f;
+        //        if (moveVertical > 0) desiredMoveDirection = Vector3.up * climbSpeed;
+        //    }
+        //}
+        Vector3 move = desiredMoveDirection * currentSpeed;
+        move.y = rb.velocity.y;
+        rb.velocity = move;
+        characterAnimation.CharaAnimation(moveHorizontal, moveVertical);
     }
 
-    private void PlayerClimbing()
-    {
-        float CheckOffset = 1.0f;       //壁判定のオフセット
-        float upperCheckOffset = 12.5f; //上部壁判定のオフセット
-        float wallCheckDistance = 5.0f; //壁判定の距離
-        Ray wallCheckRay = new Ray(transform.position + Vector3.up * CheckOffset, transform.forward);
-        Ray upperCheckRay = new Ray(transform.position + Vector3.up * upperCheckOffset, transform.up);
-
-        bool isForwardWall = Physics.Raycast(wallCheckRay, wallCheckDistance);
-        bool isUpperWall = Physics.Raycast(upperCheckRay, wallCheckDistance);
-        Debug.DrawRay(wallCheckRay.origin, wallCheckRay.direction * wallCheckDistance, Color.red);
-        Debug.DrawRay(upperCheckRay.origin, upperCheckRay.direction * wallCheckDistance, Color.blue);
-
-        if (isForwardWall && !isUpperWall) isClimbing = true;
-        else isClimbing = false;
-        if (isClimbing)
-        {
-            currentSpeed = parameter.ClimbSpeed;
-
-            //入力を取得
-            float moveHorizontal = Input.GetAxis("Horizontal");
-            float moveVertical = Input.GetAxis("Vertical");
-
-            //移動ベクトルを計算
-            Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0);
-
-            //Rigidbodyのvelocityを設定
-            rb.velocity = movement * currentSpeed;
-        }
-        else
-        {
-            currentSpeed = parameter.PlayerSpeed;
-        }
-    }
     private void PlayerSpeedControl()
     {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
-        else if (isCrouch) currentSpeed = parameter.CrouchSpeed;
         else currentSpeed = parameter.PlayerSpeed;
     }
+
     private void PlayerShift()
     {
-        if (Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            if (!isCrouch)
-            {
-                animator.SetBool("Syagami", true);
-                isCrouch = true;
-            }
-            else if (isCrouch)
-            {
-                animator.SetBool("Syagami", false);
-                isCrouch = false;
-            }
-        }
+        //TODO:しゃがむ
+        //シフトでしゃがむ
     }
+
     private void Playerfire()
     {
         if (Input.GetMouseButton(0)) gunManager.Shoot();
-        //TODO:右マウスでエイム
+        //TODO:エイム
+        //右マウスでエイム
     }
+
     private void PlayerReload()
     {
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
+
     private void PlayerAbility()
     {
     }
+
     private void Die()
     {
         gameObject.SetActive(false);
@@ -174,6 +151,7 @@ public class PlayerController : MonoBehaviour
         deathCamera.gameObject.SetActive(false);
         mainCamera.gameObject.SetActive(true);
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         //プレイヤーコイン量追加
@@ -184,9 +162,13 @@ public class PlayerController : MonoBehaviour
         }
         //Debug.Log(coin);
     }
+
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
 
         if (collision.gameObject.CompareTag("DamageArea"))
         {
@@ -197,9 +179,9 @@ public class PlayerController : MonoBehaviour
         ////給水エリア場で、常に玉がフル装填される
         //if (collision.gameObject.CompareTag("WaterArea")) gunManager.WaterReload();
     }
+
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground")) isGrounded = false;
-        if (collision.gameObject.CompareTag("Wall")) isClimbing = false;
     }
 }

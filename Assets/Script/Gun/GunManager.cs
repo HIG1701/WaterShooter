@@ -24,7 +24,7 @@ public class GunManager : MonoBehaviour
         fireCooldown = 0f;                                          //初期化
     }
 
-    private bool CanShoot()
+    public bool CanShoot()
     {
         //リロード中でない ＆ 弾が残っている ==> trueを返す
         return !isReloading && currentAmmo > 0;
@@ -46,7 +46,6 @@ public class GunManager : MonoBehaviour
             //クールダウンを挟む
             fireCooldown = gunParameter.FireRate;
             currentAmmo--;
-            Debug.Log(currentAmmo);
         }
     }
 

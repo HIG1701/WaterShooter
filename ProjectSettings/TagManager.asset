@@ -8,7 +8,7 @@ TagManager:
   - Wall
   - Coin
   - DamageArea
-  - WallArea
+  - VendingMachines
   layers:
   - Default
   - TransparentFX
