@@ -6,9 +6,10 @@ using Photon.Realtime;
 
 public class GameStart : MonoBehaviour
 {
+    [SerializeField] private ShuffleSpawn shuffleSpawn; //スポーンのシャッフルを行う
     [SerializeField] private CharBoxList charBoxList;   //キャラとスポーン位置格納リスt    
     [SerializeField] private Camera respawnCamera;      //リスポーン中に使用するカメラ
-
+    
     private void Start()
     {
         RetrievePlayerChar();
@@ -32,9 +33,10 @@ public class GameStart : MonoBehaviour
         List<int> SpawnIndices = new List<int>();
         for (int i = 0; i < charBoxList.posBox.Count; i++)　{ SpawnIndices.Add(i); }
 
-        //シャッフルメソッドを呼び出し、シャッフル。
-        ShuffleIndex(SpawnIndices);
-        int SpawnIndex = SpawnIndices[charIdx];
+        //シャッフルメソッドを呼び出し、シャッフル
+        
+        //ShuffleIndex(SpawnIndices);
+        int SpawnIndex = shuffleSpawn.ShuffleSpawnIdx()[charIdx];
 
         //キャラの選択状況確認
         //PhotonNetwork.CurrentRoom.CustomProperties.:現在の部屋に関連付けられているカスタムプロパティを取得

@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class SelectChar : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Text msgText;
-
     [SerializeField] private Button confirmButton;      //準備完了ボタン
     [SerializeField] private Button backButton;         //選択解除ボタン
     [SerializeField] private Button startGameButton;    //ゲーム開始ボタン
@@ -18,6 +16,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
     [SerializeField] private bool[] isCharSelect;       //キャラが選択されているか
 
     private bool initialize = false;
+    private bool isSelect = false;
 
     private void Awake()
     {
@@ -32,10 +31,10 @@ public class SelectChar : MonoBehaviourPunCallbacks
         }
     }
 
-    private void Start()
+    //初期化処理
+    public void SelectCharInitialize()
     {
         Debug.Log("初期化処理");
-        msgText.text = "キャラを選択してくだい";
 
         //配列の要素数だけ初期化
         //for分を利用して、各ボタンにクリックリスナーを追加
@@ -58,15 +57,15 @@ public class SelectChar : MonoBehaviourPunCallbacks
             backButton.gameObject.SetActive(false);
             if (PhotonNetwork.IsMasterClient)
             {
+                Debug.Log("スタートボタン可");
                 startGameButton.interactable = false;
+                startGameButton.gameObject.SetActive(true);
             }
             else
             {
+                Debug.Log("スタートボタン不可");
                 startGameButton.gameObject.SetActive(false);
             }
-            //charBtn[i].onClick.AddListener(() => OnCharSelect(idx));
-            //既存のキャラクター選択状態を同期
-            //UpdateCharSelectFromProperties();
         }
         initialize = true;
     }
@@ -87,7 +86,6 @@ public class SelectChar : MonoBehaviourPunCallbacks
         if (!isCharSelect[idx])
         {
             Debug.Log("キャラクタナンバー" + idx + "を選択");
-            msgText.text = "用意ができたら準部完了ボタンをクリック";
 
             isCharSelect[idx] = true;
             //ボタンを無効
@@ -119,6 +117,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             photonView.RPC("UpdateCharSelectState", RpcTarget.AllBuffered, idx);
         }
         photonView.RPC("CheckGameStartAvailability", RpcTarget.AllBuffered);
+        isSelect = true;
     }
 
     //RPCメソッド：キャラクタが選択されたことを全プレイヤーに通知
@@ -193,19 +192,13 @@ public class SelectChar : MonoBehaviourPunCallbacks
             //選択状態を解除
             isCharSelect[idx] = false;
             //対応するボタンを再有効化
-            charBtn[idx].interactable = confirmButton.interactable ? true : false;
-        }
-        else
-        {
-            //エラー処理
+            charBtn[idx].interactable = isSelect ? false : true;
         }
     }
 
     //選択完了ボタンを押下後に呼び出し
     public void OnConfirmSelection()
     {
-        msgText.text = "準備完了！";
-
         //選択完了ボタン無効
         //戻るボタン表示
         confirmButton.interactable = false;
@@ -245,12 +238,10 @@ public class SelectChar : MonoBehaviourPunCallbacks
                 //未選択キャラを有効化
                 btn.interactable = !isCharSelect[idx];
             }
-
-            //メッセージ更新
-            msgText.text = "キャラを選択してください";
         }
         photonView.RPC("CheckGameStartAvailability", RpcTarget.AllBuffered);
         EnableStartGameButton();
+        isSelect = false;
     }
     //すべてのプレイヤーがキャラクターを選択しているか確認
     [PunRPC]
@@ -287,7 +278,6 @@ public class SelectChar : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
-            msgText.text = "参加人数が１の場合は開始できません";
             //参加人数が一人の場合ゲーム開始はできない
             return false;
         }
@@ -498,6 +488,7 @@ public class SelectChar : MonoBehaviourPunCallbacks
             // 全プレイヤーに更新を通知
             photonView.RPC("UpdateCharSelectState", RpcTarget.AllBuffered, -1);
         }
+        isSelect = false;
     }
 
     //ゲームシーンへ移行

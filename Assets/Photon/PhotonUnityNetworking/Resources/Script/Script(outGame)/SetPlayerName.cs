@@ -8,10 +8,11 @@ using UnityEngine.UI;
 
 public class SetPlayerName : MonoBehaviourPunCallbacks
 {
-    [SerializeField] TMP_InputField playerNameInput;        //Playerの名前を入れる
-    [SerializeField] Text roomName;                         //ルームの名前を入れる
-    [SerializeField] Transform playerListContent;           //ルーム画面の参加プレイヤーの表示位置
-    [SerializeField] GameObject playerListPrefab;           //参加しているプレイヤーを表示するPrefab
+    [SerializeField] private SelectChar selectChar;                 //SelectCharのスクリプト
+    [SerializeField] private TMP_InputField playerNameInput;        //Playerの名前を入れる
+    [SerializeField] private Text roomName;                         //ルームの名前を入れる
+    [SerializeField] private Transform playerListContent;           //ルーム画面の参加プレイヤーの表示位置
+    [SerializeField] private GameObject playerListPrefab;           //参加しているプレイヤーを表示するPrefab
 
     public override void OnJoinedRoom()
     {
@@ -52,9 +53,15 @@ public class SetPlayerName : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = name;
         }
         MenuMng.Instance.OpenMenu("room");
+        selectChar.SelectCharInitialize();
         //入力フィールドをクリア
         playerNameInput.text = "";
 
+        SyncPlayerList();
+    }
+
+    private void SyncPlayerList()
+    {
         roomName.text = PhotonNetwork.CurrentRoom.Name;
         //プレイヤーリストを更新
         Player[] players = PhotonNetwork.PlayerList;
@@ -69,8 +76,13 @@ public class SetPlayerName : MonoBehaviourPunCallbacks
             Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(players[i]);
         }
     }
-    public override void OnPlayerEnteredRoom(Player newPlayer)
+
+    //カスタムプロパティが更新された時のコールバック
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
-        Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerList>().SetUp(newPlayer);
+        if (propertiesThatChanged.ContainsKey("Nicknames"))
+        {
+            SyncPlayerList();
+        }
     }
 }

@@ -10,13 +10,15 @@ public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance;
 
-    [SerializeField] TMP_Text titleWelcomeText;             //タイトルのメッセージ
-    [SerializeField] TMP_InputField roomNameInput;          //作成するルームの名前を入れる
-    [SerializeField] Transform roomListContent;             //ルーム検索画面のルーム表示位置
-    [SerializeField] Text roomName;                         //ルームの名前を入れる
-    [SerializeField] GameObject roomListPrefab;             //参加可能のルームを表示するPrefab
-    [SerializeField] GameObject startGameBtn;               //ゲームマスタが押せるゲーム開始ボタン
-    [SerializeField] Text errorMsg;                         //エラーメッセージを表示する
+    [SerializeField] private TMP_Text titleWelcomeText;             //タイトルのメッセージ
+    [SerializeField] private TMP_InputField roomNameInput;          //作成するルームの名前を入れる
+    [SerializeField] private Transform roomListContent;             //ルーム検索画面のルーム表示位置
+    [SerializeField] private Text roomName;                         //ルームの名前を入れる
+    [SerializeField] private GameObject roomListPrefab;             //参加可能のルームを表示するPrefab
+    [SerializeField] private GameObject startGameBtn;               //ゲームマスタが押せるゲーム開始ボタン
+    [SerializeField] private Text errorMsg;                         //エラーメッセージ格納
+    [SerializeField] private GameObject error;                      //エラー表示画面
+    [SerializeField] private GameObject errorSever;                 //サーバ接続ミスエラー表示画面
 
     private void Awake()
     {
@@ -25,10 +27,23 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     private void Start()
     {
-        //マスターサーバーに接続
-        Debug.Log("マスターサーバーに接続中");
-        PhotonNetwork.ConnectUsingSettings();
+        ConnectToMasterServer();
     }
+    private void ConnectToMasterServer()
+    {
+        //マスターサーバーに接続
+        try
+        {
+            errorSever.SetActive(false); 
+            Debug.Log("マスターサーバーに接続中");
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        catch
+        {
+            ErrorSeverHandling("マスターサーバーの接続に失敗しました");
+        }
+    }
+
     public override void OnConnectedToMaster()
     {
         //マスターサーバー接続成功後にロビー参加
@@ -47,11 +62,18 @@ public class Launcher : MonoBehaviourPunCallbacks
         //ルームメニューが入力されている場合、新しいルーム作成
         if(!string.IsNullOrEmpty(roomNameInput.text))
         {
-            var roomOptions = new RoomOptions();
-            roomOptions.MaxPlayers = 6;             //最大参加可能人数
-            PhotonNetwork.CreateRoom(roomNameInput.text, roomOptions, TypedLobby.Default);
-            MenuMng.Instance.OpenMenu("loadeing");
-            roomNameInput.text = "";
+            try
+            {
+                var roomOptions = new RoomOptions();
+                roomOptions.MaxPlayers = 6;             //最大参加可能人数
+                PhotonNetwork.CreateRoom(roomNameInput.text, roomOptions, TypedLobby.Default);
+                MenuMng.Instance.OpenMenu("loadeing");
+                roomNameInput.text = "";
+            }
+            catch
+            {
+                ErrorHandling("ルームの作成に失敗しました");
+            }
         }
         else
         {
@@ -72,8 +94,15 @@ public class Launcher : MonoBehaviourPunCallbacks
     public void JoinRoom(RoomInfo info)
     {
         //指定されたルームに参加
-        PhotonNetwork.JoinRoom(info.Name);
-        MenuMng.Instance.OpenMenu("loading");
+        try
+        {
+            PhotonNetwork.JoinRoom(info.Name);
+            MenuMng.Instance.OpenMenu("loading");
+        }
+        catch
+        {
+            ErrorHandling("ルーム参加中にエラーが発生しました");
+        }
     }
     public override void OnLeftRoom()
     {
@@ -83,8 +112,15 @@ public class Launcher : MonoBehaviourPunCallbacks
     public void LeaveRoom()
     {
         //ルーム退出し、ローディング画面を表示
-        PhotonNetwork.LeaveRoom();
-        MenuMng.Instance.OpenMenu("loadeing");
+        try
+        {
+            PhotonNetwork.LeaveRoom();
+            MenuMng.Instance.OpenMenu("loadeing");
+        }
+        catch
+        {
+            ErrorHandling("ルームの退出に失敗しました");
+        }
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
@@ -105,12 +141,32 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        errorMsg.text = "Room Creation Failed: " + message;
-        MenuMng.Instance.OpenMenu("errorMsg");
+        ErrorHandling("ルームの作成に失敗しました");
     }
     public void QuitGame()
     {
         //ゲーム終了
         Application.Quit();
+    }
+    //エラー処理
+    //エラー画面表示後にボタンを押すとタイトル画面へ強制遷移
+    private void ErrorHandling(string msg)
+    {
+        errorMsg.text = msg + "\n" + "ホーム画面へ移動します";
+        error.SetActive(true);
+    }
+    public void HomeTransition()
+    {
+        MenuMng.Instance.OpenMenu("home");
+        error.SetActive(false);
+    }
+    private void ErrorSeverHandling(string msg)
+    {
+        errorMsg.text = msg;
+        errorSever.SetActive(true);
+    }
+    public void Reconnect()
+    {
+        ConnectToMasterServer();
     }
 }

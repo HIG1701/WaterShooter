@@ -1132,6 +1132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25c6e4b81511dd34e99e2c6a9c3ff8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shuffleSpawn: {fileID: 1664508321}
   charBoxList: {fileID: 11400000, guid: 7381dd277c54be44eb8a469ad3dca788, type: 2}
   respawnCamera: {fileID: 138512385}
 --- !u!114 &407416499
@@ -2986,6 +2987,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1664508320}
+  - component: {fileID: 1664508321}
   m_Layer: 0
   m_Name: StartPoint
   m_TagString: Untagged
@@ -3014,6 +3016,19 @@ Transform:
   - {fileID: 750642534}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1664508321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664508319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dad3564fbd5a7447ac08c891d51873a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 6
 --- !u!1 &1713986145
 GameObject:
   m_ObjectHideFlags: 0
