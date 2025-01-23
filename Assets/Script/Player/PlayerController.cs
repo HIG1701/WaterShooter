@@ -19,13 +19,13 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private int coin;
     private float currentHealth;
-    private BotAnimation characterAnimation;
+    private Animator animator;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
-        characterAnimation = GetComponent<BotAnimation>();
+        animator = GetComponent<Animator>();
 
     }
 
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
         Vector3 move = desiredMoveDirection * currentSpeed;
         move.y = rb.velocity.y;
         rb.velocity = move;
-        characterAnimation.CharaAnimation(moveHorizontal, moveVertical);
+        animator.SetFloat("walk", (float)moveVertical);
     }
 
     private void PlayerSpeedControl()
