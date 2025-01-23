@@ -79,17 +79,10 @@ public class BotAnimation : MonoBehaviour
     {
         if (animator && aimTarget)
         {
-            // LookAtの適用度（0.0f 〜 1.0f）
             animator.SetLookAtWeight(1.0f, 0.5f, 0.7f, 1.0f, 0.5f);
 
-            // 照準ターゲットの位置に視線を向ける
             animator.SetLookAtPosition(aimTarget.position);
 
-            // 右手IK（銃をターゲットに向ける）
-            //animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0.1f);
-            //animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
-
-            // ターゲットの位置・回転に合わせる
             animator.SetIKPosition(AvatarIKGoal.RightHand, aimTarget.position);
             animator.SetIKRotation(AvatarIKGoal.RightHand, aimTarget.rotation);
 
