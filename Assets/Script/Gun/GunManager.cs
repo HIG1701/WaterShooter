@@ -20,7 +20,7 @@ public class GunManager : MonoBehaviour
         //ƒQ[ƒ€ŠJnA’e‚ğ•â[
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
-        bulletOffset = 1f;
+        bulletOffset = 20f;
         fireCooldown = 0f;                                          //‰Šú‰»
     }
 

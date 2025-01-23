@@ -18,6 +18,7 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
     [Header(""), SerializeField] private float viewAngle;
+    private BotAnimation botAnimation;
     private BotAim botAim;
     private Transform coinTarget;
     private NavMeshAgent agent;
@@ -46,6 +47,7 @@ public class AIControl : MonoBehaviour
     private Vector3 moveDirection;
     private void Start()
     {
+        botAnimation = GetComponent<BotAnimation>();
         botAim = GetComponent<BotAim>();
         playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
@@ -103,7 +105,7 @@ public class AIControl : MonoBehaviour
                     Debug.Log("a");
                     gunManager.StartReload();
                 }
-                botAim.AimAtTarget(player);
+                botAnimation.aimTarget = player.transform;
 
                 gunManager.Shoot();
             }
@@ -346,10 +348,6 @@ public class AIControl : MonoBehaviour
 
             float angle = Vector3.Angle(transform.forward, aim.normalized);
 
-            if (angle < 10f) //あとでフィールドにつくる.
-            {
-                characterMove.ISMove(0f, 1f);
-            }
 
 
             if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
@@ -364,6 +362,14 @@ public class AIControl : MonoBehaviour
                 pathCalculated = false;
                 characterMove.ISMove(0f, 0f);
             }
+            if (angle < 10f && pathCalculated) //あとでフィールドにつくる.
+            {
+                characterMove.ISMove(0f, 1f);
+            }
+        }
+        else if (!pathCalculated)
+        {
+            characterMove.ISMove(0f, 0f);
         }
     }
 }

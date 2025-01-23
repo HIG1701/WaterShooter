@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour
     private float CurrentX = 0f;
     private float CurrentY = 0f;
 
-    private const float AngleMIN = 0f; //Y軸最小値
+    private const float AngleMIN = -80f; //Y軸最小値
     private const float AngleMAX = 80f; //Y軸最大値
 
     private void Start()
@@ -61,6 +61,7 @@ public class CameraFollow : MonoBehaviour
         Quaternion Rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
 
         //カメラ位置をプレイヤー位置と回転、オフセットを基に設定（通常の位置）
+        Vector3 rotatedPosition = Player.position + Rotation * Direction;
         Vector3 DesiredPosition = Player.position + Rotation * Direction + Offset;
 
         //Physics.SphereCast：障害物を検知
@@ -76,6 +77,6 @@ public class CameraFollow : MonoBehaviour
         else transform.position = DesiredPosition;
 
         //transform.LookAt：カメラに特定の位置を向かせ続ける
-        transform.LookAt(Player.position + Offset);
+        transform.LookAt(Player.position + Rotation * Offset);
     }
 }

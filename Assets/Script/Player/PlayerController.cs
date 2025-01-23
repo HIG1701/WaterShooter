@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
         PlayerReload();                                         //リロード
         PlayerAbility();                                        //アビリティ（内容未実装）
+        Reload();
         //マウスScrollで飲料選択。数字でも可
     }
 
@@ -112,8 +113,24 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerShift()
     {
+        //if (Input.GetKey(KeyCode.LeftShift))
+        //{
+        //    characterAnimation.ShiftAnimation();
+        //}
+        //else if (!Input.GetKey(KeyCode.LeftShift))
+        //{
+        //    characterAnimation.AnimationReset();
+        //}
         //TODO:しゃがむ
         //シフトでしゃがむ
+    }
+
+    private void Reload()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            gunManager.WaterReload();
+        }
     }
 
     private void Playerfire()
