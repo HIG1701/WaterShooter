@@ -4,16 +4,18 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
 
 public class AIControl : MonoBehaviour
 {
     [Header(""), SerializeField] private Transform player; 
     [Header(""), SerializeField] private LayerMask obstacleLayer;
-    [Header(""), SerializeField] private float sightRange = 20f;
-    [Header(""), SerializeField] private float shootRange = 15f;
+    [Header("発見距離"), SerializeField] private float sightRange = 20f;
+    [Header("射撃距離"), SerializeField] private float shootRange = 15f;
     [Header(""), SerializeField] private float healthFight = 30f;
     [Header(""), SerializeField] private float viewHideObjectRange = 20f;
+    [Header("許容誤差"), SerializeField] private float targetThreshold = 1.5f;
     private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
@@ -29,7 +31,7 @@ public class AIControl : MonoBehaviour
     private bool coinInSight;
     private bool isHide = false;
 
-    public float stoppingDistance = 0.5f; // 停止距離
+    public float stoppingDistance = 5f; // 停止距離
 
     private NavMeshPath path; // 経路
     private int currentPathIndex; // 現在の経路インデックス
@@ -83,6 +85,7 @@ public class AIControl : MonoBehaviour
         {
             Debug.Log("cointuisewki");
             //agent.SetDestination(coinTarget.position);
+            Debug.Log(coinTarget.position);
             CalculatePath(coinTarget.position);
         }
 
@@ -196,7 +199,7 @@ public class AIControl : MonoBehaviour
 
     private void WalkingSimulator()
     {
-        if(!pathCalculated)
+        if (!pathCalculated)
         {
             Vector3 randomDirection = Random.insideUnitSphere * sightRange;
             randomDirection += transform.position;
@@ -299,32 +302,36 @@ public class AIControl : MonoBehaviour
 
     private void CalculatePath(Vector3 target)
     {
-        Debug.Log("StartPathCheck");
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(target, out hit, 5.0f, NavMesh.AllAreas))
+        if (!pathCalculated)
         {
-            target = hit.position;
-        }
-        else
-        {
-            Debug.Log("CheckReturn");
-            return;
-        }
+            Debug.Log("StartPathCheck");
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(target, out hit, 5.0f, NavMesh.AllAreas))
+            {
+                target = hit.position;
+            }
+            else
+            {
+                Debug.Log("CheckReturn");
+                return;
+            }
 
-        // NavMeshAgentを使って経路を計算
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        agent.CalculatePath(target, path);
-        Debug.Log(path.status);
-        Debug.Log(NavMeshPathStatus.PathComplete);
+            // NavMeshAgentを使って経路を計算
+            NavMeshAgent agent = GetComponent<NavMeshAgent>();
+            agent.CalculatePath(target, path);
+            Debug.Log(path.status);
+            Debug.Log(NavMeshPathStatus.PathComplete);
+            Debug.Log("目的地" + target);
 
 
 
-        // 経路が成功した場合のみフラグを設定
-        if (path.status == NavMeshPathStatus.PathComplete || path.status == NavMeshPathStatus.PathPartial)
-        {
-            Debug.Log("経路発見");
-            pathCalculated = true;
-            currentPathIndex = 0;
+            // 経路が成功した場合のみフラグを設定
+            if (path.status == NavMeshPathStatus.PathComplete || path.status == NavMeshPathStatus.PathPartial)
+            {
+                Debug.Log("経路発見");
+                pathCalculated = true;
+                currentPathIndex = 0;
+            }
         }
     }
 
@@ -334,9 +341,9 @@ public class AIControl : MonoBehaviour
         {
             Debug.Log("移動中");
             targetPosition = path.corners[currentPathIndex];
-
             Quaternion currentRotation = transform.rotation;
-
+            Debug.DrawLine(transform.position, targetPosition, Color.red);
+            Debug.Log("経路" + targetPosition);
             // ターゲットの方向を向くための回転
             Vector3 aim = targetPosition - transform.position;
             if (aim != Vector3.zero)
@@ -348,10 +355,10 @@ public class AIControl : MonoBehaviour
 
             float angle = Vector3.Angle(transform.forward, aim.normalized);
 
-
-
-            if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
+            Debug.Log(Vector3.Distance(transform.position, targetPosition));
+            if (Vector3.Distance(transform.position, targetPosition) < targetThreshold)
             {
+                Debug.LogWarning("ok!");
                 currentPathIndex++;
             }
 
