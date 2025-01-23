@@ -1,7 +1,5 @@
-using Photon.Pun.Demo.PunBasics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //StartSpawnPlayers();
+        //StartSpawnPlayers(true);
         PlayerManager.ParametersReset();
         SetParameterDate();
         PlayerManager.CopyMasterDateToRuntimeDate();
@@ -50,11 +48,15 @@ public class GameManager : MonoBehaviour
         {
             if (players[i].GetComponentInChildren<PlayerController>() != null)
             {
+                players[i].GetComponentInChildren<PlayerController>().CharacterIndex = i;
                 PlayerManager.SetPlayerDate(players[i].GetComponentInChildren<PlayerController>());
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerID = i;
             }
             else if (players[i].GetComponentInChildren<AIControl>()  != null)
             {
+                players[i].GetComponentInChildren<AIControl>().CharacterIndex = i;
                 PlayerManager.SetPlayerDate(players[i].GetComponentInChildren<AIControl>());
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerID = i;
             }
         }
     }
@@ -112,6 +114,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void StartSpawnPlayers(bool check)
+    {
+        //スポーン地点の数だけインデックスを作成
+        List<int> spawnIndices = new List<int>();
+        for (int i = 0; i < spawnPoints.Count; i++)
+        {
+            spawnIndices.Add(i);
+        }
+
+        ShuffleIndex(spawnIndices);
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            int spawnIndex = spawnIndices[i];
+
+            //spawnPoints[spawnIndex].position：対応するスポーン位置
+            //spawnPoints[spawnIndex].rotation：対応するスポーンの向き
+            if (players[i].GetComponentInChildren<AIControl>() != null)
+            {
+                Instantiate(players[i], spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation);
+            }
+        }
+    }
     public void StartRespawnTimer(GameObject player)
     {
         StartCoroutine(RespawnPlayer(player, 5f));

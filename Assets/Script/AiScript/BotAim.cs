@@ -1,5 +1,3 @@
-using Photon.Realtime;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BotAim : MonoBehaviour

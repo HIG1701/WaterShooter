@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b61dee17ec01d14f9016b348e00a995, type: 3}
   m_Name: BOTPara
   m_EditorClassIdentifier: 
-  playerID: 1
+  playerID: 6
   playerName: bot
   playerHeight: 0
   playerHP: 90

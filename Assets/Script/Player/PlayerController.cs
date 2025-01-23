@@ -9,6 +9,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerParameter parameter;
+    [SerializeField] public int CharacterIndex = 0;
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float currentSpeed;                        //現在Speed
     [SerializeField] private GunManager gunManager;
@@ -51,7 +52,7 @@ public class PlayerController : MonoBehaviour
         //マウスScrollで飲料選択。数字でも可
     }
 
-    public PlayerParameter SendPlayerParameter { get { return parameter; } }
+    public PlayerParameter SendPlayerParameter { get { return parameter; } } 
 
     public void DrinkInInventory(GameObject drinkDate)
     {

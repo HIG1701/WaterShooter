@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +8,9 @@ public static class PlayerManager
 {
     public static List<PlayerDate> parameters = new List<PlayerDate>();
 
+    /// <summary>
+    /// キャラデータベースリセット.
+    /// </summary>
     public static void ParametersReset()
     {
         parameters.Clear();
@@ -18,7 +20,6 @@ public static class PlayerManager
     {
         for (int i = 0; i < parameters.Count; i++)
         {
-            parameters[i].playerRuntimeDate.date.playerID = parameters[i].playerParameter.PlayerID;
             parameters[i].playerRuntimeDate.date.playerName = parameters[i].playerParameter.PlayerName;
             parameters[i].playerRuntimeDate.date.playerHP = parameters[i].playerParameter.PlayerHP;
             parameters[i].playerRuntimeDate.date.playerShield = parameters[i].playerParameter.PlayerShield;
@@ -29,6 +30,10 @@ public static class PlayerManager
         }
     }
 
+    /// <summary>
+    /// プレイヤーのデータをリストに追加.
+    /// </summary>
+    /// <param name="playerController">追加するプレイヤー</param>
     public static void SetPlayerDate(PlayerController playerController)
     {
         PlayerParameter player = playerController.gameObject.GetComponent<PlayerController>().SendPlayerParameter;
@@ -37,6 +42,10 @@ public static class PlayerManager
         parameters.Add(playerDate);
     }
 
+    /// <summary>
+    /// BOTのデータをリストに追加.
+    /// </summary>
+    /// <param name="aiControl">追加するBOT</param>
     public static void SetPlayerDate(AIControl aiControl)
     {
         PlayerParameter player = aiControl.gameObject.GetComponent<AIControl>().SendPlayerParameter;
@@ -47,61 +56,123 @@ public static class PlayerManager
 
 }
 
-public static class DamageManager
+/// <summary>
+/// データベース内の各種データを渡す.
+/// </summary>
+public static class ParameterDate
 {
     /// <summary>
-    /// 銃くらったときの処理
+    /// HPを渡す(Player).
     /// </summary>
-    /// <param name="playerController">この中に入ってるパラメータがほしい</param>
-    /// <param name="gunParameter">銃のパラメータももらいます</param>
-    public static void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
+    /// <param name="playerController">HPを参照したいキャラ</param>
+    /// <returns>キャラHP(整数型)</returns>
+    public static int SendCharacterHP(PlayerController playerController)
     {
-        //例外をあとでいれる
-        PlayerParameter thisParameter = playerController.SendPlayerParameter;
-        for (int i = 0; i < PlayerManager.parameters.Count; i++)
+        int characterHP = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
         {
-            if (thisParameter.PlayerID == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == playerController.CharacterIndex)
             {
-                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
-                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
-                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
-                break;
+                characterHP = (int)PlayerManager.parameters[i].playerRuntimeDate.date.playerHP;
+                return characterHP;
             }
         }
-
+        return characterHP;
     }
 
     /// <summary>
-    /// 上の処理のBOT用オーバーロード
+    /// HPを渡す(BOT).
     /// </summary>
-    /// <param name="playerAiController"></param>
-    /// <param name="gunParameter"></param>
-    public static void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
+    /// <param name="playerController">HPを参照したいキャラ</param>
+    /// <returns>キャラHP(整数型)</returns>
+    public static int SendCharacterHP(AIControl aIControl)
     {
-        //例外をあとでいれる
-        PlayerParameter thisParameter = playerAiController.SendPlayerParameter;
-        for (int i = 0; i < PlayerManager.parameters.Count; i++)
+        int characterHP = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
         {
-            if (thisParameter.PlayerID == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == aIControl.CharacterIndex)
             {
-                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
-                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
-                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
-                break;
+                characterHP = (int)PlayerManager.parameters[i].playerRuntimeDate.date.playerHP;
+                return characterHP;
             }
         }
-
+        return characterHP;
     }
 
-    public static void DeathCount(PlayerDate deathPlayerDate)
+    /// <summary>
+    /// キル数を渡す(Player).
+    /// </summary>
+    /// <param name="playerController">キル数を参照したいキャラ</param>
+    /// <returns>キル数</returns>
+    public static int SendCharacterKillCount(PlayerController playerController)
     {
-        deathPlayerDate.playerManagementDate.date.deathCount++;
-        deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
+        int killCount = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
+        {
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == playerController.CharacterIndex)
+            {
+                killCount = PlayerManager.parameters[i].playerManagementDate.date.killCount;
+                return killCount;
+            }
+        }
+        return killCount;
     }
 
-    public static void KillCount(PlayerDate killPlayerDate)
+    /// <summary>
+    /// キル数を渡す(Bot).
+    /// </summary>
+    /// <param name="playerController">キル数を参照したいキャラ</param>
+    /// <returns>キル数</returns>
+    public static int SendCharacterKillCount(AIControl aIControl)
     {
-        killPlayerDate.playerManagementDate.date.killCount++;
+        int killCount = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
+        {
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == aIControl.CharacterIndex)
+            {
+                killCount = PlayerManager.parameters[i].playerManagementDate.date.killCount;
+                return killCount;
+            }
+        }
+        return killCount;
+    }
+
+    /// <summary>
+    /// デス数を渡す(Player).
+    /// </summary>
+    /// <param name="playerController">デス数を参照したいキャラ</param>
+    /// <returns>デス数</returns>
+    public static int SendCharacterDeathCount(PlayerController playerController)
+    {
+        int deathCount = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
+        {
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == playerController.CharacterIndex)
+            {
+                deathCount = PlayerManager.parameters[i].playerManagementDate.date.deathCount;
+                return deathCount;
+            }
+        }
+        return deathCount;
+    }
+
+    /// <summary>
+    /// デス数を渡す(Bot).
+    /// </summary>
+    /// <param name="playerController">デス数を参照したいキャラ</param>
+    /// <returns></returns>
+    public static int SendCharacterDeathCount(AIControl aiControl)
+    {
+        int deathCount = 0;
+        for (int i = 0; 1 < PlayerManager.parameters.Count; i++)
+        {
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerID == aiControl.CharacterIndex)
+            {
+                deathCount = PlayerManager.parameters[i].playerManagementDate.date.deathCount;
+                return deathCount;
+            }
+        }
+        return deathCount;
     }
 
     /// <summary>
@@ -125,6 +196,70 @@ public static class DamageManager
     }
 }
 
+public static class DamageManager
+{
+    /// <summary>
+    /// 銃くらったときの処理
+    /// </summary>
+    /// <param name="playerController">この中に入ってるパラメータがほしい</param>
+    /// <param name="gunParameter">銃のパラメータももらいます</param>
+    public static void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
+    {
+        //例外をあとでいれる
+        for (int i = 0; i < PlayerManager.parameters.Count; i++)
+        {
+            if (playerController.CharacterIndex == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
+            {
+                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
+                break;
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// 上の処理のBOT用オーバーロード
+    /// </summary>
+    /// <param name="playerAiController">ダメージを受けたキャラ</param>
+    /// <param name="gunParameter">ダメージを与えたキャラの武器</param>
+    public static void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
+    {
+        //例外をあとでいれる
+        for (int i = 0; i < PlayerManager.parameters.Count; i++)
+        {
+            if (playerAiController.CharacterIndex == PlayerManager.parameters[i].playerRuntimeDate.date.playerID)
+            {
+                //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
+                PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
+                break;
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// デス数を加算する.
+    /// </summary>
+    /// <param name="deathPlayerDate">デスしたキャラのデータ</param>
+    public static void DeathCount(PlayerDate deathPlayerDate)
+    {
+        deathPlayerDate.playerManagementDate.date.deathCount++;
+        deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
+    }
+
+    /// <summary>
+    /// キル数を加算する.
+    /// </summary>
+    /// <param name="killPlayerDate">キルしたキャラのデータ</param>
+    public static void KillCount(PlayerDate killPlayerDate)
+    {
+        killPlayerDate.playerManagementDate.date.killCount++;
+    }
+}
+
 /// <summary>
 /// AddKill用の戻り値
 /// </summary>
@@ -144,6 +279,9 @@ public class SendKillDeathLog
     }
 }
 
+/// <summary>
+/// インゲーム実行時にキャラクタの各種状態を保存・更新を行えるデータ.
+/// </summary>
 public class PlayerDate
 {
     public PlayerParameter playerParameter = new();

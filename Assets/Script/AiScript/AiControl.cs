@@ -1,14 +1,10 @@
-using System;
-using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
 
 public class AIControl : MonoBehaviour
 {
+    [Header("管理番号"), SerializeField] public int CharacterIndex = 0;
     [Header(""), SerializeField] private Transform player; 
     [Header(""), SerializeField] private LayerMask obstacleLayer;
     [Header("発見距離"), SerializeField] private float sightRange = 20f;
@@ -38,7 +34,7 @@ public class AIControl : MonoBehaviour
     private bool pathCalculated; // 経路計算済みフラグ
     private Vector3 targetPosition;
 
-    public PlayerParameter SendPlayerParameter { get { return playerParameter; } }
+    public PlayerParameter SendPlayerParameter { get { return playerParameter; } set { } }
 
     public Transform SendInSightPlayerObject { get { return player; } }
 

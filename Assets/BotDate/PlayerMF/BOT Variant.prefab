@@ -8,21 +8,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 179874422476626509, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 1442033856906972357, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1442033856906972357, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: CharacterIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5909468947718474634, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: playMusic
       value: 
       objectReference: {fileID: 6621468436824285105}
     - target: {fileID: 5992154258014561370, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 31.96
+      value: -65
       objectReference: {fileID: 0}
     - target: {fileID: 5992154258014561370, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5992154258014561370, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 14.33
+      value: 61.7
       objectReference: {fileID: 0}
     - target: {fileID: 5992154258014561370, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -64,9 +76,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 179874422476626509, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4955021478524093709}
     - targetCorrespondingSourceObject: {fileID: 5067884736534501299, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6621468436824285105}
@@ -188,21 +197,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &8612032660678777201 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 179874422476626509, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
-  m_PrefabInstance: {fileID: 8501420358358254396}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4955021478524093709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8612032660678777201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0664200004305745b8704df1236f628, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
