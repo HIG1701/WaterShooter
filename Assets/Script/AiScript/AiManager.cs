@@ -64,7 +64,7 @@ public static class DamageManager
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
-                Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
+                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }
@@ -86,31 +86,43 @@ public static class DamageManager
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
-                Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
+                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }
 
     }
 
-    ///// <summary>
-    ///// キル、デスを返す
-    ///// </summary>
-    ///// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
-    ///// <param name="deathPlayerDate">デスしたプレイヤーのデータ</param>
-    ///// <returns>名前やらIDが帰ってくる</returns>
-    //public static SendKillDeathLog AddKill(PlayerRuntimeDate killPlayerDate, PlayerRuntimeDate deathPlayerDate)
-    //{
-    //    killPlayerDate.date.killCount++;
-    //    deathPlayerDate.date.deathCount++;
-    //    return new SendKillDeathLog
-    //    (
-    //         killPlayerDate.date.playerName,
-    //         killPlayerDate.date.playerID,
-    //         deathPlayerDate.date.playerName,
-    //         deathPlayerDate.date.playerID
-    //    );
-    //}
+    public static void DeathCount(PlayerDate deathPlayerDate)
+    {
+        deathPlayerDate.playerManagementDate.date.deathCount++;
+        deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
+    }
+
+    public static void KillCount(PlayerDate killPlayerDate)
+    {
+        killPlayerDate.playerManagementDate.date.killCount++;
+    }
+
+    /// <summary>
+    /// キル、デスを返す
+    /// </summary>
+    /// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
+    /// <param name="deathPlayerDate">デスしたプレイヤーのデータ</param>
+    /// <returns>名前やらIDが帰ってくる</returns>
+    public static SendKillDeathLog AddKill(PlayerDate killPlayerDate, PlayerDate deathPlayerDate)
+    {
+        killPlayerDate.playerManagementDate.date.killCount++;
+        deathPlayerDate.playerManagementDate.date.deathCount++;
+
+        return new SendKillDeathLog
+        (
+            killPlayerDate.playerRuntimeDate.date.playerName,
+            killPlayerDate.playerRuntimeDate.date.playerID,
+            deathPlayerDate.playerRuntimeDate.date.playerName,
+            deathPlayerDate.playerRuntimeDate.date.playerID
+        );
+    }
 }
 
 /// <summary>

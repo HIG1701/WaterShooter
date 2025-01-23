@@ -1,5 +1,7 @@
+using Photon.Pun.Demo.PunBasics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,13 +25,53 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        StartSpawnPlayers();
+        //StartSpawnPlayers();
+        PlayerManager.ParametersReset();
+        SetParameterDate();
+        PlayerManager.CopyMasterDateToRuntimeDate();
+        Debug.LogWarning(PlayerManager.parameters[0].playerRuntimeDate.date.playerHP);
+        Debug.LogWarning(PlayerManager.parameters[1].playerRuntimeDate.date.playerHP);
     }
 
     private void Update()
     {
         //スポーン地点が動くか確認するためのロードシーン
         if (Input.GetKey(KeyCode.P)) SceneManager.LoadScene("SampleScene");
+    }
+
+    private void FixedUpdate()
+    {
+        DeathProcessing();
+    }
+
+    private void SetParameterDate()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].GetComponentInChildren<PlayerController>() != null)
+            {
+                PlayerManager.SetPlayerDate(players[i].GetComponentInChildren<PlayerController>());
+            }
+            else if (players[i].GetComponentInChildren<AIControl>()  != null)
+            {
+                PlayerManager.SetPlayerDate(players[i].GetComponentInChildren<AIControl>());
+            }
+        }
+    }
+
+    private void DeathProcessing()
+    {
+        Debug.LogWarning(PlayerManager.parameters.Count);
+        for (int i = 0; i < PlayerManager.parameters.Count; i++)
+        {
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP < 0)
+            {
+                Debug.LogWarning("death");
+                DamageManager.DeathCount(PlayerManager.parameters[i]);
+                players[i].gameObject.SetActive(false);
+                StartRespawnTimer(players[i]);
+            }
+        }
     }
 
     /// <summary>
@@ -86,6 +128,6 @@ public class GameManager : MonoBehaviour
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
         player.SetActive(true);                                                 //プレイヤーをアクティブにする
 
-        player.GetComponent<PlayerController>().Respawn();
+        //player.GetComponent<PlayerController>().Respawn();
     }
 }

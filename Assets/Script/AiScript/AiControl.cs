@@ -15,7 +15,7 @@ public class AIControl : MonoBehaviour
     [Header("ËŒ‚‹——£"), SerializeField] private float shootRange = 15f;
     [Header(""), SerializeField] private float healthFight = 30f;
     [Header(""), SerializeField] private float viewHideObjectRange = 20f;
-    [Header("‹–—eŒë·"), SerializeField] private float targetThreshold = 1.5f;
+    [Header("‹–—eŒë·"), SerializeField] private float targetThreshold = 5f;
     private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BOTPara
   m_EditorClassIdentifier: 
   playerID: 1
-  playerName: 
+  playerName: bot
   playerHeight: 0
   playerHP: 90
   playerShield: 0

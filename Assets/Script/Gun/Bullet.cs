@@ -48,4 +48,21 @@ public class Bullet : MonoBehaviour
         }
         Destroy(gameObject);
     }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        //áŠQ•¨‚É“–‚½‚Á‚½‚ç’eŠÛ‚ğ”j‰ó‚·‚é
+        Debug.Log(collision.gameObject);
+        if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
+        {
+            //ƒvƒŒƒCƒ„[‚É‘Î‚µ‚Äƒ_ƒ‰ÁZ.
+            DamageManager.HitToCharacter(playerController, gunParameter);
+        }
+        else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
+        {
+            //BOT‚É‘Î‚µ‚Äƒ_ƒ‰ÁZ.
+            DamageManager.HitToCharacter(playerAiController, gunParameter);
+        }
+        Destroy(gameObject);
+    }
 }
