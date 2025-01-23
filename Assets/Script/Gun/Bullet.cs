@@ -40,11 +40,13 @@ public class Bullet : MonoBehaviour
         {
             //プレイヤーに対してダメ加算.
             DamageManager.HitToCharacter(playerController, gunParameter);
+            GameObject.Find("SEManeger").GetComponent<MusicManeger>().OnPlayDmgSE();
         }
         else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
             //BOTに対してダメ加算.
             DamageManager.HitToCharacter(playerAiController, gunParameter);
+            GameObject.Find("SEManeger").GetComponent<MusicManeger>().OnPlayDmgSE();
         }
         Destroy(gameObject);
     }
