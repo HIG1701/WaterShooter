@@ -10,7 +10,7 @@ public class GunManager : MonoBehaviour
     [SerializeField] private GunParameter gunParameter;
     [SerializeField] private Transform muzzle;                      //発射口
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private PlayMusic playMusic;
+    [SerializeField] private MusicManeger musicManeger;
 
     private int currentAmmo;
     private bool isReloading;
@@ -42,10 +42,9 @@ public class GunManager : MonoBehaviour
     {
         if (CanShoot() && fireCooldown <= 0f)
         {
-            playMusic.OnPlayMusic();
             Vector3 spawnPosition = muzzle.position + muzzle.forward * bulletOffset;
             Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);
-
+            musicManeger.OnPlayShootSE();
             //クールダウンを挟む
             fireCooldown = gunParameter.FireRate;
             currentAmmo--;
