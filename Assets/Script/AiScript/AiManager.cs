@@ -260,7 +260,6 @@ public static class SetDateManager
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
                 PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
                 PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
-                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }
@@ -283,7 +282,7 @@ public static class SetDateManager
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
                 PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
                 PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
-                Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
+                Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
         }

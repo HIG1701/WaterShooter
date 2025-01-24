@@ -58,7 +58,6 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         rb.velocity = Vector3.zero;
-        Debug.Log("PlayerController ‚ªÄ—LŒø‰»‚³‚ê‚Ü‚µ‚½");
     }
 
     public PlayerParameter SendPlayerParameter { get { return parameter; } } 

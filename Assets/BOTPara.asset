@@ -15,7 +15,7 @@ MonoBehaviour:
   playerID: 6
   playerName: bot
   playerHeight: 0
-  playerHP: 150
+  playerHP: 120
   playerShield: 0
   initialVelocity: 0
   playerSpeed: 0

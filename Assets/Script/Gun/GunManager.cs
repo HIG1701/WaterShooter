@@ -60,7 +60,7 @@ public class GunManager : MonoBehaviour
             playMusic.OnPlayMusic();
             Vector3 spawnPosition = muzzle.position + muzzle.forward * bulletOffset;
 
-            GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);           
+            GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);
             if (gameObject.GetComponentInParent<PlayerController>() != null)
             {
                 bulletObject.GetComponent<Bullet>().CharaIndex = gameObject.GetComponentInParent<PlayerController>().CharacterIndex;
