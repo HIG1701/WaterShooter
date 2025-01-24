@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +12,7 @@ public class GunManager : MonoBehaviour
     [SerializeField] private Transform muzzle;                      //î≠éÀå˚
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private PlayMusic playMusic;
+    [SerializeField] private TextMeshProUGUI textMeshProUGUI;
 
     private int currentAmmo;
     private bool isReloading;
@@ -85,13 +87,16 @@ public class GunManager : MonoBehaviour
     {
         isReloading = true;
         Debug.Log("Reloading...");
-
+        if (textMeshProUGUI != null) textMeshProUGUI.SetText("Reloading...");
         //ÉäÉçÅ[Éhéûä‘ÇÃë“ã@
         yield return new WaitForSeconds(gunParameter.ReloadTime);
 
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
         Debug.Log("Reload Complete!");
+        if (textMeshProUGUI != null) textMeshProUGUI.SetText("Reload Complete!");
+        yield return new WaitForSeconds(gunParameter.ReloadTime);
+        if (textMeshProUGUI != null) textMeshProUGUI.SetText("");
     }
 
     /// <summary>
