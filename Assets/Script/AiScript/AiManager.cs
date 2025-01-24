@@ -62,6 +62,52 @@ public static class PlayerManager
 public static class ParameterDate
 {
     /// <summary>
+    /// 残弾を渡す(Player).
+    /// </summary>
+    /// <param name="playerController"></param>
+    /// <returns></returns>
+    public static int SendCurrentAmmo(PlayerController playerController)
+    {
+        return PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.currentAmmo;
+    }
+
+    /// <summary>
+    /// 残弾を渡す(Bot).
+    /// </summary>
+    /// <param name="playerController"></param>
+    /// <returns></returns>
+    public static int SendCurrentAmmo(AIControl aIControl)
+    {
+        return PlayerManager.parameters[aIControl.CharacterIndex].playerRuntimeDate.date.currentAmmo;
+    }
+
+    /// <summary>
+    /// 武器命中率を渡す(Player).
+    /// </summary>
+    /// <returns>命中率</returns>
+    public static int SendAccuracy(PlayerController playerController)
+    {
+        float thisTotalFireAmmo = PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.totalFireAmmo;
+        float thisHItAmmo = PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.hitAmmo;
+        if (thisTotalFireAmmo == 0) return 0;
+        float thisAccuracy = thisHItAmmo / thisTotalFireAmmo * 100;
+        int accuracy = (int)thisAccuracy;
+        return accuracy;
+    }
+
+    /// <summary>
+    /// 武器命中率を渡す(Bot).
+    /// </summary>
+    /// <returns>命中率</returns>
+    public static int SendAccuracy(AIControl aIControl)
+    {
+        int thisTotalFireAmmo = PlayerManager.parameters[aIControl.CharacterIndex].playerRuntimeDate.date.totalFireAmmo;
+        int thisHItAmmo = PlayerManager.parameters[aIControl.CharacterIndex].playerRuntimeDate.date.hitAmmo;
+        int accuracy = (thisHItAmmo / thisTotalFireAmmo) * 100;
+        return accuracy;
+    }
+
+    /// <summary>
     /// HPを渡す(Player).
     /// </summary>
     /// <param name="playerController">HPを参照したいキャラ</param>
@@ -196,14 +242,14 @@ public static class ParameterDate
     }
 }
 
-public static class DamageManager
+public static class SetDateManager
 {
     /// <summary>
     /// 銃くらったときの処理
     /// </summary>
     /// <param name="playerController">この中に入ってるパラメータがほしい</param>
     /// <param name="gunParameter">銃のパラメータももらいます</param>
-    public static void HitToCharacter(PlayerController playerController, GunParameter gunParameter)
+    public static void HitToCharacter(PlayerController playerController, GunParameter gunParameter, int charaIndex)
     {
         //例外をあとでいれる
         for (int i = 0; i < PlayerManager.parameters.Count; i++)
@@ -212,6 +258,8 @@ public static class DamageManager
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
+                PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
                 Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
@@ -224,7 +272,7 @@ public static class DamageManager
     /// </summary>
     /// <param name="playerAiController">ダメージを受けたキャラ</param>
     /// <param name="gunParameter">ダメージを与えたキャラの武器</param>
-    public static void HitToCharacter(AIControl playerAiController, GunParameter gunParameter)
+    public static void HitToCharacter(AIControl playerAiController, GunParameter gunParameter, int charaIndex)
     {
         //例外をあとでいれる
         for (int i = 0; i < PlayerManager.parameters.Count; i++)
@@ -233,6 +281,8 @@ public static class DamageManager
             {
                 //テスト用なので後々シールド処理や距離減衰、当たり所のDPS変動を追加
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
+                PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
+                PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
                 Debug.LogWarning(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
@@ -241,11 +291,22 @@ public static class DamageManager
     }
 
     /// <summary>
+    /// 撃った弾の数.
+    /// </summary>
+    /// <param name="deathPlayerDate">発砲したキャラ</param>
+    public static void TotalFireCount(int charaIndex)
+    {
+        var fireCharacter = PlayerManager.parameters[charaIndex];
+        fireCharacter.playerRuntimeDate.date.totalFireAmmo++;
+    }
+
+    /// <summary>
     /// デス数を加算する.
     /// </summary>
     /// <param name="deathPlayerDate">デスしたキャラのデータ</param>
-    public static void DeathCount(PlayerDate deathPlayerDate)
+    public static void DeathCount(int charaIndex)
     {
+        var deathPlayerDate = PlayerManager.parameters[charaIndex];
         deathPlayerDate.playerManagementDate.date.deathCount++;
         deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
     }
@@ -253,9 +314,10 @@ public static class DamageManager
     /// <summary>
     /// キル数を加算する.
     /// </summary>
-    /// <param name="killPlayerDate">キルしたキャラのデータ</param>
-    public static void KillCount(PlayerDate killPlayerDate)
+    /// <param name="charaIndex">キルしたキャラのインデックス</param>
+    public static void KillCount(int charaIndex)
     {
+        var killPlayerDate = PlayerManager.parameters[charaIndex];
         killPlayerDate.playerManagementDate.date.killCount++;
     }
 }
@@ -318,6 +380,10 @@ public struct PlayerRuntimeDateStruct
     public float playerSpeed;               //通常速度
     public float sprintSpeed;               //加速
     public float jumpVelocity;              //ジャンプ速度
+
+    public int currentAmmo;                 //残弾
+    public int totalFireAmmo;               //撃った弾.
+    public int hitAmmo;                     //当たった弾の数.
 }
 
 /// <summary>

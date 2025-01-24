@@ -296,6 +296,10 @@ public class AIControl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 経路探索.
+    /// </summary>
+    /// <param name="target"></param>
     private void CalculatePath(Vector3 target)
     {
         if (!pathCalculated)
@@ -312,35 +316,28 @@ public class AIControl : MonoBehaviour
                 return;
             }
 
-            // NavMeshAgentを使って経路を計算
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
             agent.CalculatePath(target, path);
-            Debug.Log(path.status);
-            Debug.Log(NavMeshPathStatus.PathComplete);
-            Debug.Log("目的地" + target);
 
-
-
-            // 経路が成功した場合のみフラグを設定
             if (path.status == NavMeshPathStatus.PathComplete || path.status == NavMeshPathStatus.PathPartial)
             {
-                Debug.Log("経路発見");
                 pathCalculated = true;
                 currentPathIndex = 0;
             }
         }
     }
 
+    /// <summary>
+    /// 移動関連.
+    /// </summary>
     private void ForwardMove()
     {
         if (currentPathIndex < path.corners.Length && pathCalculated)
         {
-            Debug.Log("移動中");
             targetPosition = path.corners[currentPathIndex];
             Quaternion currentRotation = transform.rotation;
             Debug.DrawLine(transform.position, targetPosition, Color.red);
-            Debug.Log("経路" + targetPosition);
-            // ターゲットの方向を向くための回転
+
             Vector3 aim = targetPosition - transform.position;
             if (aim != Vector3.zero)
             {
@@ -351,14 +348,13 @@ public class AIControl : MonoBehaviour
 
             float angle = Vector3.Angle(transform.forward, aim.normalized);
 
-            Debug.Log(Vector3.Distance(transform.position, targetPosition));
             if (Vector3.Distance(transform.position, targetPosition) < targetThreshold)
             {
                 Debug.LogWarning("ok!");
                 currentPathIndex++;
             }
 
-            // 最後のポイントまで到達したら計算をリセット
+            // 最後のポイントまで到達したら計算をリセットする.
             if (currentPathIndex >= path.corners.Length)
             {
                 Debug.Log("Leave");

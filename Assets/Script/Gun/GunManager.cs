@@ -34,8 +34,21 @@ public class GunManager : MonoBehaviour
 
     private void Update()
     {
+        SendCurrentAmmo();
         //クールダウンを減少させる
         if (fireCooldown > 0) fireCooldown -= Time.deltaTime;
+    }
+
+    private void SendCurrentAmmo()
+    {
+        if (gameObject.GetComponentInParent<PlayerController>() != null)
+        {
+            PlayerManager.parameters[gameObject.GetComponentInParent<PlayerController>().CharacterIndex].playerRuntimeDate.date.currentAmmo = currentAmmo;
+        }
+        else if (gameObject.GetComponentInParent<AIControl>() != null)
+        {
+            PlayerManager.parameters[gameObject.GetComponentInParent<AIControl>().CharacterIndex].playerRuntimeDate.date.currentAmmo = currentAmmo;
+        }
     }
 
     public void Shoot()
@@ -44,7 +57,18 @@ public class GunManager : MonoBehaviour
         {
             playMusic.OnPlayMusic();
             Vector3 spawnPosition = muzzle.position + muzzle.forward * bulletOffset;
-            Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);
+
+            GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, muzzle.rotation);           
+            if (gameObject.GetComponentInParent<PlayerController>() != null)
+            {
+                bulletObject.GetComponent<Bullet>().CharaIndex = gameObject.GetComponentInParent<PlayerController>().CharacterIndex;
+                SetDateManager.TotalFireCount(gameObject.GetComponentInParent<PlayerController>().CharacterIndex);
+            }
+            else if (gameObject.GetComponentInParent<AIControl>() != null)
+            {
+                bulletObject.GetComponent<Bullet>().CharaIndex = gameObject.GetComponentInParent<AIControl>().CharacterIndex;
+                SetDateManager.TotalFireCount(gameObject.GetComponentInParent<AIControl>().CharacterIndex);
+            }
 
             //クールダウンを挟む
             fireCooldown = gunParameter.FireRate;
@@ -54,7 +78,7 @@ public class GunManager : MonoBehaviour
 
     public void StartReload()
     {
-        if (!CanShoot()) StartCoroutine(Reload());
+        StartCoroutine(Reload());
     }
 
     private IEnumerator Reload()

@@ -40,15 +40,18 @@ public class PlayerController : MonoBehaviour
         deathCamera.gameObject.SetActive(false);
     }
 
+    private void Update()
+    {
+        PlayerReload();
+    }
+
     private void FixedUpdate()
     {
-        PlayerSpeedControl();                                   //ダッシュ処理
+        //PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        PlayerShift();                                          //しゃがむ処理（内容未実装）
+        //PlayerShift();                                          //しゃがむ処理（内容未実装）
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
-        PlayerReload();                                         //リロード
-        PlayerAbility();                                        //アビリティ（内容未実装）
-        Reload();
+        //PlayerAbility();                                        //アビリティ（内容未実装）
         //マウスScrollで飲料選択。数字でも可
     }
 
@@ -106,11 +109,11 @@ public class PlayerController : MonoBehaviour
         characterAnimation.CharaAnimation(moveHorizontal, moveVertical);
     }
 
-    private void PlayerSpeedControl()
-    {
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
-        else currentSpeed = parameter.PlayerSpeed;
-    }
+    //private void PlayerSpeedControl()
+    //{
+    //    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
+    //    else currentSpeed = parameter.PlayerSpeed;
+    //}
 
     private void PlayerShift()
     {
@@ -124,14 +127,6 @@ public class PlayerController : MonoBehaviour
         //}
         //TODO:しゃがむ
         //シフトでしゃがむ
-    }
-
-    private void Reload()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            gunManager.WaterReload();
-        }
     }
 
     private void Playerfire()

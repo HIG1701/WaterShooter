@@ -7,6 +7,7 @@ using UnityEngine;
 //TODO;リジッドボディの影響か、プレイヤーが前方向に加速する
 public class Bullet : MonoBehaviour
 {
+    public int CharaIndex = 0;
     [SerializeField] private GunParameter gunParameter;
     private float speed;                                           //弾丸の速度
     private float range;                                           //射程距離
@@ -35,16 +36,15 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //障害物に当たったら弾丸を破壊する
-        Debug.Log(collision.gameObject);
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
         {
             //プレイヤーに対してダメ加算.
-            DamageManager.HitToCharacter(playerController, gunParameter);
+            SetDateManager.HitToCharacter(playerController, gunParameter, CharaIndex);
         }
         else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
             //BOTに対してダメ加算.
-            DamageManager.HitToCharacter(playerAiController, gunParameter);
+            SetDateManager.HitToCharacter(playerAiController, gunParameter, CharaIndex);
         }
         Destroy(gameObject);
     }
@@ -56,12 +56,12 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
         {
             //プレイヤーに対してダメ加算.
-            DamageManager.HitToCharacter(playerController, gunParameter);
+            SetDateManager.HitToCharacter(playerController, gunParameter, CharaIndex);
         }
         else if (collision.gameObject.TryGetComponent<AIControl>(out AIControl playerAiController))
         {
             //BOTに対してダメ加算.
-            DamageManager.HitToCharacter(playerAiController, gunParameter);
+            SetDateManager.HitToCharacter(playerAiController, gunParameter, CharaIndex);
         }
         Destroy(gameObject);
     }

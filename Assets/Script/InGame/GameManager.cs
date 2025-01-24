@@ -66,12 +66,13 @@ public class GameManager : MonoBehaviour
         Debug.LogWarning(PlayerManager.parameters.Count);
         for (int i = 0; i < PlayerManager.parameters.Count; i++)
         {
-            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP < 0)
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP <= 0)
             {
                 Debug.LogWarning("death");
-                DamageManager.DeathCount(PlayerManager.parameters[i]);
+                SetDateManager.DeathCount(i);
                 players[i].gameObject.SetActive(false);
                 StartRespawnTimer(players[i]);
+                if (PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage != null) SetDateManager.KillCount(PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage.date.playerID);
             }
         }
     }
