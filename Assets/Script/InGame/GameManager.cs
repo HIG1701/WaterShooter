@@ -145,11 +145,28 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private IEnumerator RespawnPlayer(GameObject player, float delay)
     {
+        Collider col = player.GetComponentInChildren<Collider>();
+        if (col != null)
+        {
+            col.enabled = false;
+        }
+        Rigidbody rb = player.GetComponentInChildren<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
         yield return new WaitForSeconds(delay);
+        player.SetActive(true);
         int randomIndex = Random.Range(0, spawnPoints.Count);                   //ランダムなスポーン地点を選択
         Transform respawnPoint = spawnPoints[randomIndex];
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
-        player.SetActive(true); 
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+
+        Debug.Log(respawnPoint.transform.position);
         //プレイヤーをアクティブにする
 
         //player.GetComponent<PlayerController>().Respawn();
