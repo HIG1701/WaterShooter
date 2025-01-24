@@ -55,6 +55,12 @@ public class PlayerController : MonoBehaviour
         //マウスScrollで飲料選択。数字でも可
     }
 
+    private void OnEnable()
+    {
+        rb.velocity = Vector3.zero;
+        Debug.Log("PlayerController が再有効化されました");
+    }
+
     public PlayerParameter SendPlayerParameter { get { return parameter; } } 
 
     public void DrinkInInventory(GameObject drinkDate)

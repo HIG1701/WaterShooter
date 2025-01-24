@@ -19,7 +19,7 @@ public class HPBarAnim : MonoBehaviour
 
         maxHP = playerController.SendPlayerParameter.PlayerHP;
 
-        currentDamageBar = CalculateBarPosition(PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.playerHP);
+        //currentDamageBar = CalculateBarPosition(PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.playerHP);
         nextDamageBar = currentDamageBar;
     }
 

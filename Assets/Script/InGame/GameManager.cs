@@ -27,8 +27,6 @@ public class GameManager : MonoBehaviour
         PlayerManager.ParametersReset();
         SetParameterDate();
         PlayerManager.CopyMasterDateToRuntimeDate();
-        Debug.LogWarning(PlayerManager.parameters[0].playerRuntimeDate.date.playerHP);
-        Debug.LogWarning(PlayerManager.parameters[1].playerRuntimeDate.date.playerHP);
     }
 
     private void Update()
@@ -66,9 +64,8 @@ public class GameManager : MonoBehaviour
         Debug.LogWarning(PlayerManager.parameters.Count);
         for (int i = 0; i < PlayerManager.parameters.Count; i++)
         {
-            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP <= 0)
+            if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP <= 0 && players[i].activeSelf)
             {
-                Debug.LogWarning("death");
                 SetDateManager.DeathCount(i);
                 players[i].gameObject.SetActive(false);
                 StartRespawnTimer(players[i]);
@@ -152,7 +149,8 @@ public class GameManager : MonoBehaviour
         int randomIndex = Random.Range(0, spawnPoints.Count);                   //ランダムなスポーン地点を選択
         Transform respawnPoint = spawnPoints[randomIndex];
         player.transform.position = respawnPoint.position;                      //プレイヤーの位置をリスポーン地点に設定
-        player.SetActive(true);                                                 //プレイヤーをアクティブにする
+        player.SetActive(true); 
+        //プレイヤーをアクティブにする
 
         //player.GetComponent<PlayerController>().Respawn();
     }
