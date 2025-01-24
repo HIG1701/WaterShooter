@@ -32,6 +32,18 @@ PrefabInstance:
       propertyPath: CharacterIndex
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1442033856906972357, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: targetThreshold
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4583778701483740049, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: m_Radius
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4583778701483740049, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
+      propertyPath: m_BaseOffset
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5557282501081369865, guid: 43900a4f5aaff584d80b90878366d5a5, type: 3}
       propertyPath: m_LocalRotation.w
       value: -0.0520492

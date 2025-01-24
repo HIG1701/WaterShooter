@@ -306,7 +306,7 @@ public class AIControl : MonoBehaviour
         {
             Debug.Log("StartPathCheck");
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(target, out hit, 5.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(target, out hit, 10.0f, NavMesh.AllAreas))
             {
                 target = hit.position;
             }

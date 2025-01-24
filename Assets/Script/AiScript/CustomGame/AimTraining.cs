@@ -63,14 +63,8 @@ public class AimTraining : MonoBehaviour
         if (thisKillillCount >= levelUpPoint)
         {
             level++;
-            gameTimer = gameTimer + setTime;
+            gameTimer = setTime;
             killCount = PlayerManager.parameters[playerController.CharacterIndex].playerManagementDate.date.killCount;
-
-            if (record[0] < level)
-            {
-                record[0] = level;
-                Ranking();
-            }
         }
     }
 
@@ -85,7 +79,11 @@ public class AimTraining : MonoBehaviour
             yield return new WaitForSeconds(1);
             gameTimer--;
         }
-
+        if (record[0] < level)
+        {
+            record[0] = level;
+            Ranking();
+        }
         level = 0;
         killCount = 0;
         isGameStart = false;
