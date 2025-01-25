@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        transform.localPosition = Vector3.zero;
         rb.velocity = Vector3.zero;
     }
 

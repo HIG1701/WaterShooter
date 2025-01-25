@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: SCAR
   gunPower: 10
-  fireRate: 0.1
+  fireRate: 0.12
   bulletSpeed: 3000
-  attackRange: 3000
-  reloadTime: 3
+  attackRange: 6000
+  reloadTime: 2
   maxAmmo: 30
   drinkDate:
     drinkName: 

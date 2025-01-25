@@ -28,6 +28,15 @@ public class GunManager : MonoBehaviour
         fireCooldown = 0f;                                          //‰Šú‰»
     }
 
+    private void OnEnable()
+    {
+        currentAmmo = gunParameter.MaxAmmo;
+        isReloading = false;
+        bulletOffset = 20f;
+        fireCooldown = 0f;
+        if (textMeshProUGUI != null) textMeshProUGUI.SetText("");
+    }
+
     public bool CanShoot()
     {
         //ƒŠƒ[ƒh’†‚Å‚È‚¢ • ’e‚ªŽc‚Á‚Ä‚¢‚é ==> true‚ð•Ô‚·
