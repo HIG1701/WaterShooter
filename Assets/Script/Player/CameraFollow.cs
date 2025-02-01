@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour
     private float CurrentX = 0f;
     private float CurrentY = 0f;
 
-    private const float AngleMIN = -80f; //Yé≤ç≈è¨íl
+    private const float AngleMIN = 0f; //Yé≤ç≈è¨íl
     private const float AngleMAX = 80f; //Yé≤ç≈ëÂíl
 
     private void Start()

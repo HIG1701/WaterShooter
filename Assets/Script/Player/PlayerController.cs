@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private int coin;
     private float currentHealth;
     private Animator animator;
-    private bool Syagami;
+    private bool isSyagamu;
 
     private void Awake()
     {
@@ -32,8 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
-        Syagami = false;
-
+        isSyagamu = false;
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
         deathCamera.gameObject.SetActive(false);
@@ -50,6 +49,16 @@ public class PlayerController : MonoBehaviour
         PlayerMove();                                           //プレイヤーの移動
         PlayerShift();                                          //しゃがむ処理（内容未実装）
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
+        if (!isSyagamu)
+        {
+            animator.SetTrigger("Tatu");
+            animator.ResetTrigger("Syagamu");
+        }
+        else
+        {
+            animator.SetTrigger("Syagamu");
+            animator.ResetTrigger("Tatu");
+        }
     }
 
     private void OnEnable()
@@ -109,11 +118,11 @@ public class PlayerController : MonoBehaviour
         Vector3 move = desiredMoveDirection * currentSpeed;
         move.y = rb.velocity.y;
         rb.velocity = move;
-        if (Syagami == false)
+        if (!isSyagamu)
         {
             animator.SetFloat("Walk", move.magnitude);
         }
-        else if (Syagami == true)
+        else
         {
             animator.SetFloat("SyagamiWalk", move.magnitude);
         }
@@ -127,15 +136,18 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerShift()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            animator.SetBool("Syagamu", true);
-            Syagami = true;
-        }
-        else if (!Input.GetKey(KeyCode.LeftShift))
-        {
-            animator.SetBool("Syagamu", false);
-            Syagami = false;
+            if (!isSyagamu)
+            {
+                isSyagamu = true;
+                Debug.Log(isSyagamu);
+            }
+            else
+            {
+                isSyagamu = false;
+                Debug.Log(isSyagamu);
+            }
         }
     }
 
