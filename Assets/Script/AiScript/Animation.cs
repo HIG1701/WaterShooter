@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public class BotAnimation : MonoBehaviour
+public class Animation : MonoBehaviour
 {
     private Animator animator;
     private Vector3 previousPosition;

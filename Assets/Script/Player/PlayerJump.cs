@@ -10,7 +10,7 @@ public class PlayerJump : MonoBehaviour
     private Status playerStatus = Status.GROUND;        //状態
     private float timeKeeper = 0f;                      //経過時間計測
     private bool jumpKey = false;                       //ジャンプキー
-    private BotAnimation animator;
+    private Animator animator;
     readonly float lowerLimit = 0.03f;                  //ジャンプ時間制限
     readonly float gravity = 30.0f;
 
@@ -24,7 +24,8 @@ public class PlayerJump : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponent<BotAnimation>();
+        animator = GetComponent<Animator>();
+
     }
 
     private void Update()
@@ -51,7 +52,7 @@ public class PlayerJump : MonoBehaviour
                 if (jumpKey)
                 {
                     playerStatus = Status.UP;
-                    animator.JumpAnimation();
+                    animator.SetTrigger("Jump2");
                 }
                 break;
             case Status.UP:
@@ -90,7 +91,7 @@ public class PlayerJump : MonoBehaviour
     {
         if (playerStatus == Status.DOWN && collision.gameObject.CompareTag("Ground"))
         {
-            animator.AnimationReset();
+            animator.SetTrigger("JumpReset2");
             playerStatus = Status.GROUND;
             timeKeeper = 0f;
         }

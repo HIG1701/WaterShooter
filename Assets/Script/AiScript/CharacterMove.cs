@@ -5,12 +5,12 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] private PlayerParameter parameter;
     [SerializeField] private float currentSpeed;
     private Rigidbody rb;
-    private BotAnimation animationControl;
+    private Animation animationControl;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        animationControl = GetComponent<BotAnimation>();
+        animationControl = GetComponent<Animation>();
     }
 
     public void ISMove(float moveHorizontal, float moveVertical)

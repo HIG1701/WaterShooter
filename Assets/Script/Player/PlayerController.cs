@@ -4,8 +4,6 @@ using UnityEngine;
 /// プレイヤーに関するクラス
 /// </summary>
 
-//TODO:死亡時のカメラの処理をここに書くな。今後設計を考え直せ
-
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerParameter parameter;
@@ -20,20 +18,21 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private int coin;
     private float currentHealth;
-    private BotAnimation characterAnimation;
+    private Animator animator;
+    private bool Syagami;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
-        characterAnimation = GetComponent<BotAnimation>();
-
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
     {
         currentSpeed = parameter.PlayerSpeed;
         currentHealth = parameter.PlayerHP;
+        Syagami = false;
 
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
@@ -47,12 +46,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //PlayerSpeedControl();                                   //ダッシュ処理
+        PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        //PlayerShift();                                          //しゃがむ処理（内容未実装）
+        PlayerShift();                                          //しゃがむ処理（内容未実装）
         Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
-        //PlayerAbility();                                        //アビリティ（内容未実装）
-        //マウスScrollで飲料選択。数字でも可
     }
 
     private void OnEnable()
@@ -61,7 +58,7 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector3.zero;
     }
 
-    public PlayerParameter SendPlayerParameter { get { return parameter; } } 
+    public PlayerParameter SendPlayerParameter { get { return parameter; } }
 
     public void DrinkInInventory(GameObject drinkDate)
     {
@@ -112,34 +109,39 @@ public class PlayerController : MonoBehaviour
         Vector3 move = desiredMoveDirection * currentSpeed;
         move.y = rb.velocity.y;
         rb.velocity = move;
-        characterAnimation.CharaAnimation(moveHorizontal, moveVertical);
+        if (Syagami == false)
+        {
+            animator.SetFloat("Walk", move.magnitude);
+        }
+        else if (Syagami == true)
+        {
+            animator.SetFloat("SyagamiWalk", move.magnitude);
+        }
     }
 
-    //private void PlayerSpeedControl()
-    //{
-    //    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
-    //    else currentSpeed = parameter.PlayerSpeed;
-    //}
+    private void PlayerSpeedControl()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
+        else currentSpeed = parameter.PlayerSpeed;
+    }
 
     private void PlayerShift()
     {
-        //if (Input.GetKey(KeyCode.LeftShift))
-        //{
-        //    characterAnimation.ShiftAnimation();
-        //}
-        //else if (!Input.GetKey(KeyCode.LeftShift))
-        //{
-        //    characterAnimation.AnimationReset();
-        //}
-        //TODO:しゃがむ
-        //シフトでしゃがむ
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            animator.SetBool("Syagamu", true);
+            Syagami = true;
+        }
+        else if (!Input.GetKey(KeyCode.LeftShift))
+        {
+            animator.SetBool("Syagamu", false);
+            Syagami = false;
+        }
     }
 
     private void Playerfire()
     {
         if (Input.GetMouseButton(0)) gunManager.Shoot();
-        //TODO:エイム
-        //右マウスでエイム
     }
 
     private void PlayerReload()
@@ -147,9 +149,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
-    private void PlayerAbility()
-    {
-    }
 
     private void Die()
     {
@@ -179,7 +178,6 @@ public class PlayerController : MonoBehaviour
             coin += coinManager.Coin;
             Destroy(collision.gameObject);
         }
-        //Debug.Log(coin);
     }
 
     private void OnCollisionStay(Collision collision)

@@ -16,7 +16,7 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
     [Header(""), SerializeField] private float viewAngle;
-    private BotAnimation botAnimation;
+    private Animation botAnimation;
     private BotAim botAim;
     private Transform coinTarget;
     private NavMeshAgent agent;
@@ -45,7 +45,7 @@ public class AIControl : MonoBehaviour
     private Vector3 moveDirection;
     private void Start()
     {
-        botAnimation = GetComponent<BotAnimation>();
+        botAnimation = GetComponent<Animation>();
         botAim = GetComponent<BotAim>();
         playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
