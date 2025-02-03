@@ -1,7 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// MFópÇÃÇΩÇﬂìÀä—çHéñ
+/// </summary>
 public class MainUi : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI killCountText;
@@ -12,16 +17,28 @@ public class MainUi : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private TextMeshProUGUI totalFireAmmoText;
     [SerializeField] private GameObject statsObject;
+    [SerializeField] private GameObject mainMenu;
     [SerializeField] private TextMeshProUGUI recordText;
     [SerializeField] private TextMeshProUGUI coinText;
+    [SerializeField] private TextMeshProUGUI totalAmmoText;
+    [SerializeField] private GameObject buttons;
+    [SerializeField] private GameObject subMenu;
+    [SerializeField] public int[] record = new int[5];
+    [SerializeField] private List<TextMeshProUGUI> coinRankingTexts = new List<TextMeshProUGUI>();
+    [SerializeField] private GameObject coinRankingText;
+    [SerializeField] private CameraFollow cameraFollow;
+    [SerializeField] private Slider slider;
+    private int maxCoin = 0;
     private AudioSource audioSource;
     private AimTraining aimTraining;
     private int hitCount;
+
 
     private void Start()
     {
         aimTraining = GetComponent<AimTraining>();
         audioSource = GetComponent<AudioSource>();
+        cameraFollow = cameraFollow.gameObject.GetComponent<CameraFollow>();
         Stats();
         StartCoroutine(StartStatsView());
     }
@@ -30,6 +47,7 @@ public class MainUi : MonoBehaviour
     {
         aimTraining = GetComponent<AimTraining>();
         Stats();
+        MainMenu();
         HitAudio();
     }
 
@@ -50,7 +68,6 @@ public class MainUi : MonoBehaviour
 
     private void Stats()
     {
-        Debug.Log(playerController.gameObject.activeSelf);
         if (Input.GetKeyDown(KeyCode.Tab) && player.activeSelf)
         {
             statsObject.SetActive(true);
@@ -88,19 +105,101 @@ public class MainUi : MonoBehaviour
         }
     }
 
+    private void MainMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && buttons.activeSelf)
+        {
+            mainMenu.SetActive(!mainMenu.activeSelf);
+            if (mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.None; }
+            else if (!mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.Locked; }
+            Cursor.visible = mainMenu.activeSelf;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && !buttons.activeSelf)
+        {
+            coinRankingText.SetActive(false);
+            slider.gameObject.SetActive(false);
+            buttons.SetActive(true);
+        }
+    }
+
+    private void Record()
+    {
+        if (maxCoin < ParameterDate.SendCharacterCoin(player.gameObject.GetComponentInChildren<PlayerController>().CharacterIndex))
+        {
+            maxCoin = ParameterDate.SendCharacterCoin(player.gameObject.GetComponentInChildren<PlayerController>().CharacterIndex);
+        }
+        Debug.Log(maxCoin);
+        if (player.activeSelf) { return; }
+        if (record[0] < maxCoin)
+        {
+            Debug.Log(maxCoin);
+            record[0] = maxCoin;
+            maxCoin = 0;
+        }
+        int temp = 0;
+        for (int i = 0; i < record.Length; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (record[i] < record[j])
+                {
+                    temp = record[i];
+                    record[i] = record[j];
+                    record[j] = temp;
+                }
+            }
+        }
+    }
+
+    public void Ranking()
+    {
+        if (mainMenu.activeSelf)
+        {
+            buttons.SetActive(false);
+            coinRankingText.SetActive(true);
+            coinRankingTexts[0].SetText(record[4].ToString() + "coin   1st");
+            coinRankingTexts[1].SetText(record[3].ToString() + "coin   2nd");
+            coinRankingTexts[2].SetText(record[2].ToString() + "coin   3rd");
+            coinRankingTexts[3].SetText(record[1].ToString() + "coin   4th");
+            coinRankingTexts[4].SetText(record[0].ToString() + "coin   5th");
+        }
+    }
+
+    public void BackToGame()
+    {
+        mainMenu.SetActive(!mainMenu.activeSelf);
+        if (mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.None; }
+        else if (!mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.Locked; }
+        Cursor.visible = mainMenu.activeSelf;
+    }
+
+    public void Setting()
+    {
+        buttons.SetActive(false);
+        slider.gameObject.SetActive(true);
+    }
+
+    private void MouseSensitivity()
+    {
+        cameraFollow.MouseSensitivity = slider.value;
+    }
+
     private void FixedUpdate()
     {
         SendText();
+        Record();
+        MouseSensitivity();
     }
 
     private void SendText()
     {
         killCountText.SetText(ParameterDate.SendCharacterKillCount(playerController).ToString());
         deathCountText.SetText(ParameterDate.SendCharacterDeathCount(playerController).ToString());
-        currentAmmoText.SetText(ParameterDate.SendCurrentAmmo(playerController).ToString());
+        currentAmmoText.SetText(ParameterDate.SendCurrentAmmo(playerController.CharacterIndex).ToString());
         characterHpText.SetText(ParameterDate.SendCharacterHP(playerController).ToString());
         totalFireAmmoText.SetText(ParameterDate.SendAccuracy(playerController).ToString() + "%");
         coinText.SetText(ParameterDate.SendCharacterCoin(playerController.CharacterIndex).ToString());
+        totalAmmoText.SetText(ParameterDate.SendTotalAmmo(playerController.CharacterIndex).ToString());
     }
 
     private void HitAudio()

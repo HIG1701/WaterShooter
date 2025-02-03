@@ -140,21 +140,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
-    public void Respawn()
-    {
-        gameObject.SetActive(true);
-
-        //死亡時カメラを無効化し、メインカメラを有効化
-        deathCamera.gameObject.SetActive(false);
-        mainCamera.gameObject.SetActive(true);
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         //プレイヤーコイン量追加
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
-            SetDateManager.SetCoin(CharacterIndex, coinManager.Coin);
+            SetDateManager.AddCoin(CharacterIndex, coinManager.Coin);
             Destroy(collision.gameObject);
         }
         //Debug.Log(coin);

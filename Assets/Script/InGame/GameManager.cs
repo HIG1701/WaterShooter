@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         {
             if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP <= 0 && players[i].activeSelf)
             {
-                SetDateManager.SetCoin(ParameterDate.SendlastCharacterToDamage(i), ParameterDate.SendCharacterCoin(i));
+                SetDateManager.AddCoin(ParameterDate.SendlastCharacterToDamage(i), ParameterDate.SendCharacterCoin(i));
                 SetDateManager.DeathCount(i);
                 players[i].gameObject.SetActive(false);
                 StartRespawnTimer(players[i]);

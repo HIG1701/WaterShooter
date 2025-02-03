@@ -1,34 +1,38 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
-//‚±‚ÌƒXƒNƒŠƒvƒg‚Å‚ÍAƒ}ƒEƒX‚ªƒvƒŒƒCƒ„[‚ğ’†S‚É’Ç]‚·‚é‚æ‚¤‚Èˆ—‚ğÀ‘•‚·‚é
-//QlƒŠƒ“ƒNFhttps://chamucode.com/unity-camera-follow/
+//ã“ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§ã¯ã€ãƒã‚¦ã‚¹ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ä¸­å¿ƒã«è¿½å¾“ã™ã‚‹ã‚ˆã†ãªå‡¦ç†ã‚’å®Ÿè£…ã™ã‚‹
+//å‚è€ƒãƒªãƒ³ã‚¯ï¼šhttps://chamucode.com/unity-camera-follow/
 /// <summary>
-/// ƒJƒƒ‰‚ÉŠÖ‚·‚éƒNƒ‰ƒX
+/// ã‚«ãƒ¡ãƒ©ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] Rigidbody Player;
     [SerializeField] Vector3 Offset;
-    [SerializeField] float Sensitivity = 5f;
+    
+    [Header("æ„Ÿåº¦")] public float MouseSensitivity = 5f; // ãƒã‚¦ã‚¹æ„Ÿåº¦1~10.
+    private float Sensitivity;
+
     [SerializeField] float Distance = 5;
-    [SerializeField] float SphereCastRadius = 0.5f;                 //SphereCast‚Ì”¼Œa
-    [SerializeField] LayerMask CollisionLayers;                     //Õ“Ë‚ğŒŸo‚·‚éƒŒƒCƒ„[iƒCƒ“ƒXƒyƒNƒ^[‚ÅWall‚ğw’èj
+    [SerializeField] float SphereCastRadius = 0.5f;                 //SphereCastã®åŠå¾„
+    [SerializeField] LayerMask CollisionLayers;                     //è¡çªã‚’æ¤œå‡ºã™ã‚‹ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼ˆã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼ã§Wallã‚’æŒ‡å®šï¼‰
 
     private float CurrentX = 0f;
     private float CurrentY = 0f;
 
-    private const float AngleMIN = -80f; //Y²Å¬’l
-    private const float AngleMAX = 80f; //Y²Å‘å’l
+    private const float AngleMIN = -80f; //Yè»¸æœ€å°å€¤
+    private const float AngleMAX = 80f; //Yè»¸æœ€å¤§å€¤
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;                   //ƒJ[ƒ\ƒ‹ƒƒbƒN
-        Cursor.visible = false;                                     //ƒJ[ƒ\ƒ‹”ñ•\¦
+        Cursor.lockState = CursorLockMode.Locked;                   //ã‚«ãƒ¼ã‚½ãƒ«ãƒ­ãƒƒã‚¯
+        Cursor.visible = false;                                     //ã‚«ãƒ¼ã‚½ãƒ«éè¡¨ç¤º
     }
 
     private void Update()
     {
-        GetMouthPos();
+        Sensitivity = Mathf.Lerp(0.1f, 5f, MouseSensitivity / 10f);
+        GetMousePos();
         RotatePlayer();
     }
 
@@ -37,13 +41,13 @@ public class CameraFollow : MonoBehaviour
         CameraMove();
     }
 
-    private void GetMouthPos()
+    private void GetMousePos()
     {
         CurrentX += Input.GetAxis("Mouse X") * Sensitivity;
         CurrentY -= Input.GetAxis("Mouse Y") * Sensitivity;
 
-        //CurrentY‚Ì’l‚ğAngleMIN‚ÆAngleMAX‚ÌŠÔ‚É§ŒÀ‚·‚é
-        //Mathf.ClampF’l‚ğw’è‚³‚ê‚½”ÍˆÍ‚Ì’†‚É‚Æ‚Ç‚ß‚é
+        //CurrentYã®å€¤ã‚’AngleMINã¨AngleMAXã®é–“ã«åˆ¶é™ã™ã‚‹
+        //Mathf.Clampï¼šå€¤ã‚’æŒ‡å®šã•ã‚ŒãŸç¯„å›²ã®ä¸­ã«ã¨ã©ã‚ã‚‹
         CurrentY = Mathf.Clamp(CurrentY, AngleMIN, AngleMAX);
     }
 
@@ -54,29 +58,29 @@ public class CameraFollow : MonoBehaviour
 
     private void CameraMove()
     {
-        //ƒvƒŒƒCƒ„[‚ÌŒã‚ë‚É”z’u
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¾Œã‚ã«é…ç½®
         Vector3 Direction = new Vector3(0, 0, -Distance);
 
-        //Quaternion.EulerF‚šA‚˜A‚™‚Ì‡‚Å‰ñ“]‚·‚é
+        //Quaternion.Eulerï¼šï½šã€ï½˜ã€ï½™ã®é †ã§å›è»¢ã™ã‚‹
         Quaternion Rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
 
-        //ƒJƒƒ‰ˆÊ’u‚ğƒvƒŒƒCƒ„[ˆÊ’u‚Æ‰ñ“]AƒIƒtƒZƒbƒg‚ğŠî‚Éİ’èi’Êí‚ÌˆÊ’uj
+        //ã‚«ãƒ¡ãƒ©ä½ç½®ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã¨å›è»¢ã€ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŸºã«è¨­å®šï¼ˆé€šå¸¸ã®ä½ç½®ï¼‰
         Vector3 rotatedPosition = Player.position + Rotation * Direction;
         Vector3 DesiredPosition = Player.position + Rotation * Direction + Offset;
 
-        //Physics.SphereCastFáŠQ•¨‚ğŒŸ’m
-        //SphereCastRadiusFSphereCast‚Ì”¼Œa
-        //DesiredPosition - Player.positionFSphereCast‚Ì•ûŒü
+        //Physics.SphereCastï¼šéšœå®³ç‰©ã‚’æ¤œçŸ¥
+        //SphereCastRadiusï¼šSphereCastã®åŠå¾„
+        //DesiredPosition - Player.positionï¼šSphereCastã®æ–¹å‘
         RaycastHit hit;
         if (Physics.SphereCast(Player.position, SphereCastRadius, DesiredPosition - Player.position, out hit, Distance, CollisionLayers))
         {
-            //hit.pointFÕ“Ë’n“_
-            //hit.normalFÕ“Ë‚ÌƒxƒNƒgƒ‹
+            //hit.pointï¼šè¡çªåœ°ç‚¹
+            //hit.normalï¼šè¡çªã®ãƒ™ã‚¯ãƒˆãƒ«
             transform.position = hit.point + hit.normal * SphereCastRadius;
         }
         else transform.position = DesiredPosition;
 
-        //transform.LookAtFƒJƒƒ‰‚É“Á’è‚ÌˆÊ’u‚ğŒü‚©‚¹‘±‚¯‚é
+        //transform.LookAtï¼šã‚«ãƒ¡ãƒ©ã«ç‰¹å®šã®ä½ç½®ã‚’å‘ã‹ã›ç¶šã‘ã‚‹
         transform.LookAt(Player.position + Rotation * Offset);
     }
 }

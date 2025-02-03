@@ -27,6 +27,7 @@ public static class PlayerManager
             parameters[i].playerRuntimeDate.date.playerSpeed = parameters[i].playerParameter.PlayerSpeed;
             parameters[i].playerRuntimeDate.date.sprintSpeed = parameters[i].playerParameter.SprintSpeed;
             parameters[i].playerRuntimeDate.date.jumpVelocity = parameters[i].playerParameter.JumpVelocity;
+            parameters[i].playerRuntimeDate.date.totalAmmo = parameters[i].playerParameter.TotalAmmo;
             parameters[i].playerRuntimeDate.date.coin = 0;
         }
     }
@@ -63,23 +64,13 @@ public static class PlayerManager
 public static class ParameterDate
 {
     /// <summary>
-    /// 残弾を渡す(Player).
+    /// 残弾を渡す.
     /// </summary>
     /// <param name="playerController"></param>
     /// <returns></returns>
-    public static int SendCurrentAmmo(PlayerController playerController)
+    public static int SendCurrentAmmo(int charaIndex)
     {
-        return PlayerManager.parameters[playerController.CharacterIndex].playerRuntimeDate.date.currentAmmo;
-    }
-
-    /// <summary>
-    /// 残弾を渡す(Bot).
-    /// </summary>
-    /// <param name="playerController"></param>
-    /// <returns></returns>
-    public static int SendCurrentAmmo(AIControl aIControl)
-    {
-        return PlayerManager.parameters[aIControl.CharacterIndex].playerRuntimeDate.date.currentAmmo;
+        return PlayerManager.parameters[charaIndex].playerRuntimeDate.date.currentAmmo;
     }
 
     /// <summary>
@@ -236,12 +227,23 @@ public static class ParameterDate
     /// <summary>
     /// 所持コイン数を渡す.
     /// </summary>
-    /// <param name="playerController">所持コイン数を参照したいキャラ</param>
+    /// <param name="playerController">所持コイン数を参照したいキャラID</param>
     /// <returns>所持コイン数</returns>
     public static int SendCharacterCoin(int charaIndex)
     {
         int coin = PlayerManager.parameters[charaIndex].playerRuntimeDate.date.coin;
         return coin;
+    }
+
+    /// <summary>
+    /// 所持総弾数を渡す.
+    /// </summary>
+    /// <param name="charaIndex">所持総弾数を参照したいキャラID</param>
+    /// <returns>所持総弾数</returns>
+    public static int SendTotalAmmo(int charaIndex)
+    {
+        int totalAmmo = PlayerManager.parameters[charaIndex].playerRuntimeDate.date.totalAmmo;
+        return totalAmmo;
     }
 
     /// <summary>
@@ -325,12 +327,13 @@ public static class SetDateManager
     /// <summary>
     /// デス数を加算する.
     /// </summary>
-    /// <param name="deathPlayerDate">デスしたキャラのデータ</param>
+    /// <param name="deathPlayerDate">デスしたキャラID</param>
     public static void DeathCount(int charaIndex)
     {
         var deathPlayerDate = PlayerManager.parameters[charaIndex];
         deathPlayerDate.playerManagementDate.date.deathCount++;
         deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
+        deathPlayerDate.playerRuntimeDate.date.totalAmmo = deathPlayerDate.playerParameter.TotalAmmo;
         deathPlayerDate.playerRuntimeDate.date.coin = 0;
     }
 
@@ -347,11 +350,21 @@ public static class SetDateManager
     /// <summary>
     /// 所持コイン数を加算する.
     /// </summary>
-    /// <param name="charaIndex"></param>
-    /// <param name="coin"></param>
-    public static void SetCoin(int charaIndex, int coin)
+    /// <param name="charaIndex">所持コイン数を加算するキャラID</param>
+    /// <param name="coin">加算するコイン数</param>
+    public static void AddCoin(int charaIndex, int coin)
     {
         PlayerManager.parameters[charaIndex].playerRuntimeDate.date.coin += coin;
+    }
+
+    /// <summary>
+    /// 所持総弾数を加算する.
+    /// </summary>
+    /// <param name="charaIndex">所持総弾数を加算するキャラID</param>
+    /// <param name="coin">加算する弾数</param>
+    public static void AddTotalAmmo(int charaIndex, int addAmmo)
+    {
+        PlayerManager.parameters[charaIndex].playerRuntimeDate.date.totalAmmo += addAmmo;
     }
 }
 
@@ -403,18 +416,19 @@ public class PlayerRuntimeDate
 }
 public struct PlayerRuntimeDateStruct
 {
-    public int playerID;                    //プレイヤーID
-    public string playerName;               //プレイヤー名
+    public int playerID;                    //プレイヤーID.
+    public string playerName;               //プレイヤー名.
 
-    public float playerHP;                  //体力
-    public float playerShield;              //シールド耐久力
-    public float initialVelocity;           //ジャンプ力
+    public float playerHP;                  //体力.
+    public float playerShield;              //シールド耐久力.
+    public float initialVelocity;           //ジャンプ力.
 
-    public float playerSpeed;               //通常速度
-    public float sprintSpeed;               //加速
-    public float jumpVelocity;              //ジャンプ速度
+    public float playerSpeed;               //通常速度.
+    public float sprintSpeed;               //加速.
+    public float jumpVelocity;              //ジャンプ速度.
 
-    public int currentAmmo;                 //残弾
+    public int currentAmmo;                 //残弾.
+    public int totalAmmo;                   //所持弾数.
     public int totalFireAmmo;               //撃った弾.
     public int hitAmmo;                     //当たった弾の数.
 

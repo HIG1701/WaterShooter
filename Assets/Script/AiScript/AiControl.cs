@@ -77,6 +77,7 @@ public class AIControl : MonoBehaviour
         if (coinInSight && !playerInSight && coinTarget != null)
         {
             CalculatePath(coinTarget.position);
+            Debug.Log(coinTarget.position);
         }
 
         if (playerInSight)
@@ -148,6 +149,10 @@ public class AIControl : MonoBehaviour
         if (thisCoinTarget != null)
         {
             coinInSight = true;
+        }
+        else if (thisCoinTarget == null)
+        {
+            coinInSight = false;
         }
 
         if (player != null)
@@ -271,7 +276,7 @@ public class AIControl : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
-            SetDateManager.SetCoin(CharacterIndex, coinManager.Coin);
+            SetDateManager.AddCoin(CharacterIndex, coinManager.Coin);
             coinTarget = null;
             Destroy(collision.gameObject);
         }

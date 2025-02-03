@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class GunManager : MonoBehaviour
     private bool isReloading;
     private float fireCooldown;                                     //発射のクールダウン時間
     private float bulletOffset;
+    private int characterIndex;
 
     private void Start()
     {
@@ -26,6 +28,14 @@ public class GunManager : MonoBehaviour
         isReloading = false;
         bulletOffset = 20f;
         fireCooldown = 0f;                                          //初期化
+        if (gameObject.GetComponentInParent<PlayerController>() != null )
+        {
+            characterIndex = gameObject.GetComponentInParent<PlayerController>().CharacterIndex;
+        }
+        else if ( gameObject.GetComponentInParent<AIControl>() != null )
+        {
+            characterIndex = gameObject.GetComponentInParent<AIControl>().CharacterIndex;
+        }
     }
 
     private void OnEnable()
@@ -103,6 +113,9 @@ public class GunManager : MonoBehaviour
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
         Debug.Log("Reload Complete!");
+        int characterCurrentAmmo = ParameterDate.SendCurrentAmmo(characterIndex);
+        characterCurrentAmmo = gunParameter.MaxAmmo - characterCurrentAmmo;
+        SetDateManager.AddTotalAmmo(characterIndex, -characterCurrentAmmo);
         if (textMeshProUGUI != null) textMeshProUGUI.SetText("Reload Complete!");
         yield return new WaitForSeconds(gunParameter.ReloadTime);
         if (textMeshProUGUI != null) textMeshProUGUI.SetText("");
