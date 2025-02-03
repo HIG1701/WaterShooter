@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class CoinScript : MonoBehaviour
 {
-    [SerializeField] private readonly int coin;
+    [SerializeField] private int coin;
 
     public int Coin => coin;
 }

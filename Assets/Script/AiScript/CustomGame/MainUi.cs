@@ -13,6 +13,7 @@ public class MainUi : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalFireAmmoText;
     [SerializeField] private GameObject statsObject;
     [SerializeField] private TextMeshProUGUI recordText;
+    [SerializeField] private TextMeshProUGUI coinText;
     private AudioSource audioSource;
     private AimTraining aimTraining;
     private int hitCount;
@@ -99,6 +100,7 @@ public class MainUi : MonoBehaviour
         currentAmmoText.SetText(ParameterDate.SendCurrentAmmo(playerController).ToString());
         characterHpText.SetText(ParameterDate.SendCharacterHP(playerController).ToString());
         totalFireAmmoText.SetText(ParameterDate.SendAccuracy(playerController).ToString() + "%");
+        coinText.SetText(ParameterDate.SendCharacterCoin(playerController.CharacterIndex).ToString());
     }
 
     private void HitAudio()

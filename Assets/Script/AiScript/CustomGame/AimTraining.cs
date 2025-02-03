@@ -43,7 +43,6 @@ public class AimTraining : MonoBehaviour
         {
             for (int j = 0; j < i; j++)
             {
-                Debug.Log("sas");
                 if (record[i] < record[j])
                 {
                     temp = record[i];

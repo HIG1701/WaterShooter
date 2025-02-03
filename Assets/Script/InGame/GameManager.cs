@@ -61,11 +61,11 @@ public class GameManager : MonoBehaviour
 
     private void DeathProcessing()
     {
-        Debug.LogWarning(PlayerManager.parameters.Count);
         for (int i = 0; i < PlayerManager.parameters.Count; i++)
         {
             if (PlayerManager.parameters[i].playerRuntimeDate.date.playerHP <= 0 && players[i].activeSelf)
             {
+                SetDateManager.SetCoin(ParameterDate.SendlastCharacterToDamage(i), ParameterDate.SendCharacterCoin(i));
                 SetDateManager.DeathCount(i);
                 players[i].gameObject.SetActive(false);
                 StartRespawnTimer(players[i]);

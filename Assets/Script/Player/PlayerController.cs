@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour
         //プレイヤーコイン量追加
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
-            coin += coinManager.Coin;
+            SetDateManager.SetCoin(CharacterIndex, coinManager.Coin);
             Destroy(collision.gameObject);
         }
         //Debug.Log(coin);

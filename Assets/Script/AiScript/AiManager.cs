@@ -27,6 +27,7 @@ public static class PlayerManager
             parameters[i].playerRuntimeDate.date.playerSpeed = parameters[i].playerParameter.PlayerSpeed;
             parameters[i].playerRuntimeDate.date.sprintSpeed = parameters[i].playerParameter.SprintSpeed;
             parameters[i].playerRuntimeDate.date.jumpVelocity = parameters[i].playerParameter.JumpVelocity;
+            parameters[i].playerRuntimeDate.date.coin = 0;
         }
     }
 
@@ -222,6 +223,28 @@ public static class ParameterDate
     }
 
     /// <summary>
+    /// 最後にダメージを与えたキャラIDを参照する.
+    /// </summary>
+    /// <param name="charaIndex">ダメージを与えたキャラID</param>
+    /// <returns>ダメージを与えたキャラID</returns>
+    public static int SendlastCharacterToDamage(int charaIndex)
+    {
+        int runtimeDate = PlayerManager.parameters[charaIndex].playerManagementDate.date.lastPlayerToDamage.date.playerID; 
+        return runtimeDate;
+    }
+
+    /// <summary>
+    /// 所持コイン数を渡す.
+    /// </summary>
+    /// <param name="playerController">所持コイン数を参照したいキャラ</param>
+    /// <returns>所持コイン数</returns>
+    public static int SendCharacterCoin(int charaIndex)
+    {
+        int coin = PlayerManager.parameters[charaIndex].playerRuntimeDate.date.coin;
+        return coin;
+    }
+
+    /// <summary>
     /// キル、デスを返す
     /// </summary>
     /// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
@@ -308,6 +331,7 @@ public static class SetDateManager
         var deathPlayerDate = PlayerManager.parameters[charaIndex];
         deathPlayerDate.playerManagementDate.date.deathCount++;
         deathPlayerDate.playerRuntimeDate.date.playerHP = deathPlayerDate.playerParameter.PlayerHP;
+        deathPlayerDate.playerRuntimeDate.date.coin = 0;
     }
 
     /// <summary>
@@ -318,6 +342,16 @@ public static class SetDateManager
     {
         var killPlayerDate = PlayerManager.parameters[charaIndex];
         killPlayerDate.playerManagementDate.date.killCount++;
+    }
+
+    /// <summary>
+    /// 所持コイン数を加算する.
+    /// </summary>
+    /// <param name="charaIndex"></param>
+    /// <param name="coin"></param>
+    public static void SetCoin(int charaIndex, int coin)
+    {
+        PlayerManager.parameters[charaIndex].playerRuntimeDate.date.coin += coin;
     }
 }
 
@@ -383,6 +417,8 @@ public struct PlayerRuntimeDateStruct
     public int currentAmmo;                 //残弾
     public int totalFireAmmo;               //撃った弾.
     public int hitAmmo;                     //当たった弾の数.
+
+    public int coin;                        //所持コイン数.
 }
 
 /// <summary>

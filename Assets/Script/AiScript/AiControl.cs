@@ -56,15 +56,13 @@ public class AIControl : MonoBehaviour
     private void Update()
     {
         //CharacterMoveCheck();
-        Debug.Log(coinInSight);
-        Debug.Log(playerInSight);
         //artCoroutine(CharacterHide());
-        WalkingSimulator();
         CheckPlayerInSight();
         OnPlayerInSight();
         CharacterLifeCycle();
         //aracterHide();
         ForwardMove();
+        WalkingSimulator();
     }
 
     //botの移動監視実装する可能性あり。現在はなしで実装中
@@ -79,9 +77,7 @@ public class AIControl : MonoBehaviour
     {
         if (coinInSight && !playerInSight && coinTarget != null)
         {
-            Debug.Log("cointuisewki");
-            //agent.SetDestination(coinTarget.position);
-            Debug.Log(coinTarget.position);
+            Debug.Log($"coinInSight: {coinInSight}, playerInSight: {playerInSight}, coinTarget: {coinTarget}");
             CalculatePath(coinTarget.position);
         }
 
@@ -93,7 +89,7 @@ public class AIControl : MonoBehaviour
                 Vector3 directionToPlayer = (player.position - transform.position).normalized;
                 Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-                Debug.Log("Check");
+
                 pathCalculated = false; //BOTの移動停止.
                 Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
                 agent.Move(sideStep * Time.deltaTime);
@@ -101,7 +97,6 @@ public class AIControl : MonoBehaviour
                 //以下銃撃処理
                 if (!gunManager.CanShoot())
                 {
-                    Debug.Log("a");
                     gunManager.StartReload();
                 }
                 botAnimation.aimTarget = player.transform;
@@ -110,14 +105,11 @@ public class AIControl : MonoBehaviour
             }
             else
             {
-                pathCalculated = false; //BOTの移動停止.
-                //agent.SetDestination(player.position);
                 CalculatePath(player.position);
             }
         }
         else if (lastKnownPosition != Vector3.zero && !coinInSight && lastKnownPosition == this.transform.position)
         {
-            //agent.SetDestination(lastKnownPosition);
             CalculatePath(lastKnownPosition);
         }
     }
@@ -130,7 +122,6 @@ public class AIControl : MonoBehaviour
         {
             if (target.CompareTag("Coin"))
             {
-                Debug.Log("coin");
                 thisCoinTarget = target.gameObject;
                 coinTarget = thisCoinTarget.transform;
             }
@@ -142,9 +133,7 @@ public class AIControl : MonoBehaviour
         {
             if (target.CompareTag("Player"))
             {
-                Debug.Log("Player");
                 thisTargetPlayerObject = target.gameObject;
-                coinTarget = thisTargetPlayerObject.transform;
             }
         }
         if (thisTargetPlayerObject != null)
@@ -158,6 +147,11 @@ public class AIControl : MonoBehaviour
             }
         }
 
+        if (thisCoinTarget != null)
+        {
+            coinInSight = true;
+        }
+
         if (player != null)
         {
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
@@ -166,43 +160,34 @@ public class AIControl : MonoBehaviour
 
 
             if (
-                distanceToPlayer <= sightRange
-                && !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer)
-                && player != null
-                )
+                distanceToPlayer <= sightRange)
             {
+                Debug.Log("a");
                 coinInSight = false;
                 playerInSight = true;
             }
-            else if (distanceToPlayer > sightRange || Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer))
+            else if (distanceToPlayer > sightRange)
             {
+                Debug.Log("b");
                 playerInSight = false;
             }
             else
             {
-                Debug.Log("aaa");
                 agent.enabled = false;
             }
-        }
-
-        if (thisCoinTarget != null)
-        {
-            Debug.Log("こいんおいかける");
-            coinInSight = true;
         }
 
     }
 
     private void WalkingSimulator()
     {
-        if (!pathCalculated)
+        if (!coinTarget & !playerInSight)
         {
             Vector3 randomDirection = Random.insideUnitSphere * sightRange;
             randomDirection += transform.position;
             NavMeshHit hit;
             if (NavMesh.SamplePosition(randomDirection, out hit, sightRange, 1))
             {
-                //    agent.SetDestination(hit.position);
                 CalculatePath(hit.position);
             }
         }
@@ -290,7 +275,7 @@ public class AIControl : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<CoinScript>(out var coinManager))
         {
-            coin += coinManager.Coin;
+            SetDateManager.SetCoin(CharacterIndex, coinManager.Coin);
             coinTarget = null;
             Destroy(collision.gameObject);
         }
@@ -304,7 +289,6 @@ public class AIControl : MonoBehaviour
     {
         if (!pathCalculated)
         {
-            Debug.Log("StartPathCheck");
             NavMeshHit hit;
             if (NavMesh.SamplePosition(target, out hit, 10.0f, NavMesh.AllAreas))
             {
@@ -312,7 +296,6 @@ public class AIControl : MonoBehaviour
             }
             else
             {
-                Debug.Log("CheckReturn");
                 return;
             }
 
@@ -350,14 +333,12 @@ public class AIControl : MonoBehaviour
 
             if (Vector3.Distance(transform.position, targetPosition) < targetThreshold)
             {
-                Debug.LogWarning("ok!");
                 currentPathIndex++;
             }
 
             // 最後のポイントまで到達したら計算をリセットする.
             if (currentPathIndex >= path.corners.Length)
             {
-                Debug.Log("Leave");
                 pathCalculated = false;
                 characterMove.ISMove(0f, 0f);
             }
