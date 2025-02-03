@@ -87,7 +87,6 @@ public class MainUi : MonoBehaviour
 
         if (!player.activeSelf)
         {
-            Debug.LogWarning("non");
             statsObject.SetActive(true);
             recordText.SetText
                 (
@@ -149,6 +148,15 @@ public class MainUi : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ReturnToDesktop()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
+        Application.Quit();  // ÉQÅ[ÉÄÇèIóπ
+        #endif
     }
 
     public void Ranking()

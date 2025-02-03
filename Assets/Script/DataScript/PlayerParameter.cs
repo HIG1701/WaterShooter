@@ -14,6 +14,7 @@ public class PlayerParameter : ScriptableObject
     [SerializeField] private float playerShield = 50f;        //シールド耐久力
     [SerializeField] private float initialVelocity = 5f;      //ジャンプ力
     [SerializeField] private int totalAmmo = 120;
+    [SerializeField] private int coin = 0;
 
     [Header("速度に関するParameter")]
     [SerializeField] private float playerSpeed = 5f;          //通常速度
@@ -48,4 +49,5 @@ public class PlayerParameter : ScriptableObject
     public float CrouchSpeed => crouchSpeed;
     public float JumpVelocity => jumpVelocity;
     public int TotalAmmo => totalAmmo;
+    public int Coin => coin;
 }

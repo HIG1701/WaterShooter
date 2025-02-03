@@ -28,7 +28,7 @@ public static class PlayerManager
             parameters[i].playerRuntimeDate.date.sprintSpeed = parameters[i].playerParameter.SprintSpeed;
             parameters[i].playerRuntimeDate.date.jumpVelocity = parameters[i].playerParameter.JumpVelocity;
             parameters[i].playerRuntimeDate.date.totalAmmo = parameters[i].playerParameter.TotalAmmo;
-            parameters[i].playerRuntimeDate.date.coin = 0;
+            parameters[i].playerRuntimeDate.date.coin = parameters[i].playerParameter.Coin;
         }
     }
 

@@ -19,6 +19,7 @@ MonoBehaviour:
   playerShield: 0
   initialVelocity: 0
   totalAmmo: 12000
+  coin: 10
   playerSpeed: 0
   sprintSpeed: 0
   climbSpeed: 3
