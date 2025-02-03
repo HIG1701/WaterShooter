@@ -12,17 +12,14 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private float healthFight = 30f;
     [Header(""), SerializeField] private float viewHideObjectRange = 20f;
     [Header("ãñóeåÎç∑"), SerializeField] private float targetThreshold = 5f;
-    private PlayerController playerController;
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
     [Header(""), SerializeField] private float viewAngle;
     private BotAnimation botAnimation;
-    private BotAim botAim;
     private Transform coinTarget;
     private NavMeshAgent agent;
     private CharacterMove characterMove;
     private Vector3 lastKnownPosition;
-    private int coin;
     private bool playerInSight = false;
     private bool coinInSight;
     private bool isHide = false;
@@ -42,15 +39,17 @@ public class AIControl : MonoBehaviour
 
     public float SendViewAngle() { return viewAngle; }
 
-    private Vector3 moveDirection;
     private void Start()
     {
         botAnimation = GetComponent<BotAnimation>();
-        botAim = GetComponent<BotAim>();
-        playerController = GetComponent<PlayerController>();
         agent = GetComponent<NavMeshAgent>();
         characterMove = GetComponent<CharacterMove>();
         path = new NavMeshPath();
+    }
+
+    private void OnEnable()
+    {
+        transform.localPosition = Vector3.zero;
     }
 
     private void Update()
@@ -77,7 +76,6 @@ public class AIControl : MonoBehaviour
     {
         if (coinInSight && !playerInSight && coinTarget != null)
         {
-            Debug.Log($"coinInSight: {coinInSight}, playerInSight: {playerInSight}, coinTarget: {coinTarget}");
             CalculatePath(coinTarget.position);
         }
 
@@ -162,13 +160,11 @@ public class AIControl : MonoBehaviour
             if (
                 distanceToPlayer <= sightRange)
             {
-                Debug.Log("a");
                 coinInSight = false;
                 playerInSight = true;
             }
             else if (distanceToPlayer > sightRange)
             {
-                Debug.Log("b");
                 playerInSight = false;
             }
             else

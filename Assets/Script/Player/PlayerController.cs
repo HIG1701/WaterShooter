@@ -15,17 +15,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GunManager gunManager;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Camera deathCamera;
-    private GameManager gameManager;
     private Rigidbody rb;
     private bool isGrounded;
-    private int coin;
-    private float currentHealth;
     private BotAnimation characterAnimation;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        gameManager = FindObjectOfType<GameManager>();
         characterAnimation = GetComponent<BotAnimation>();
 
     }
@@ -33,7 +29,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         currentSpeed = parameter.PlayerSpeed;
-        currentHealth = parameter.PlayerHP;
 
         ////このコメントは記述者が書いていて分からなくなったので、計算メモとして残してます
         ////参考リンク：https://qiita.com/kaku0710/items/fdf5bab18b65f6f9dcb4
@@ -49,10 +44,8 @@ public class PlayerController : MonoBehaviour
     {
         //PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        //PlayerShift();                                          //しゃがむ処理（内容未実装）
-        Playerfire();                                           //プレイヤーの銃撃（バグ未解決）
-        //PlayerAbility();                                        //アビリティ（内容未実装）
-        //マウスScrollで飲料選択。数字でも可
+        //PlayerShift();                                          //しゃがむ処理(内容未実装)
+        Playerfire();                                           //プレイヤーの銃撃(バグ未解決)
     }
 
     private void OnEnable()
@@ -147,21 +140,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R)) gunManager.StartReload();
     }
 
-    private void PlayerAbility()
-    {
-    }
-
-    private void Die()
-    {
-        gameObject.SetActive(false);
-        //リスポーンタイマーを開始させる
-        gameManager.StartRespawnTimer(gameObject);
-        //メインカメラを無効化し、死亡時カメラを有効化
-        mainCamera.gameObject.SetActive(false);
-        deathCamera.gameObject.SetActive(true);
-        deathCamera.transform.position = transform.position + new Vector3(0, 10, 0); //上空に配置
-        deathCamera.transform.LookAt(transform.position);
-    }
     public void Respawn()
     {
         gameObject.SetActive(true);
@@ -188,15 +166,6 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
-
-        if (collision.gameObject.CompareTag("DamageArea"))
-        {
-            currentHealth -= 9999 * Time.deltaTime;
-            if (currentHealth <= 0) Die();
-        }
-
-        ////給水エリア場で、常に玉がフル装填される
-        //if (collision.gameObject.CompareTag("WaterArea")) gunManager.WaterReload();
     }
 
     private void OnCollisionExit(Collision collision)
