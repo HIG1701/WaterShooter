@@ -99,6 +99,9 @@ public class GunManager : MonoBehaviour
 
     public void StartReload()
     {
+        int totalAmmo = ParameterDate.SendTotalAmmo(characterIndex);
+        int currentAmmo = ParameterDate.SendCurrentAmmo(characterIndex);
+        if (totalAmmo <= 0) { return; }
         StartCoroutine(Reload());
     }
 
@@ -113,8 +116,10 @@ public class GunManager : MonoBehaviour
         currentAmmo = gunParameter.MaxAmmo;
         isReloading = false;
         Debug.Log("Reload Complete!");
+        int totalAmmo = ParameterDate.SendTotalAmmo(characterIndex);
         int characterCurrentAmmo = ParameterDate.SendCurrentAmmo(characterIndex);
         characterCurrentAmmo = gunParameter.MaxAmmo - characterCurrentAmmo;
+        if (totalAmmo < characterCurrentAmmo) { characterCurrentAmmo = totalAmmo; currentAmmo = characterCurrentAmmo; }
         SetDateManager.AddTotalAmmo(characterIndex, -characterCurrentAmmo);
         if (textMeshProUGUI != null) textMeshProUGUI.SetText("Reload Complete!");
         yield return new WaitForSeconds(gunParameter.ReloadTime);
