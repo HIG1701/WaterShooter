@@ -28,6 +28,7 @@ public class MainUi : MonoBehaviour
     [SerializeField] private GameObject coinRankingText;
     [SerializeField] private CameraFollow cameraFollow;
     [SerializeField] private Slider slider;
+    [SerializeField] private TextMeshProUGUI dpsText;
     private int maxCoin = 0;
     private AudioSource audioSource;
     private AimTraining aimTraining;
@@ -208,6 +209,7 @@ public class MainUi : MonoBehaviour
         totalFireAmmoText.SetText(ParameterDate.SendAccuracy(playerController).ToString() + "%");
         coinText.SetText(ParameterDate.SendCharacterCoin(playerController.CharacterIndex).ToString());
         totalAmmoText.SetText(ParameterDate.SendTotalAmmo(playerController.CharacterIndex).ToString());
+        dpsText.SetText(ParameterDate.SendDamageCount(playerController.CharacterIndex).ToString());
     }
 
     private void HitAudio()

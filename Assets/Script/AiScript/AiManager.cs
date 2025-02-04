@@ -247,6 +247,17 @@ public static class ParameterDate
     }
 
     /// <summary>
+    /// 与ダメを渡す.
+    /// </summary>
+    /// <param name="charaIndex">与ダメを参照したいキャラID</param>
+    /// <returns>与ダメ</returns>
+    public static float SendDamageCount(int charaIndex)
+    {
+        float damageCount = PlayerManager.parameters[charaIndex].playerManagementDate.date.damageCount;
+        return damageCount;
+    }
+
+    /// <summary>
     /// キル、デスを返す
     /// </summary>
     /// <param name="killPlayerDate">キルしたプレイヤーのデータ</param>
@@ -285,6 +296,7 @@ public static class SetDateManager
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
                 PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
                 PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
+                PlayerManager.parameters[charaIndex].playerManagementDate.date.damageCount += gunParameter.GunPower;
                 break;
             }
         }
@@ -307,6 +319,7 @@ public static class SetDateManager
                 PlayerManager.parameters[i].playerRuntimeDate.date.playerHP = PlayerManager.parameters[i].playerRuntimeDate.date.playerHP - gunParameter.GunPower;
                 PlayerManager.parameters[i].playerManagementDate.date.lastPlayerToDamage = PlayerManager.parameters[charaIndex].playerRuntimeDate;
                 PlayerManager.parameters[charaIndex].playerRuntimeDate.date.hitAmmo++;
+                PlayerManager.parameters[charaIndex].playerManagementDate.date.damageCount += gunParameter.GunPower;
                 Debug.Log(PlayerManager.parameters[i].playerRuntimeDate.date.playerHP);
                 break;
             }
@@ -455,7 +468,7 @@ public class PlayerManagementDate
 public struct PlayerManagementDateStruct
 {
     public int killCount;
-    public int damageCount;
+    public float damageCount;
     public int deathCount;
 
     public PlayerRuntimeDate lastPlayerToDamage;
