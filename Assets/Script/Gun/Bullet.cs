@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
 {
     public int CharaIndex = 0;
     [SerializeField] private GunParameter gunParameter;
+    [SerializeField] private GameObject hitParticle;
     private float speed;                                           //’eŠÛ‚Ì‘¬“x
     private float range;                                           //Ë’ö‹——£
     private Vector3 startPosition;
@@ -45,6 +46,8 @@ public class Bullet : MonoBehaviour
         {
             //BOT‚É‘Î‚µ‚Äƒ_ƒ‰ÁZ.
             SetDateManager.HitToCharacter(playerAiController, gunParameter, CharaIndex);
+            GameObject particleInstance = Instantiate(hitParticle, gameObject.transform.position, Quaternion.identity);
+            particleInstance.GetComponentInChildren<ParticleSystem>().Play();
         }
         Destroy(gameObject);
     }
@@ -62,6 +65,8 @@ public class Bullet : MonoBehaviour
         {
             //BOT‚É‘Î‚µ‚Äƒ_ƒ‰ÁZ.
             SetDateManager.HitToCharacter(playerAiController, gunParameter, CharaIndex);
+            GameObject particleInstance = Instantiate(hitParticle, gameObject.transform.position, Quaternion.identity);
+            particleInstance.GetComponentInChildren<ParticleSystem>().Play();
         }
         Destroy(gameObject);
     }

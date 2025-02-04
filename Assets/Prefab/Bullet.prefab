@@ -148,3 +148,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharaIndex: 0
   gunParameter: {fileID: 11400000, guid: dd718d4a324b08e4c804cffa46c0e873, type: 2}
+  hitParticle: {fileID: 5998191296958979712, guid: e8b2dd2a082245647b9ee972f9e278c0, type: 3}
