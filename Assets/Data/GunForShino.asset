@@ -16,7 +16,7 @@ MonoBehaviour:
   gunPower: 10
   fireRate: 0.12
   bulletSpeed: 3000
-  attackRange: 60000
+  attackRange: 30000
   reloadTime: 2
   maxAmmo: 30
   drinkDate:

@@ -10,10 +10,12 @@ public class Bullet : MonoBehaviour
     public int CharaIndex = 0;
     [SerializeField] private GunParameter gunParameter;
     [SerializeField] private GameObject hitParticle;
+    [SerializeField] private GameObject muzzleFlash;
     private float speed;                                           //’eŠÛ‚Ì‘¬“x
     private float range;                                           //ŽË’ö‹——£
     private Vector3 startPosition;
     private Rigidbody rb;
+    private GameObject particleFlash;
 
     private void Start()
     {
@@ -21,6 +23,8 @@ public class Bullet : MonoBehaviour
         range = gunParameter.AttackRange;
         startPosition = transform.position;
         rb = GetComponent<Rigidbody>();
+        particleFlash = Instantiate(muzzleFlash, gameObject.transform.position, transform.rotation);
+        particleFlash.GetComponent<ParticleSystem>().Play();
 
         //’eŠÛ‚Ì‰‘¬“x‚ðÝ’è
         rb.velocity = transform.forward * speed;
@@ -31,7 +35,12 @@ public class Bullet : MonoBehaviour
     private void FixedUpdate()
     {
         //ŽË’ö‹——£‚É’B‚µ‚½‚ç’eŠÛ‚ð”j‰ó‚·‚é
-        if (Vector3.Distance(startPosition, transform.position) >= range) Destroy(gameObject);
+        if (Vector3.Distance(startPosition, transform.position) >= range)
+        {
+            particleFlash.GetComponent<ParticleSystem>().Stop();
+            Destroy(particleFlash);
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -49,6 +58,7 @@ public class Bullet : MonoBehaviour
             GameObject particleInstance = Instantiate(hitParticle, gameObject.transform.position, Quaternion.identity);
             particleInstance.GetComponentInChildren<ParticleSystem>().Play();
         }
+        Destroy(particleFlash);
         Destroy(gameObject);
     }
 
@@ -68,6 +78,8 @@ public class Bullet : MonoBehaviour
             GameObject particleInstance = Instantiate(hitParticle, gameObject.transform.position, Quaternion.identity);
             particleInstance.GetComponentInChildren<ParticleSystem>().Play();
         }
+        particleFlash.GetComponent<ParticleSystem>().Stop();
+        Destroy(particleFlash);
         Destroy(gameObject);
     }
 }

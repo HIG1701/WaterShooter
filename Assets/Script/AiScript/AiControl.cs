@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 public class AIControl : MonoBehaviour
 {
     [Header("管理番号"), SerializeField] public int CharacterIndex = 0;
-    [Header(""), SerializeField] private Transform player; 
+    [Header(""), SerializeField] private Transform player;
     [Header(""), SerializeField] private LayerMask obstacleLayer;
     [Header("発見距離"), SerializeField] private float sightRange = 20f;
     [Header("射撃距離"), SerializeField] private float shootRange = 15f;
@@ -15,12 +15,14 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
     [Header(""), SerializeField] private float viewAngle;
+    private BotShootingMove shootingMove;
     private BotAnimation botAnimation;
     private Transform coinTarget;
     private NavMeshAgent agent;
     private CharacterMove characterMove;
     private Vector3 lastKnownPosition;
     private bool playerInSight = false;
+    private bool isShooting = false;
     private bool coinInSight;
     private bool isHide = false;
 
@@ -41,6 +43,7 @@ public class AIControl : MonoBehaviour
 
     private void Start()
     {
+        shootingMove = GetComponent<BotShootingMove>();
         botAnimation = GetComponent<BotAnimation>();
         agent = GetComponent<NavMeshAgent>();
         characterMove = GetComponent<CharacterMove>();
@@ -49,7 +52,16 @@ public class AIControl : MonoBehaviour
 
     private void OnEnable()
     {
+        shootingMove = GetComponent<BotShootingMove>();
+        botAnimation = GetComponent<BotAnimation>();
+        path = new NavMeshPath();
+        pathCalculated = false;
+        botAnimation.aimTarget = null;
         transform.localPosition = Vector3.zero;
+        isShooting = false;
+        playerInSight = false;
+        coinInSight = false;
+        shootingMove.BotShootingMoveReset();
     }
 
     private void Update()
@@ -90,8 +102,9 @@ public class AIControl : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
 
                 pathCalculated = false; //BOTの移動停止.
-                Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
-                agent.Move(sideStep * Time.deltaTime);
+                //Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
+                //agent.Move(sideStep * Time.deltaTime);
+                shootingMove.BotShootingMoveStart();
 
                 //以下銃撃処理
                 if (!gunManager.CanShoot())
@@ -99,16 +112,23 @@ public class AIControl : MonoBehaviour
                     gunManager.StartReload();
                 }
                 botAnimation.aimTarget = player.transform;
-
+                isShooting = true;
                 gunManager.Shoot();
             }
             else
             {
+                shootingMove.BotShootingMoveReset();
+                botAnimation.aimTarget = null;
+                isShooting = false;
                 CalculatePath(player.position);
             }
         }
         else if (lastKnownPosition != Vector3.zero && !coinInSight && lastKnownPosition == this.transform.position)
         {
+            shootingMove.BotShootingMoveReset();
+            isShooting = false;
+            botAnimation.aimTarget = null;
+            player = null;
             CalculatePath(lastKnownPosition);
         }
     }
@@ -182,7 +202,7 @@ public class AIControl : MonoBehaviour
 
     private void WalkingSimulator()
     {
-        if (!coinTarget & !playerInSight)
+        if (!coinTarget && !playerInSight)
         {
             Vector3 randomDirection = Random.insideUnitSphere * sightRange;
             randomDirection += transform.position;
@@ -258,7 +278,7 @@ public class AIControl : MonoBehaviour
     //    yield break;
     //}
 
-    
+
 
     private void CharacterLifeCycle()
     {
@@ -282,6 +302,8 @@ public class AIControl : MonoBehaviour
         }
     }
 
+    private Vector3 lastPosition;
+    private float timer = 0f;
     /// <summary>
     /// 経路探索.
     /// </summary>
@@ -307,6 +329,8 @@ public class AIControl : MonoBehaviour
             {
                 pathCalculated = true;
                 currentPathIndex = 0;
+                lastPosition = transform.position;
+                timer = 0f;
             }
         }
     }
@@ -326,7 +350,6 @@ public class AIControl : MonoBehaviour
             if (aim != Vector3.zero)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(aim);
-
                 transform.rotation = Quaternion.Slerp(currentRotation, lookRotation, 4f * Time.deltaTime);
             }
 
@@ -337,20 +360,34 @@ public class AIControl : MonoBehaviour
                 currentPathIndex++;
             }
 
+            if (Vector3.Distance(transform.position, lastPosition) < 0.05f) //あとで0.05fを変数に置き換え.
+            {
+                timer += Time.deltaTime;
+            }
+            else
+            {
+                timer = 0f;
+                lastPosition = transform.position;
+            }
+
+            //1秒間動かなかったら経路を再計算(あとで変数に置き換え).
+            if (timer > 1.0f)
+            {
+                pathCalculated = false;
+                timer = 0f; 
+            }
+
             // 最後のポイントまで到達したら計算をリセットする.
-            if (currentPathIndex >= path.corners.Length)
+            if (currentPathIndex >= path.corners.Length && !isShooting)
             {
                 pathCalculated = false;
                 characterMove.ISMove(0f, 0f);
             }
-            if (angle < 10f && pathCalculated) //あとでフィールドにつくる.
+
+            if (angle < 10f && pathCalculated && !isShooting) //あとでフィールドにつくる.
             {
                 characterMove.ISMove(0f, 1f);
             }
-        }
-        else if (!pathCalculated)
-        {
-            characterMove.ISMove(0f, 0f);
         }
     }
 }
