@@ -118,11 +118,11 @@ public class PlayerController : MonoBehaviour
         Vector3 move = desiredMoveDirection * currentSpeed;
         move.y = rb.velocity.y;
         rb.velocity = move;
-        if (!isSyagamu && (moveHorizontal >= 0 || moveVertical >= 0))
+        if (!isSyagamu && !Input.GetKey(KeyCode.Space))
         {
             animator.SetFloat("Walk", move.magnitude);
         }
-        else if (isSyagamu && (moveHorizontal >= 0 || moveVertical >= 0))
+        else if (isSyagamu && !Input.GetKey(KeyCode.Space))
         {
             animator.SetFloat("SyagamiWalk", move.magnitude);
         }
