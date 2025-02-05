@@ -21,7 +21,7 @@ MonoBehaviour:
   totalAmmo: 120
   coin: 0
   playerSpeed: 30
-  sprintSpeed: 60
+  sprintSpeed: 45
   climbSpeed: 10
   crouchSpeed: 15
   jumpVelocity: 15

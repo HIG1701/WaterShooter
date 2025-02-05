@@ -16,16 +16,18 @@ public class BotShootingMove : MonoBehaviour
         characterMove = GetComponent<CharacterMove>();
     }
 
-    public void BotShootingMoveReset()
+    public float BotShootingMoveReset()
     {
         isShooting = false;
         randomSecond = 0;
         moveDirection = 0;
         previosDirection = 0;
+        return previosDirection;
     }
 
-    public void BotShootingMoveStart()
+    public void BotShootingMoveStart(float botForwardMove)
     {
+        StartCoroutine(BotForwardMoveDirectionReset(botForwardMove));
         StartCoroutine(Shooting());
     }
 
@@ -58,6 +60,16 @@ public class BotShootingMove : MonoBehaviour
         yield return new WaitForSeconds(randomSecond);
         isShooting = false;
         previosDirection = moveValue;
+    }
+
+    private IEnumerator BotForwardMoveDirectionReset(float botForwardMove)
+    {
+        while (botForwardMove > 0)
+        {
+            botForwardMove -= 0.05f;
+            yield return null;
+        }
+        yield break;
     }
 
     private void MoveShoot()

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Photon.Pun;  // Photon.Pun‚Ì–¼‘O‹óŠÔ‚ð’Ç‰Á
+using Photon.Pun;
 
 [Serializable]
 public class BulletDateToInventory : MonoBehaviour, IPointerClickHandler
@@ -33,7 +33,7 @@ public class BulletDateToInventory : MonoBehaviour, IPointerClickHandler
             Debug.Log(childPlayerObject);
             if (childPlayerObject != null)
             {
-                childPlayerObject.gameObject.GetComponent<PlayerController>().DrinkInInventory(eventData.pointerClick.gameObject);
+                //childPlayerObject.gameObject.GetComponent<PlayerController>().DrinkInInventory(eventData.pointerClick.gameObject);
             }
         }
     }

@@ -15,8 +15,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GunManager gunManager;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Camera deathCamera;
+    [SerializeField] private float runAnimationSpeed = 1.25f;
     private Rigidbody rb;
     private bool isGrounded;
+    private bool isCanNotShoot;
     private BotAnimation characterAnimation;
 
     private void Awake()
@@ -42,9 +44,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //PlayerSpeedControl();                                   //ダッシュ処理
+        PlayerSpeedControl();                                   //ダッシュ処理
         PlayerMove();                                           //プレイヤーの移動
-        //PlayerShift();                                          //しゃがむ処理(内容未実装)
+        PlayerSquat();                                          //しゃがむ処理(内容未実装)
         Playerfire();                                           //プレイヤーの銃撃(バグ未解決)
     }
 
@@ -55,12 +57,6 @@ public class PlayerController : MonoBehaviour
     }
 
     public PlayerParameter SendPlayerParameter { get { return parameter; } } 
-
-    public void DrinkInInventory(GameObject drinkDate)
-    {
-        Debug.Log(drinkDate);
-        //parameter.playerInventory.drinkType.Add(drinkDate);
-    }
 
     public virtual void PlayerMove()
     {
@@ -108,29 +104,40 @@ public class PlayerController : MonoBehaviour
         characterAnimation.CharaAnimation(moveHorizontal, moveVertical);
     }
 
-    //private void PlayerSpeedControl()
-    //{
-    //    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) currentSpeed = parameter.SprintSpeed;
-    //    else currentSpeed = parameter.PlayerSpeed;
-    //}
-
-    private void PlayerShift()
+    private void PlayerSpeedControl()
     {
-        //if (Input.GetKey(KeyCode.LeftShift))
-        //{
-        //    characterAnimation.ShiftAnimation();
-        //}
-        //else if (!Input.GetKey(KeyCode.LeftShift))
-        //{
-        //    characterAnimation.AnimationReset();
-        //}
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            currentSpeed = parameter.SprintSpeed;
+            characterAnimation.AnimationSpeed(runAnimationSpeed);
+            isCanNotShoot = true;
+        }
+        else
+        {
+            currentSpeed = parameter.PlayerSpeed;
+            characterAnimation.AnimationSpeedReset();
+            isCanNotShoot = false;
+        }
+    }
+
+    private void PlayerSquat()
+    {
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            characterAnimation.SquatAnimation();
+            currentSpeed = currentSpeed / 2;
+        }
+        else if (!Input.GetKey(KeyCode.LeftControl))
+        {
+            characterAnimation.WalkAnimation();
+        }
         //TODO:しゃがむ
         //シフトでしゃがむ
     }
 
     private void Playerfire()
     {
-        if (Input.GetMouseButton(0)) gunManager.Shoot();
+        if (Input.GetMouseButton(0) && !isCanNotShoot) gunManager.Shoot();
         //TODO:エイム
         //右マウスでエイム
     }

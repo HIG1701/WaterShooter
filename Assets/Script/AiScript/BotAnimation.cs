@@ -2,7 +2,7 @@
 public class BotAnimation : MonoBehaviour
 {
     private Animator animator;
-    private Vector3 previousPosition;
+    private int previousAnimationIndex;
 
     private void Start()
     {
@@ -55,19 +55,37 @@ public class BotAnimation : MonoBehaviour
         //}
     }
 
+    public void AnimationSpeed(float animeSpeed)
+    {
+        animator.speed = animeSpeed;
+    }
+
     public void JumpAnimation()
     {
         animator.SetInteger("Animeset", (int)2);
+        previousAnimationIndex = 2;
     }
 
-    public void ShiftAnimation()
+    public void SquatAnimation()
     {
         animator.SetInteger("Animeset", (int)1);
+        previousAnimationIndex = 1;
+    }
+
+    public void WalkAnimation()
+    {
+        previousAnimationIndex = 0;
+    }
+
+    public void AnimationSpeedReset()
+    {
+        animator.SetInteger("Animeset", (int)0);
+        animator.speed = 1.0f;
     }
 
     public void AnimationReset()
     {
-        animator.SetInteger("Animeset", (int)0);
+        animator.SetInteger("Animeset", (int)previousAnimationIndex);
     }
 
     [SerializeField] public Transform aimTarget;

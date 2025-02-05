@@ -15,6 +15,7 @@ public class AIControl : MonoBehaviour
     [Header(""), SerializeField] private PlayerParameter playerParameter;
     [Header(""), SerializeField] private GunManager gunManager;
     [Header(""), SerializeField] private float viewAngle;
+    [Header("アニメーション切り替え速度"), SerializeField] private int animationChangeSpeed = 5;
     private BotShootingMove shootingMove;
     private BotAnimation botAnimation;
     private Transform coinTarget;
@@ -89,7 +90,6 @@ public class AIControl : MonoBehaviour
         if (coinInSight && !playerInSight && coinTarget != null)
         {
             CalculatePath(coinTarget.position);
-            Debug.Log(coinTarget.position);
         }
 
         if (playerInSight)
@@ -104,7 +104,7 @@ public class AIControl : MonoBehaviour
                 pathCalculated = false; //BOTの移動停止.
                 //Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
                 //agent.Move(sideStep * Time.deltaTime);
-                shootingMove.BotShootingMoveStart();
+                shootingMove.BotShootingMoveStart(moveDirectionValue);
 
                 //以下銃撃処理
                 if (!gunManager.CanShoot())
@@ -114,6 +114,7 @@ public class AIControl : MonoBehaviour
                 botAnimation.aimTarget = player.transform;
                 isShooting = true;
                 gunManager.Shoot();
+                moveDirectionValue = 0;
             }
             else
             {
@@ -304,6 +305,7 @@ public class AIControl : MonoBehaviour
 
     private Vector3 lastPosition;
     private float timer = 0f;
+    private float moveDirectionValue = 0f;
     /// <summary>
     /// 経路探索.
     /// </summary>
@@ -381,13 +383,32 @@ public class AIControl : MonoBehaviour
             if (currentPathIndex >= path.corners.Length && !isShooting)
             {
                 pathCalculated = false;
-                characterMove.ISMove(0f, 0f);
+                characterMove.ISMove(0f, MoveDirectionLerp(0));
             }
 
             if (angle < 10f && pathCalculated && !isShooting) //あとでフィールドにつくる.
             {
-                characterMove.ISMove(0f, 1f);
+                characterMove.ISMove(0f, MoveDirectionLerp(1));
             }
         }
+    }
+    private float MoveDirectionLerp(int moveDirection)
+    {
+        switch (moveDirection)
+        {
+            case 0:
+                if (moveDirectionValue > moveDirection)
+                {
+                    moveDirectionValue = moveDirectionValue - Time.deltaTime * animationChangeSpeed;
+                }
+                break;
+            case 1:
+                if (moveDirectionValue < moveDirection)
+                {
+                    moveDirectionValue = moveDirectionValue + Time.deltaTime * animationChangeSpeed;
+                }
+                break;
+        }
+        return moveDirectionValue;
     }
 }

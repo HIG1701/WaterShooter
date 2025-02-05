@@ -64,23 +64,23 @@ public class CameraFollow : MonoBehaviour
         //Quaternion.Euler：ｚ、ｘ、ｙの順で回転する
         Quaternion Rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
 
+        float cameraDistance = Distance;
+
         //カメラ位置をプレイヤー位置と回転、オフセットを基に設定（通常の位置）
-        Vector3 rotatedPosition = Player.position + Rotation * Direction;
-        Vector3 DesiredPosition = Player.position + Rotation * Direction + Offset;
+        Vector3 DesiredPosition = Player.transform.position + Rotation * Direction + Offset;
 
         //Physics.SphereCast：障害物を検知
         //SphereCastRadius：SphereCastの半径
         //DesiredPosition - Player.position：SphereCastの方向
-        RaycastHit hit;
-        if (Physics.SphereCast(Player.position, SphereCastRadius, DesiredPosition - Player.position, out hit, Distance, CollisionLayers))
+        if (Physics.SphereCast(Player.transform.position + Offset, SphereCastRadius, Rotation * -Vector3.forward, out RaycastHit hit, Distance, CollisionLayers))
         {
-            //hit.point：衝突地点
-            //hit.normal：衝突のベクトル
-            transform.position = hit.point + hit.normal * SphereCastRadius;
+            cameraDistance = Mathf.Min(Distance, hit.distance); // 壁が近ければ距離を短縮
         }
-        else transform.position = DesiredPosition;
 
-        //transform.LookAt：カメラに特定の位置を向かせ続ける
+        // カメラ位置を調整
+        DesiredPosition = Player.transform.position + Rotation * new Vector3(0, 0, -cameraDistance) + Offset;
+
+        transform.position = DesiredPosition;
         transform.LookAt(Player.position + Rotation * Offset);
     }
 }
