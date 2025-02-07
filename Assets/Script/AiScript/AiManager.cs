@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -29,6 +30,7 @@ public static class PlayerManager
             parameters[i].playerRuntimeDate.date.jumpVelocity = parameters[i].playerParameter.JumpVelocity;
             parameters[i].playerRuntimeDate.date.totalAmmo = parameters[i].playerParameter.TotalAmmo;
             parameters[i].playerRuntimeDate.date.coin = parameters[i].playerParameter.Coin;
+            parameters[i].playerRuntimeDate.date.myDrink = new List<BulletDateToInventory>();
         }
     }
 
@@ -276,6 +278,11 @@ public static class ParameterDate
             deathPlayerDate.playerRuntimeDate.date.playerID
         );
     }
+
+    public static IReadOnlyList<BulletDateToInventory> SendDrinkInventory(int charaIndex)
+    {
+        return PlayerManager.parameters[charaIndex].playerRuntimeDate.date.myDrink;
+    }
 }
 
 public static class SetDateManager
@@ -328,6 +335,16 @@ public static class SetDateManager
     }
 
     /// <summary>
+    /// HP‚ğ‰ÁZ‚·‚é.
+    /// </summary>
+    /// <param name="charaIndex">HP—Ê‚ğ‰ÁZ‚·‚éƒLƒƒƒ‰ID</param>
+    /// <param name="hp">‰ÁZ‚·‚éHP—Ê</param>
+    public static void SetHP(int charaIndex, float hp)
+    {
+        PlayerManager.parameters[charaIndex].playerRuntimeDate.date.playerHP += hp;
+    }
+
+    /// <summary>
     /// Œ‚‚Á‚½’e‚Ì”.
     /// </summary>
     /// <param name="deathPlayerDate">”­–C‚µ‚½ƒLƒƒƒ‰</param>
@@ -371,6 +388,15 @@ public static class SetDateManager
     }
 
     /// <summary>
+    /// ŠƒRƒCƒ“”‚ğƒŠƒZƒbƒg‚·‚é.
+    /// </summary>
+    /// <param name="charaIndex">ŠƒRƒCƒ“”‚ğƒŠƒZƒbƒg‚·‚éƒLƒƒƒ‰ID</param>
+    public static void ResetCoin(int charaIndex)
+    {
+        PlayerManager.parameters[charaIndex].playerRuntimeDate.date.coin = 0;
+    }
+
+    /// <summary>
     /// Š‘’e”‚ğ‰ÁZ‚·‚é.
     /// </summary>
     /// <param name="charaIndex">Š‘’e”‚ğ‰ÁZ‚·‚éƒLƒƒƒ‰ID</param>
@@ -408,6 +434,7 @@ public class PlayerDate
     public PlayerParameter playerParameter = new();
     public PlayerRuntimeDate playerRuntimeDate = new();
     public PlayerManagementDate playerManagementDate = new();
+    public BulletDateToInventory[] myDrink = new BulletDateToInventory[5];
 }
 
 /// <summary>
@@ -446,6 +473,8 @@ public struct PlayerRuntimeDateStruct
     public int hitAmmo;                     //“–‚½‚Á‚½’e‚Ì”.
 
     public int coin;                        //ŠƒRƒCƒ“”.
+
+    public List<BulletDateToInventory> myDrink;
 }
 
 /// <summary>
@@ -472,6 +501,4 @@ public struct PlayerManagementDateStruct
     public int deathCount;
 
     public PlayerRuntimeDate lastPlayerToDamage;
-
-    public PlayerInventory playerInventory;
 }

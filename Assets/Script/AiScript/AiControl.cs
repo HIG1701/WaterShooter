@@ -376,6 +376,11 @@ public class AIControl : MonoBehaviour
             if (timer > 1.0f)
             {
                 pathCalculated = false;
+                botAnimation.aimTarget = null;
+                isShooting = false;
+                playerInSight = false;
+                coinInSight = false;
+                pathCalculated = false;
                 timer = 0f; 
             }
 

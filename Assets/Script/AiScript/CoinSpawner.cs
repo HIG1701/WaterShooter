@@ -44,6 +44,10 @@ public class CoinSpawner : MonoBehaviour
 
     private void CoinListReset()
     {
+        for (int i = 0;i < coinList.Count;i++)
+        {
+            Destroy(coinList[i]);
+        }
         coinList.Clear();
     }
 

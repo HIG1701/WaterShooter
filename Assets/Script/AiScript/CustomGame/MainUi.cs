@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 
 /// <summary>
@@ -9,6 +10,9 @@ using UnityEngine.UI;
 /// </summary>
 public class MainUi : MonoBehaviour
 {
+    [SerializeField] private float space = 100f;
+    [SerializeField] private Transform parentPanel;
+    [SerializeField] private GameObject imagePrefab;
     [SerializeField] private TextMeshProUGUI killCountText;
     [SerializeField] private TextMeshProUGUI currentAmmoText;
     [SerializeField] private TextMeshProUGUI deathCountText;
@@ -33,7 +37,6 @@ public class MainUi : MonoBehaviour
     private AudioSource audioSource;
     private AimTraining aimTraining;
     private int hitCount;
-
 
     private void Start()
     {
@@ -110,8 +113,8 @@ public class MainUi : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && buttons.activeSelf)
         {
             mainMenu.SetActive(!mainMenu.activeSelf);
-            if (mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.None; }
-            else if (!mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.Locked; }
+            if (mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.None; Time.timeScale = 0; }
+            else if (!mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.Locked; Time.timeScale = 1; }
             Cursor.visible = mainMenu.activeSelf;
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && !buttons.activeSelf)
@@ -210,6 +213,11 @@ public class MainUi : MonoBehaviour
         coinText.SetText(ParameterDate.SendCharacterCoin(playerController.CharacterIndex).ToString());
         totalAmmoText.SetText(ParameterDate.SendTotalAmmo(playerController.CharacterIndex).ToString());
         dpsText.SetText(ParameterDate.SendDamageCount(playerController.CharacterIndex).ToString());
+    }
+
+    private Sprite TextureToSprite(Texture2D texture)
+    {
+        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
     private void HitAudio()

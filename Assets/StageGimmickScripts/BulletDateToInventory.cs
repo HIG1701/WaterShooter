@@ -3,78 +3,47 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Photon.Pun;
+using Unity.VisualScripting;
+using System.Collections;
 
 [Serializable]
 public class BulletDateToInventory : MonoBehaviour, IPointerClickHandler
 {
-    [Header("飲料データタブ"), SerializeField] private BulletDate bulletDate = new BulletDate();
-
-    public BulletDate readonlyBulletData => bulletDate;
-
-    private GameObject playerObject;
-
-    private void Start()
-    {
-        if (PhotonNetwork.IsConnected)
-        {
-            playerObject = PhotonNetwork.LocalPlayer.TagObject as GameObject;
-        }
-    }
+    [Header("飲料データタブ"), SerializeField] public BulletDate bulletDate = new BulletDate();
+    [Header("仮の購入クールタイム(MF仕様)"), SerializeField] private int time = 1;
+    private bool isBuy;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        var childPlayerObject = playerObject.transform.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.CompareTag("Player"));
-        Debug.Log($"購入{bulletDate.drinkName}");
+        if ((gameObject.GetComponentInParent<VendingMachineController>() == null)) { return; }
+        if (gameObject.GetComponentInParent<VendingMachineController>().player == null) { return; }
+        int charaIndex = gameObject.GetComponentInParent<VendingMachineController>().player.CharacterIndex;
 
-        if (eventData.pointerClick.gameObject.CompareTag(tag))
+        if (
+            (int)bulletDate.gunType
+            == 1
+            && ParameterDate.SendCharacterCoin(charaIndex) >= bulletDate.drinkCost
+            && !isBuy
+            )
         {
-            // 購入処理
-            Debug.Log($"購入完了{eventData.pointerClick}");
-            Debug.Log(childPlayerObject);
-            if (childPlayerObject != null)
-            {
-                //childPlayerObject.gameObject.GetComponent<PlayerController>().DrinkInInventory(eventData.pointerClick.gameObject);
-            }
+            StartCoroutine(Buy(charaIndex));
+        }
+         else if (
+                  eventData.pointerClick.gameObject.CompareTag(tag)
+                  && ParameterDate.SendCharacterCoin(charaIndex) >= bulletDate.drinkCost
+                  && !isBuy
+                 )
+        {
+            StartCoroutine(Buy(charaIndex));
         }
     }
+
+    private IEnumerator Buy(int characterIndex)
+    {
+        SetDateManager.AddCoin(characterIndex, -bulletDate.drinkCost);
+        SetDateManager.AddTotalAmmo(characterIndex, bulletDate.drinkCapacity);
+        SetDateManager.SetHP(characterIndex, bulletDate.drinkHeal);
+        yield return new WaitForSeconds(time);
+        isBuy = false;
+    }
 }
-
-
-    //private void OnCollisionStay(Collision collision)
-    //{
-    //    //カーソルロック解除処理などを描く
-    //    Debug.Log("解除");
-    //    if (collision.gameObject == playerObject && Input.GetKey(KeyCode.F))
-    //    {
-    //        Cursor.lockState = CursorLockMode.None;
-    //        Cursor.visible = true;
-    //        playerObject = collision.gameObject;
-
-    //        return;
-    //    }
-    //}
-
-    ///// <summary>
-    ///// デバッグ用なので削除します。
-    ///// </summary>
-    ///// <param name="collision"></param>
-    //private void OnCollisionExit(Collision collision)
-    //{
-    //    var childPlayerObject = playerObject.transform.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.CompareTag(playerTagObject.tag));
-    //    var obj = childPlayerObject.gameObject.GetComponent<PlayerController>().ReturnValue();
-    //    if (obj.playerInventory.drinkType[0] == this.gameObject && obj.playerInventory.drinkType != null)
-    //    {
-    //        Debug.Log(obj.playerInventory.drinkType[0]);
-    //        Debug.Log("成功");
-    //    }
-
-    //    if (collision.gameObject == playerObject)
-    //    {
-    //        Cursor.lockState = CursorLockMode.None;
-    //        Cursor.visible = true;
-    //        playerObject = collision.gameObject;
-
-    //        return;
-    //    }
-    //}
-//}

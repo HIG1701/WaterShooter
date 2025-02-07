@@ -7,26 +7,33 @@ public class VendingMachineController : MonoBehaviour
     [Header("仮の値段(MF仕様)"), SerializeField] private int num = 100;
     [Header("仮の弾数(MF仕様)"), SerializeField] private int ammo = 120;
     [Header("仮の購入クールタイム(MF仕様)"), SerializeField] private int time = 1;
+    public PlayerController player;
     private bool isBuy;
 
     private void OnTriggerStay(Collider collision)
     {
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
-
+            player = playerController;
         if (!PhotonNetwork.IsConnected || GetComponent<PhotonView>().IsMine && playerController)
         {
             Debug.Log("解除a");
             if (Input.GetKey(KeyCode.F))
             {
-                //Cursor.lockState = CursorLockMode.None;
-                //Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
             }
             else { return; }
 
             if (ParameterDate.SendCharacterCoin(playerController.CharacterIndex) >= num && !isBuy)
             {
                 isBuy = true;
-                StartCoroutine(Buy(playerController));
+                //StartCoroutine(Buy(playerController));
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
         }
     }
@@ -39,12 +46,18 @@ public class VendingMachineController : MonoBehaviour
         isBuy = false;
     }
 
+    private void Update()
+    {
+        //Cursor.lockState = CursorLockMode.None;
+        //Cursor.visible = true;
+    }
+
     private void OnTriggerExit(Collider collision)
     {
         if (!PhotonNetwork.IsConnected || GetComponent<PhotonView>().IsMine)
         {
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 }

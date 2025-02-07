@@ -23,4 +23,6 @@ MonoBehaviour:
     drinkName: 
     drinkCapacity: 0
     drinkCost: 0
+    drinkHeal: 0
+    slotField: 120
     gunType: 3
