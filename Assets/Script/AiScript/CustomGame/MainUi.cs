@@ -183,6 +183,7 @@ public class MainUi : MonoBehaviour
         if (mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.None; }
         else if (!mainMenu.activeSelf) { Cursor.lockState = CursorLockMode.Locked; }
         Cursor.visible = mainMenu.activeSelf;
+        Time.timeScale = 1;
     }
 
     public void Setting()

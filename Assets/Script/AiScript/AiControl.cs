@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -100,7 +101,10 @@ public class AIControl : MonoBehaviour
                 Vector3 directionToPlayer = (player.position - transform.position).normalized;
                 Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-
+                if (Vector3.Distance(transform.position, player.position) >= shootRange / 1.2 && !isShooting)
+                {
+                    return;
+                }
                 pathCalculated = false; //BOT‚ÌˆÚ“®’âŽ~.
                 //Vector3 sideStep = transform.right * Mathf.Sin(Time.time * 6f);
                 //agent.Move(sideStep * Time.deltaTime);

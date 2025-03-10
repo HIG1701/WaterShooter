@@ -45,6 +45,12 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //if (collision.gameObject.TryGetComponent<HeadShoot>(out HeadShoot headShoot))
+        //{
+        //    headShoot.HeadHit(gunParameter, CharaIndex, hitParticle);
+        //    return;
+        //}
+
         //è·äQï®Ç…ìñÇΩÇ¡ÇΩÇÁíeä€ÇîjâÛÇ∑ÇÈ
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController playerController))
         {
